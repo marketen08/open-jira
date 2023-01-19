@@ -26,7 +26,7 @@ export const Navbar = () => {
               legacyBehavior
             >
               <Link underline='none' color='white'>
-                <Typography variant='h6'>OpenJira</Typography>
+                <Typography variant='h6'>Administración de presupuestos</Typography>
               </Link>
             </NextLink>
         </Toolbar>

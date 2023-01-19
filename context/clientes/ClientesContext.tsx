@@ -2,7 +2,12 @@ import { createContext } from 'react';
 import { Cliente } from '../../interfaces';
 
 interface ContextProps {
-  clientes: Cliente[]
+    clientes: Cliente[];
+    
+    // Methods
+    addNewCliente: (description: string) => void;
+    updateCliente: (cliente: Cliente, showSnackbar?: boolean ) => void;
 }
 
-export const ClientesContext = createContext({} as ContextProps)
+
+export const ClientesContext = createContext({} as ContextProps );

@@ -7,12 +7,15 @@ import mongoose from 'mongoose';
  * 3 = disconecting
  */
 
+
 const mongoConection = {
     isConected: 0
 }
 
 export const connect = async() => {
 
+    mongoose.set('strictQuery', false);
+    
     if ( mongoConection.isConected ) {
         console.log('Ya estamos conectados');
         return;

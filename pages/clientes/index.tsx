@@ -5,7 +5,7 @@ import { Layout } from "../../components/layouts";
 
 const Clientes:NextPage = () => {
   return (
-    <Layout title='Clientes - OpenJira'>
+    <Layout title='Clientes'>
       
       <Grid container spacing={ 2 }>
 
@@ -43,7 +43,7 @@ import externalApi from '../../apiAxios/externalApi';
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const resp2 = await externalApi.get('/clientes');
 
-  console.log(resp2.data.clientes);
+  // console.log(resp2.data.clientes);
 
   return {
     props: {

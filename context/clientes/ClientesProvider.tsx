@@ -1,66 +1,78 @@
-import { FC, ReactNode, useReducer } from 'react';
+import { FC, ReactNode, useEffect, useReducer } from 'react';
+import { useSnackbar } from 'notistack'
+import { externalApi } from '../../apiAxios';
 import { Cliente } from '../../interfaces';
 import { ClientesContext, clientesReducer } from './';
 
-import { v4 as uuidv4 } from 'uuid'
-
 interface Props {
-  children: ReactNode
+    children: ReactNode
+}
+
+interface ListadoDeClientesApi {
+    total: number;
+    clientes: Cliente[];
 }
 
 export interface ClientesState {
-  clientes: Cliente[]
+    clientes: Cliente[];
 }
 
 const Clientes_INITIAL_STATE: ClientesState = {
-  clientes: [
-    {
-      id: uuidv4(),
-      codigo: 1,
-      razonSocial: 'NUWARE SRL',
-      tipoDeDocumento: 'CUIT',
-      numero: '30714525319',
-      nombre: 'NUWARE',
-      condicionIva: 'IVA Responsable Inscripto',
-      domicilio: 'Carlos Casares 1641',
-      provincia: 'Buenos Aires',
-      localidad: 'Victoria',
-      telefono: '1133520349',
-      email: 'info@nuware.com.ar',
-      activo: true,
-      createdAt: Date.now()
-    },
-    {
-      id: uuidv4(),
-      codigo: 2,
-      razonSocial: 'INGENIERIA SRL',
-      tipoDeDocumento: 'CUIT',
-      numero: '30714525318',
-      nombre: 'INGENIERIA',
-      condicionIva: 'IVA Responsable Inscripto',
-      domicilio: 'Carlos Casares 1641',
-      provincia: 'Buenos Aires',
-      localidad: 'Victoria',
-      telefono: '1133520349',
-      email: 'info@nuware.com.ar',
-      activo: true,
-      createdAt: Date.now()
-    }
-  ]
+    clientes: []
 }
 
-export const ClientesProvider: FC<Props> = ({ children }) => {
-  const [state, dispatch] = useReducer(clientesReducer, Clientes_INITIAL_STATE)
+export const ClientesProvider:FC<Props> = ({ children }) => {
 
-  console.log({ dispatch })
+    const [state, dispatch] = useReducer( clientesReducer, Clientes_INITIAL_STATE )
+    const { enqueueSnackbar } = useSnackbar();
 
-  return (
-    <ClientesContext.Provider
-      value={{
-        ...state
-      }}
-    >
-      {children}
-    </ClientesContext.Provider>
-  )
+    const addNewCliente = async( description: string ) => {
+        const { data } = await externalApi.post<Cliente>('/clientes', { description });
+        dispatch({ type: '[Cliente] - Agregar entrada', payload: data });
+    }
+
+    const updateCliente = async( cliente: Cliente, showSnackbar = false ) => {
+        try {
+            const { data } = await externalApi.put<Cliente>(`/clientes/${ cliente.id }`, cliente );    
+            dispatch({ type: '[Cliente] - Actualizar entrada', payload: data });
+
+            if ( showSnackbar ) 
+                enqueueSnackbar('Entrada actualizada', {
+                    variant: 'success',
+                    autoHideDuration: 1500,
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right'
+                    }
+
+                })
+            
+        } catch (error) {
+            
+        }
+    }
+
+
+
+    const refreshClientes = async() => {
+        const { data } = await externalApi.get<ListadoDeClientesApi>('/clientes');
+        const { clientes } = data;
+        dispatch({ type: '[Cliente] - Refresh Data', payload: clientes });
+    }
+
+    useEffect(() => {
+        refreshClientes();
+    }, []);
+    
+    return (
+        <ClientesContext.Provider value={{
+            ...state,
+
+            // Methods
+            addNewCliente,
+            updateCliente,
+        }} >
+            { children }
+        </ClientesContext.Provider>
+    )
 }

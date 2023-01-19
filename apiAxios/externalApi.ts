@@ -1,10 +1,12 @@
 import axios from 'axios';
 
+export const baseURL: string = 'http://localhost:8080/api'
+
 const externalApi = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: baseURL,
     timeout: 1000,
     headers: {
-        'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M0OTc5YmZjYWFhODEyZmFjMzFlN2YiLCJpYXQiOjE2NzM5ODIwNTYsImV4cCI6MTY3NDA2ODQ1Nn0.j6c3KaNm5xnV_aB2BxtGNLANQFOWBKqSebYawZJcY3c' 
+        'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M0OTc5YmZjYWFhODEyZmFjMzFlN2YiLCJpYXQiOjE2NzQwODE1NzQsImV4cCI6MTY3NDE2Nzk3NH0.6SAhPLWOsYHAeOoXtGn3AYD0K8Bm91jAgfDivBOuDeI' 
     }
     
 })

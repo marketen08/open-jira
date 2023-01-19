@@ -1,16 +1,42 @@
 import { useContext } from "react";
-import { Box, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material"
-
-import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material"
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
+import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import { UIContext } from "../../../context/ui";
+import NextLink from "next/link";
+import Button from "@mui/material/Button";
+import { LoginOutlined } from "@mui/icons-material";
+import { AuthContext } from "../../../context";
 
-const menuItems: string[] = ['Inbox', 'Starred', 'Send Email', 'Drafts']
+type menuItem = {
+  titulo: string,
+  url: string,
+  icono?: any
+}
+
+const menuItems: menuItem[] = [
+  {
+    titulo: 'INICIO',
+    url: '/',
+    icono: <HomeOutlinedIcon />
+  },
+  {
+    titulo: 'CLIENTES',
+    url: '/clientes',
+    icono: <FolderCopyOutlinedIcon />
+  },
+  {
+    titulo: 'PRESUPUESTOS',
+    url: '/presupuestos',
+    icono: <SummarizeOutlinedIcon />
+  }
+]
 
 export const SideBar = () => {
 
   const { sidemenuOpen, closeSideMenu } = useContext( UIContext)
-
+  const { user, isLoggedIn, logout } = useContext(  AuthContext );
 
   return (
           <Drawer
@@ -20,20 +46,33 @@ export const SideBar = () => {
           >
             <Box sx={{ width: 250 }}></Box>
             <Box sx={{ padding: '5px 5px' }} >
-                <Typography variant='h4'>Menú</Typography>
+                <Typography variant='h4' sx={{ pl: 2, pt: 2 }}>Menú</Typography>
             </Box>
 
             <List>
               {
-                menuItems.map((text, index) => (
-                  <ListItem button key={text}>
-                    <ListItemIcon>
-                      { index % 2 ? <InboxOutlinedIcon /> : <EmailOutlinedIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={ text } />
-                  </ListItem>
+                menuItems.map(( item, index) => (
+                  <NextLink
+                    href={ item.url }
+                    passHref
+                    legacyBehavior
+                    key={ item.titulo }
+                  >
+                    <ListItemButton component='a' onClick={ closeSideMenu }>
+                      <ListItemIcon>
+                        { item.icono }
+                      </ListItemIcon>
+                      <ListItemText primary={ item.titulo } />
+                    </ListItemButton>
+                  </NextLink>
                 ))
               }
+              <ListItemButton component='a' onClick={ logout }>
+                      <ListItemIcon>
+                        <LoginOutlined />
+                      </ListItemIcon>
+                      <ListItemText primary='Salir' />
+                    </ListItemButton>
             </List>
 
             <Divider />

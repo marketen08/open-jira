@@ -1,9 +1,20 @@
 // middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt';
 
 // This function can be marked `async` if using `await` inside
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
+
+    const session:any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if ( !session ) {
+        const requestedPage = req.nextUrl.pathname;
+        const url = req.nextUrl.clone();
+        url.pathname = `/auth/login`;
+        url.search = `callbackUrl=${requestedPage}`;
+        return NextResponse.redirect(url);
+    }
 
     if ( req.nextUrl.pathname.startsWith( '/api/entries/' )) {
         const id = req.nextUrl.pathname.replace('/api/entries/', '');
@@ -17,11 +28,19 @@ export function middleware(req: NextRequest) {
             return NextResponse.rewrite(url);
 
         }
-
-
     }
 
-    // console.log(req.nextUrl.pathname);
+    if ( req.nextUrl.pathname.startsWith( '/clientes' )) {
+
+        const validRoles = [ 'admin', 'super-admin' ];
+        if ( !validRoles.includes( session.user?.rol ) ) {
+            const url = req.nextUrl.clone();
+            url.pathname = `/`;
+            url.search = '';
+            return NextResponse.redirect(url);
+        }
+    }
+
 
     return NextResponse.next();
 }
@@ -30,6 +49,9 @@ export function middleware(req: NextRequest) {
 export const config = {
 //   matcher: '/about/:path*',
     matcher: [
-        '/api/entries/:path*'
+        '/api/entries/:path*',
+        '/clientes/:path*',
+        '/clientes',
+        '/',
     ]
 }

@@ -14,7 +14,7 @@ export interface Cliente {
   activo: boolean;
 
   createdAt: number;
-
+  updatedAt?: number;
   // usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true }
 }
 
