@@ -43,7 +43,8 @@ export default NextAuth({
           const { usuario } = data;
           
           const user = { 
-            ...usuario
+            ...usuario,
+            token: data.token
           }
           
           return user;
@@ -112,8 +113,6 @@ export default NextAuth({
     // newUser: '/auth/register'
   },
 
-  // Callbacks
-  
   // session: {
   //   maxAge: 2592000, /// 30d
   //   strategy: 'jwt',

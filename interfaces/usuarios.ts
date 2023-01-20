@@ -4,5 +4,6 @@ export interface IUsuario {
     nombre     : string;
     email    : string;
     online     : boolean;
+    token: string;
 
 }

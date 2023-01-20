@@ -1,4 +1,4 @@
-# Next.js OpenJira App
+# Next.js Sonia App
 
 Para correr localmente, se necsita la base de datos.
 Ejecutar el siguiente comando.

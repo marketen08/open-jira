@@ -4,7 +4,6 @@ import { Layout } from "../components/layouts";
 import { EntryList, NewEntry } from "../components/layouts/ui";
 
 const HomePage:NextPage = () => {
-  
   return (
     <Layout title='Home - OpenJira'>
       
