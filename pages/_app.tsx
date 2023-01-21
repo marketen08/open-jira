@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
-import { AuthProvider, ClientesProvider, EntriesProvider, UIProvider } from '../context'
+import { AuthProvider, ClientesProvider, EntriesProvider, PedidosProvider, UIProvider, VehiculosProvider } from '../context'
 
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
@@ -22,16 +22,20 @@ export default function App({ Component, pageProps }: AppProps) {
         >
       <AuthProvider>
         <SnackbarProvider maxSnack={ 3 }>
-          <EntriesProvider>
-            <UIProvider>
-              <ClientesProvider>
-                <ThemeProvider theme={ darkTheme }>
-                  <CssBaseline />
-                  <Component {...pageProps} />
-                </ThemeProvider>
-              </ClientesProvider>
-            </UIProvider>
-          </EntriesProvider>
+          <UIProvider>
+            <PedidosProvider>
+              <VehiculosProvider>
+                <EntriesProvider>
+                  <ClientesProvider>
+                    <ThemeProvider theme={ darkTheme }>
+                      <CssBaseline />
+                      <Component {...pageProps} />
+                    </ThemeProvider>
+                  </ClientesProvider>
+                </EntriesProvider>
+              </VehiculosProvider>
+            </PedidosProvider>
+          </UIProvider>
         </SnackbarProvider>
       </AuthProvider>
       </SWRConfig>

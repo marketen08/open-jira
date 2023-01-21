@@ -22,13 +22,23 @@ const menuItems: menuItem[] = [
     icono: <HomeOutlinedIcon />
   },
   {
-    titulo: 'CLIENTES',
-    url: '/clientes',
+    titulo: 'PEDIDOS',
+    url: '/pedidos',
     icono: <FolderCopyOutlinedIcon />
   },
   {
     titulo: 'PRESUPUESTOS',
     url: '/presupuestos',
+    icono: <SummarizeOutlinedIcon />
+  },
+  {
+    titulo: 'VEHÍCULOS',
+    url: '/vehiculos',
+    icono: <SummarizeOutlinedIcon />
+  },
+  {
+    titulo: 'CLIENTES',
+    url: '/clientes',
     icono: <SummarizeOutlinedIcon />
   }
 ]
