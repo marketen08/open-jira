@@ -79,19 +79,19 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                             sx={{ mt: 1.5, mb: 1 }}
                             size='small'
                         />
-                            <Field 
-                                as={ TextField }
-                                name='tipoDeDocumento'
-                                fullWidth
-                                size='small'
-                                label='Tipo de Documento'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                select
-                                >
-                                {
-                                    validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                                }
-                            </Field>
+                        <Field 
+                            as={ TextField }
+                            name='tipoDeDocumento'
+                            fullWidth
+                            size='small'
+                            label='Tipo de Documento'
+                            sx={{ mt: 1.5, mb: 1 }}
+                            select
+                            >
+                            {
+                                validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                            }
+                        </Field>
                         <FormGroup>
                             <Field
                                 as={ TextField }
