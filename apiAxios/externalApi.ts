@@ -6,7 +6,7 @@ const externalApi = axios.create({
     baseURL: baseURL,
     timeout: 1000,
     headers: {
-        'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQzMzAwOTQsImV4cCI6MTY3NDQxNjQ5NH0.J5FMnMxgUATM4Q6CV3FKcPeo6M7CZUWuUKHRLlYPGP8'
+        'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ1MDAzNTUsImV4cCI6MTY3NDU4Njc1NX0.x_uMi01U8FgHBa3FaSQ45xbQ_cI9XPUZbREDORhevb4'
     }
     
 })

@@ -1,22 +1,37 @@
 import { useCallback, useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 
 
-export const useSocket = ( serverPath ) => {
+export const useSocket = ( serverPath:string ) => {
     
-    const [ socket, setSocket ] = useState(null);
+    // const token = localStorage.getItem('token');
+
+    // console.log('first')
+    const socketTemp:Socket = io( serverPath, { 
+        transports: ['websocket'],
+        autoConnect: true,
+        forceNew: true,
+        query: {
+            'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ1MDI3MDIsImV4cCI6MTY3NDU4OTEwMn0.o2gY5kyaQ95ZXOHaEMASFjNUiw6z1PtFVDok1T62XSM'
+        }
+    });
+
+    const [ socket, setSocket ] = useState<Socket>(socketTemp);
     const [ online, setOnline ] = useState(false);
 
     const conectarSocket = useCallback( () => {
 
         const token = localStorage.getItem('token');
 
-        const socketTemp = io.connect( serverPath, { 
+        const socketTemp:Socket = io( serverPath, { 
             transports: ['websocket'],
-            autoConnect: true,
-            forceNew: true,
+            // autoConnect: true,
+            // forceNew: true,
+            // timeout: 20000,
+            
+            
             query: {
-                'x-token': token
+                'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ1MDI3MDIsImV4cCI6MTY3NDU4OTEwMn0.o2gY5kyaQ95ZXOHaEMASFjNUiw6z1PtFVDok1T62XSM'
             }
         });
         setSocket( socketTemp );
