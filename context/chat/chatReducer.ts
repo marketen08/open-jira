@@ -3,7 +3,7 @@ import { Mensaje } from '../../interfaces/mensaje';
 import { ChatState } from './';
 
 type ChatActionType = 
-| { type: 'Chat - Usuarios Cargados', payload: IUsuario[] }
+| { type: 'Chat - Usuarios Cargados', payload: any }
 | { type: 'Chat - Activar Chat', payload: null | string }
 | { type: 'Chat - Nuevo Mensaje', payload: Mensaje }
 | { type: 'Chat - Cargar Mensajes', payload: Mensaje[] }
@@ -12,7 +12,7 @@ export const chatReducer = ( state: ChatState, action: ChatActionType ):ChatStat
     
     switch (action.type) {
         case 'Chat - Usuarios Cargados':
-            console.log('Reducer usuarios cargados', action.payload )
+            console.log('ChatReducer', action.payload )
             return {
                 ...state,
                 usuarios: [ ...action.payload ]

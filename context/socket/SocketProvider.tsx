@@ -42,7 +42,6 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     // Escuchar los cambios en los usuarios conectados
     useEffect(() => {
         socket?.on( 'lista-usuarios', (usuarios) => {
-            // console.log(usuarios);
             dispatch({ type: 'Chat - Usuarios Cargados', payload: usuarios });
         })
     }, [ socket, dispatch ]);

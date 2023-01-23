@@ -5,9 +5,9 @@ import { SidebarChatItem } from './SidebarChatItem'
 export const Sidebar = () => {
     
     const { user } = useContext( AuthContext );
-    const { usuarios } = useContext( ChatContext );
+    const { uid, usuarios, mensajes, chatActivo } = useContext( ChatContext );
 
-    console.log('Sidebar Usuarios cargados', usuarios);
+    console.log('ChatContext Sidebar', uid, usuarios, mensajes, chatActivo);
 
 
     return (
