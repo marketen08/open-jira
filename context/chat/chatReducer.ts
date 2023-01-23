@@ -3,7 +3,7 @@ import { Mensaje } from '../../interfaces/mensaje';
 import { ChatState } from './';
 
 type ChatActionType = 
-| { type: 'Chat - Usuarios Cargados', payload: any }
+| { type: 'Chat - Usuarios Cargados', payload: IUsuario[] }
 | { type: 'Chat - Activar Chat', payload: null | string }
 | { type: 'Chat - Nuevo Mensaje', payload: Mensaje }
 | { type: 'Chat - Cargar Mensajes', payload: Mensaje[] }
