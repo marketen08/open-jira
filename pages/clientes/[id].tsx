@@ -87,7 +87,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                             label='Tipo de Documento'
                             sx={{ mt: 1.5, mb: 1 }}
                             select
-                            >
+                        >
                             {
                                 validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
                             }
