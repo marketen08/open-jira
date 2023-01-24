@@ -7,16 +7,9 @@ export const useSocket = ( serverPath:string ) => {
     // const token = localStorage.getItem('token');
 
     // console.log('first')
-    const socketTemp:Socket = io( serverPath, { 
-        transports: ['websocket'],
-        autoConnect: true,
-        forceNew: true,
-        query: {
-            'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ1MDI3MDIsImV4cCI6MTY3NDU4OTEwMn0.o2gY5kyaQ95ZXOHaEMASFjNUiw6z1PtFVDok1T62XSM'
-        }
-    });
+    // const socketTemp:Socket = null;
 
-    const [ socket, setSocket ] = useState<Socket>(socketTemp);
+    const [ socket, setSocket ] = useState<Socket|null>(null);
     const [ online, setOnline ] = useState(false);
 
     const conectarSocket = useCallback( () => {
@@ -25,9 +18,9 @@ export const useSocket = ( serverPath:string ) => {
 
         const socketTemp:Socket = io( serverPath, { 
             transports: ['websocket'],
-            // autoConnect: true,
-            // forceNew: true,
-            // timeout: 20000,
+            autoConnect: true,
+            forceNew: true,
+            timeout: 20000,
             
             
             query: {
@@ -43,7 +36,9 @@ export const useSocket = ( serverPath:string ) => {
 
 
     useEffect(() => {
-        setOnline( socket?.connected );
+        if ( socket ) {
+            setOnline( socket?.connected );
+        }
     }, [socket])
 
     useEffect(() => {
