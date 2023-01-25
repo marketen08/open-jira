@@ -8,7 +8,7 @@ import { SnackbarProvider } from 'notistack'
 
 import { darkTheme, lightTheme } from '../themes'
 import { SWRConfig } from 'swr'
-import { SocketProvider } from '../context/socket/SocketContextOriginal'
+import { SocketProvider } from '../context/socket'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

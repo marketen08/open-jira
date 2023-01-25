@@ -1,8 +1,7 @@
 import { Box, Button, TextField } from '@mui/material';
 import React, { useContext, useState, ChangeEvent, FormEvent } from 'react';
 import { AuthContext, ChatContext } from '../../context';
-import { SocketContext } from '../../context/socket/SocketContextOriginal'
-// import { Media, FormControl, Button, InputGroup } from 'react-bootstrap';
+import { SocketContext } from '../../context/socket'
 
 export const SendMessage = () => {
 

@@ -1,4 +1,3 @@
-import { Button } from '@mui/material';
 import { useContext } from 'react';
 import { ChatSelect, InboxPeople, Messages } from '../../components/chats';
 import { ChatContext } from '../../context/chat/ChatContext';
