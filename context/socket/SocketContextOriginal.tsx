@@ -39,7 +39,6 @@ export const SocketProvider:FC<Props> = ({ children }) => {
 
     // Escuchar los cambios en los usuarios conectados
     useEffect(() => {
-        
         socket?.on( 'lista-usuarios', ( usuarios ) => {
             cargarUsuarios( usuarios );
         })
@@ -49,7 +48,7 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     
     useEffect(() => {
         socket?.on('mensaje-personal', (mensaje) => {
-            cargarMensajes( mensaje );
+            cargarMensajes( mensaje.para );
             scrollToBottomAnimated('mensajes');
         })
 

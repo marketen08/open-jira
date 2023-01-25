@@ -24,7 +24,7 @@ export const useSocket = ( serverPath:string ) => {
             
             
             query: {
-                'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ2MTA0NzcsImV4cCI6MTY3NDY5Njg3N30.wOdeR8sDBuWUibW2_NL4gO3eldSjttPHAHM5mcGVCDw'
+                'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ2NTMwOTksImV4cCI6MTY3NDczOTQ5OX0.Qxeb4PnhBUmvHK4uP4hqe-5wLUn7rm998u7WmfXKGCI'
             }
         });
         setSocket( socketTemp );
