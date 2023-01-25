@@ -6,7 +6,7 @@ import { SocketContext } from '../../context/socket'
 
 export const SendMessage = () => {
 
-    const [mensaje, setMensaje] = useState('');
+    const [ mensaje, setMensaje ] = useState('');
     const { socket } = useContext( SocketContext );
     const { user } = useContext( AuthContext );
     const { chatActivo } = useContext( ChatContext );
@@ -22,7 +22,7 @@ export const SendMessage = () => {
 
         setMensaje('');
 
-        socket.emit('mensaje-personal', {
+        socket?.emit('mensaje-personal', {
             de: user?.uid,
             para: chatActivo,
             mensaje

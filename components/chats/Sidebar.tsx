@@ -5,17 +5,13 @@ import { SidebarChatItem } from './SidebarChatItem'
 export const Sidebar = () => {
     
     const { user } = useContext( AuthContext );
-    const { uid, usuarios, mensajes, chatActivo } = useContext( ChatContext );
+    const { usuarios } = useContext( ChatContext );
 
-    console.log('ChatContext Sidebar', uid, usuarios, mensajes, chatActivo);
+    // console.log('ChatContext Sidebar1', usuarios);
 
 
     return (
         <div className="inbox_chat">
-                    {/* <SidebarChatItem 
-                        key={ '63c98ea65d21548037e0d50b' }
-                        usuario={ usuario }
-                    /> */}
             {
                 usuarios
                     .filter( us => us.uid !== user?.uid )
@@ -26,8 +22,6 @@ export const Sidebar = () => {
                     />
                 ))
             }
-
-
             {/* <!-- Espacio extra para scroll --> */}
             <div className="extra_space"></div>
 

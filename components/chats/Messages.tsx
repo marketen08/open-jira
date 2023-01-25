@@ -7,7 +7,8 @@ import { AuthContext } from '../../context';
 
 export const Messages = () => {
 
-    const { uid, chatActivo, usuarios, mensajes } = useContext( ChatContext );
+    const { mensajes } = useContext( ChatContext );
+
 
     const { user } = useContext( AuthContext );
 
@@ -23,8 +24,8 @@ export const Messages = () => {
                 {
                     mensajes.map( msg => (
                         ( msg.para === user?.uid )
-                            ? <IncomingMessage key={ msg.id } msg={ msg } />
-                            : <OutgoingMessage key={ msg.id } msg={ msg } />
+                            ? <IncomingMessage key={ msg._id } msg={ msg } />
+                            : <OutgoingMessage key={ msg._id } msg={ msg } />
                     ))
                 }
 

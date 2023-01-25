@@ -1,9 +1,9 @@
 
 export interface IUsuario {
-    uid      : string;
-    nombre     : string;
-    email    : string;
-    online     : boolean;
-    token: string;
+    uid: string;
+    nombre: string;
+    email: string;
+    online: boolean;
+    rol: string;
 
 }

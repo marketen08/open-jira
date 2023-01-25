@@ -1,12 +1,17 @@
 import { createContext } from 'react';
 import { IUsuario } from '../../interfaces';
-import { Mensaje } from '../../interfaces/mensaje';
+import { IMensaje } from '../../interfaces/mensaje';
 
 interface ContextProps {
-    uid: String;
-    chatActivo: String | null;
+    uid: string;
+    chatActivo: string | null;
+    mensajes: IMensaje[];
     usuarios: IUsuario[];
-    mensajes: Mensaje[];
+    // Methods
+    cargarMensajes: (uid: string) => void;
+    cargarUsuarios: (usuarios: IUsuario[]) => void;
+    activarChat: (uid: string) => void;
+    // updateCliente: (cliente: Cliente, showSnackbar?: boolean ) => void;
 }
 
 

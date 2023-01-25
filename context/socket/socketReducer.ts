@@ -1,8 +1,9 @@
 import { SocketState } from './';
 
 type SocketActionType = 
-| { type: 'Socket - Conectar' }
-| { type: 'Socket - Desconectar' }
+| { type: 'Socket - Usuarios cargados', payload: any }
+| { type: 'Socket - Mensajes cargados', payload: any }
+// | { type: 'Socket - Activar Chat', payload: any }
 
 
 // TODO: IMPORTANTE
@@ -12,15 +13,25 @@ type SocketActionType =
 export const socketReducer = ( state: SocketState, action: SocketActionType ):SocketState => {
     
     switch (action.type) {
-        case 'Socket - Conectar':
+        case 'Socket - Usuarios cargados':
             return {
                 ...state,
+                usuarios: [ ...action.payload ]
             }
         
-        case 'Socket - Desconectar':
-            return {
-                ...state,
-            }
+        // case 'Socket - Mensajes cargados':
+        //     return {
+        //         ...state,
+        //         mensajes: [ ...action.payload ]
+        //     }
+
+        // case 'Socket - Activar Chat':
+        //     if ( state.chatActivo === action.payload ) return state;
+            
+        //     return {
+        //         ...state,
+        //         chatActivo: action.payload,
+        //     }
 
         default:
             return state;

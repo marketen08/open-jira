@@ -1,10 +1,10 @@
-export interface Mensaje {
-    id: string;
+export interface IMensaje {
+    _id: string;
     de: string;
     para: string;
     mensaje: string;
   
-    createdAt: number;
-    updatedAt?: number;
+    createdAt: string;
+    updatedAt?: string;
   }
   

@@ -1,8 +1,8 @@
 import { FC, ReactNode, useContext, useEffect, useReducer } from 'react';
 import { Socket } from 'socket.io-client';
 import { useSocket } from '../../hooks/useSocket';
+import { IUsuario } from '../../interfaces';
 import { AuthContext } from '../auth';
-import { chatReducer, CHAT_INITIAL_STATE } from '../chat';
 import { SocketContext, socketReducer } from './';
 
 interface Props {
@@ -10,19 +10,20 @@ interface Props {
 }
 
 export interface SocketState {
-    socket: Socket|null;
+    socket: Socket|null
     online: boolean;
+    usuarios: IUsuario[];
 }
 
-const Socket_INITIAL_STATE: SocketState = {
+export const SOCKET_INITIAL_STATE: SocketState = {
     socket: null,
-    online: false
+    online: false,
+    usuarios: [],
 }
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
-    // const [stateSocket, dispatchSocket] = useReducer( socketReducer, Socket_INITIAL_STATE )
-    const [state, dispatch] = useReducer( chatReducer, CHAT_INITIAL_STATE )
+    const [state, dispatch] = useReducer( socketReducer, SOCKET_INITIAL_STATE )
 
     const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
     const { isLoggedIn } = useContext( AuthContext );
@@ -42,21 +43,24 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     // Escuchar los cambios en los usuarios conectados
     useEffect(() => {
         socket?.on( 'lista-usuarios', (usuarios) => {
-            dispatch({ type: 'Chat - Usuarios Cargados', payload: usuarios });
+            dispatch({ type: 'Socket - Usuarios cargados', payload: usuarios });
         })
     }, [ socket, dispatch ]);
 
 
     useEffect(() => {
         socket?.on('mensaje-personal', (mensaje) => {
-            dispatch({ type: 'Chat - Nuevo Mensaje', payload: mensaje });
+            console.log(mensaje);
+            dispatch({ type: 'Socket - Mensajes cargados', payload: mensaje });
             // scrollToBottomAnimated('mensajes');
         })
 
     }, [ socket, dispatch ]);
     
     return (
-        <SocketContext.Provider value={{ socket, online }} >
+        <SocketContext.Provider value={{
+            ...state
+        }} >
             { children }
         </SocketContext.Provider>
     )
