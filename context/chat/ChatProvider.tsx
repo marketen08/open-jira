@@ -1,5 +1,5 @@
 import { FC, ReactNode, useReducer } from 'react';
-import { externalApi } from '../../apiAxios';
+import { externalApiConToken } from '../../apiAxios';
 import { IUsuario } from '../../interfaces';
 import { IMensaje } from '../../interfaces/mensaje';
 import { ChatContext, chatReducer } from './';
@@ -27,7 +27,7 @@ export const ChatProvider:FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer( chatReducer, CHAT_INITIAL_STATE )
 
     const cargarMensajes = async( uid: string ) => {
-        const { data } = await externalApi.get(`mensajes/${ uid }`);
+        const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
         dispatch({ type: 'Chat - Mensajes cargados', payload: data.mensajes });
     }
 
@@ -36,7 +36,7 @@ export const ChatProvider:FC<Props> = ({ children }) => {
     }
 
     const activarChat = async( uid: string ) => {
-        // const { data } = await externalApi.get(`mensajes/${ uid }`);
+        // const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
         dispatch({ type: 'Chat - Activar', payload: uid });
     }
 

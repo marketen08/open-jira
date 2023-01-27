@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { GetServerSideProps } from 'next'
 import NextLink from 'next/link';
 import { signIn, getSession, getProviders } from 'next-auth/react';
@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { AuthLayout } from '../../components/layouts'
 import { validations } from '../../utils';
 import { useRouter } from 'next/router';
+import { AuthContext } from '../../context';
 
 
 type FormData = {
@@ -19,6 +20,8 @@ type FormData = {
 
 
 const LoginPage = () => {
+
+    const { loginUser } = useContext(AuthContext);
 
     const router = useRouter();
     // const { loginUser } = useContext( AuthContext );
@@ -39,7 +42,14 @@ const LoginPage = () => {
 
         setShowError(false);
 
-        await signIn('credentials',{ email, password });
+        const aa = await signIn('credentials', { email, password });
+        
+        // login manual, tambien guarda la cookie token
+        // const isValidLogin = await loginUser( email, password );
+        // console.log(aa);
+        // if ( !isValidLogin ) {
+        //     console.log('credenciales manuales incorrectas');
+        // }
 
     }
 

@@ -8,18 +8,10 @@ import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { Vehiculo, VehiculoCondicionIva, VehiculoTipoDeDocumento } from "../../interfaces";
+import { Vehiculo } from "../../interfaces";
 import { VehiculosContext } from '../../context';
 import { dateFunctions } from '../../utils';
-import { externalApi } from '../../apiAxios';
-
-const validTipoDocumento: VehiculoTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
-const validCondicionIva: VehiculoCondicionIva[] = [  'IVA Responsable Inscripto',
-                                                    'Responsable Monotributo',
-                                                    'IVA Sujeto Exento',
-                                                    'Vehiculo del Exterior',
-                                                    'Consumidor Final',
-                                                    'IVA No Alcanzado' ];
+import { externalApiConToken } from '../../apiAxios';
 
 interface Props {
     vehiculo: Vehiculo
@@ -79,85 +71,9 @@ export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
                             sx={{ mt: 1.5, mb: 1 }}
                             size='small'
                         />
-                        <Field 
-                            as={ TextField }
-                            name='tipoDeDocumento'
-                            fullWidth
-                            size='small'
-                            label='Tipo de Documento'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            select
-                            >
-                            {
-                                validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                            }
-                        </Field>
-                        <FormGroup>
-                            <Field
-                                as={ TextField }
-                                name='numero'
-                                type='text'
-                                fullWidth
-                                label='Número'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                                error={ touched.numero && errors.numero }
-                                helperText={ touched.numero && errors.numero && 'Ingrese el número' }
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <Field
-                                as={ TextField }
-                                name='razonSocial'
-                                type='text'
-                                fullWidth
-                                label='Razon Social'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                                error={ touched.razonSocial && errors.razonSocial }
-                                helperText={ touched.razonSocial && errors.razonSocial && 'Ingrese la razon social' }
-                            />
-                        </FormGroup>
-                        <Field
-                            as={ TextField }
-                            name='nombre'
-                            type='text'
-                            fullWidth
-                            label='Nombre'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field 
-                            as={ TextField }
-                            name='condicionIva'
-                            fullWidth
-                            size='small'
-                            label='Condición Iva'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            select
-                        >
-                            {
-                                validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                            }
-                        </Field>
-                        <Field
-                            as={ TextField }
-                            name='domicilio'
-                            type='text'
-                            fullWidth
-                            label='Domicilio'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='provincia'
-                            type='text'
-                            fullWidth
-                            label='Provincia'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'    
-                        />
+                        
+                        
+                       
                         <Field
                             as={ TextField }
                             name='localidad'
@@ -218,9 +134,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     const { id } = ctx.params as { id: string };
 
-    const { data:vehiculo } = await externalApi.get(`/vehiculos/${ id }`);
-
-    console.log(vehiculo);
+    const { data:vehiculo } = await externalApiConToken.get(`/vehiculos/${ id }`);
 
     if ( !vehiculo ) {
         return {

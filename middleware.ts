@@ -8,7 +8,9 @@ export async function middleware(req: NextRequest) {
 
     const session:any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    if ( !session ) {
+    const token = req.cookies.get('token')?.value
+
+    if ( !session || !token ) {
         const requestedPage = req.nextUrl.pathname;
         const url = req.nextUrl.clone();
         url.pathname = `/auth/login`;

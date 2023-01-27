@@ -1,8 +1,11 @@
-import { FC, ReactNode, useEffect, useReducer } from 'react';
+import { FC, ReactNode, useContext, useEffect, useReducer } from 'react';
 import { useSnackbar } from 'notistack'
-import { externalApi } from '../../apiAxios';
+import Cookies from 'js-cookie';
+
+import { externalApiConToken } from '../../apiAxios';
 import { Cliente } from '../../interfaces';
 import { ClientesContext, clientesReducer } from './';
+import { AuthContext } from '../auth';
 
 interface Props {
     children: ReactNode
@@ -23,17 +26,20 @@ const Clientes_INITIAL_STATE: ClientesState = {
 
 export const ClientesProvider:FC<Props> = ({ children }) => {
 
+    const { isLoggedIn } = useContext( AuthContext )
+
     const [state, dispatch] = useReducer( clientesReducer, Clientes_INITIAL_STATE )
     const { enqueueSnackbar } = useSnackbar();
 
     const addNewCliente = async( description: string ) => {
-        const { data } = await externalApi.post<Cliente>('/clientes', { description });
+        
+        const { data } = await externalApiConToken.post<Cliente>('/clientes', { description });
         dispatch({ type: '[Cliente] - Agregar entrada', payload: data });
     }
 
     const updateCliente = async( cliente: Cliente, showSnackbar = false ) => {
         try {
-            const { data } = await externalApi.put<Cliente>(`/clientes/${ cliente.id }`, cliente );    
+            const { data } = await externalApiConToken.put<Cliente>(`/clientes/${ cliente.id }`, cliente );    
             dispatch({ type: '[Cliente] - Actualizar entrada', payload: data });
 
             if ( showSnackbar ) 
@@ -52,12 +58,17 @@ export const ClientesProvider:FC<Props> = ({ children }) => {
         }
     }
 
-
-
     const refreshClientes = async() => {
-        const { data } = await externalApi.get<ListadoDeClientesApi>('/clientes');
-        const { clientes } = data;
-        dispatch({ type: '[Cliente] - Refresh Data', payload: clientes });
+
+        if ( Cookies.get('token')  ) {
+            try {
+                const { data } = await externalApiConToken.get<ListadoDeClientesApi>('/clientes');
+                const { clientes } = data;
+                dispatch({ type: '[Cliente] - Refresh Data', payload: clientes });
+            } catch (error) {
+                console.log('Sin credenciales')                
+            }
+        }
     }
 
     useEffect(() => {
@@ -71,6 +82,7 @@ export const ClientesProvider:FC<Props> = ({ children }) => {
             // Methods
             addNewCliente,
             updateCliente,
+            refreshClientes,
         }} >
             { children }
         </ClientesContext.Provider>

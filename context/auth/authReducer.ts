@@ -2,8 +2,8 @@ import { AuthState } from './';
 import { IUsuario } from '../../interfaces';
 
 type AuthActionType = 
-   | { type: '[Auth] - Login', payload: IUsuario } 
-   | { type: '[Auth] - Logout' } 
+   | { type: '[Auth] - Login', payload: IUsuario }
+   | { type: '[Auth] - Logout' }
 
 
 export const authReducer = ( state: AuthState, action: AuthActionType ): AuthState => {
@@ -22,7 +22,6 @@ export const authReducer = ( state: AuthState, action: AuthActionType ): AuthSta
                 isLoggedIn: false,
                 user: undefined,
             }
-
 
        default:
           return state;

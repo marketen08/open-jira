@@ -9,9 +9,7 @@ import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Pedido, PedidoCondicionIva, PedidoTipoDeDocumento } from "../../interfaces";
-import { PedidosContext } from '../../context';
-import { dateFunctions } from '../../utils';
-import { externalApi } from '../../apiAxios';
+import { externalApiConToken } from '../../apiAxios';
 
 const validTipoDocumento: PedidoTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
 const validCondicionIva: PedidoCondicionIva[] = [  'IVA Responsable Inscripto',
@@ -105,19 +103,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                 helperText={ touched.numero && errors.numero && 'Ingrese el número' }
                             />
                         </FormGroup>
-                        <FormGroup>
-                            <Field
-                                as={ TextField }
-                                name='razonSocial'
-                                type='text'
-                                fullWidth
-                                label='Razon Social'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                                error={ touched.razonSocial && errors.razonSocial }
-                                helperText={ touched.razonSocial && errors.razonSocial && 'Ingrese la razon social' }
-                            />
-                        </FormGroup>
+                       
                         <Field
                             as={ TextField }
                             name='nombre'
@@ -218,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     const { id } = ctx.params as { id: string };
 
-    const { data:pedido } = await externalApi.get(`/pedidos/${ id }`);
+    const { data:pedido } = await externalApiConToken.get(`/pedidos/${ id }`);
 
     console.log(pedido);
 

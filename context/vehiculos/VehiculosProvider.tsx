@@ -1,8 +1,9 @@
-import { FC, ReactNode, useEffect, useReducer } from 'react';
+import { FC, ReactNode, useEffect, useReducer, useContext } from 'react';
 import { useSnackbar } from 'notistack'
-import { externalApi } from '../../apiAxios';
+import { externalApiConToken } from '../../apiAxios';
 import { Vehiculo } from '../../interfaces';
 import { VehiculosContext, vehiculosReducer } from '.';
+import { AuthContext } from '../auth';
 
 interface Props {
     children: ReactNode
@@ -23,17 +24,20 @@ const Vehiculos_INITIAL_STATE: VehiculosState = {
 
 export const VehiculosProvider:FC<Props> = ({ children }) => {
 
+
+    const { isLoggedIn } = useContext( AuthContext )
+
     const [state, dispatch] = useReducer( vehiculosReducer, Vehiculos_INITIAL_STATE )
     const { enqueueSnackbar } = useSnackbar();
 
     const addNewVehiculo = async( description: string ) => {
-        const { data } = await externalApi.post<Vehiculo>('/vehiculos', { description });
+        const { data } = await externalApiConToken.post<Vehiculo>('/vehiculos', { description });
         dispatch({ type: '[Vehiculo] - Agregar entrada', payload: data });
     }
 
     const updateVehiculo = async( vehiculo: Vehiculo, showSnackbar = false ) => {
         try {
-            const { data } = await externalApi.put<Vehiculo>(`/vehiculos/${ vehiculo.id }`, vehiculo );    
+            const { data } = await externalApiConToken.put<Vehiculo>(`/vehiculos/${ vehiculo.id }`, vehiculo );    
             dispatch({ type: '[Vehiculo] - Actualizar entrada', payload: data });
 
             if ( showSnackbar ) 
@@ -55,9 +59,17 @@ export const VehiculosProvider:FC<Props> = ({ children }) => {
 
 
     const refreshVehiculos = async() => {
-        const { data } = await externalApi.get<ListadoDeVehiculosApi>('/vehiculos');
-        const { vehiculos } = data;
-        dispatch({ type: '[Vehiculo] - Refresh Data', payload: vehiculos });
+
+        if ( isLoggedIn ) {
+            try {
+                
+                const { data } = await externalApiConToken.get<ListadoDeVehiculosApi>('/vehiculos');
+                const { vehiculos } = data;
+                dispatch({ type: '[Vehiculo] - Refresh Data', payload: vehiculos });
+            } catch (error) {
+                console.log('Sin credenciales')                
+            }
+        }
     }
 
     useEffect(() => {

@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { externalApi } from '../../../apiAxios';
 import { isEmail } from '../../../utils/validations';
+import { externalApiSinTocken } from '../../../apiAxios';
 
 declare module "next-auth" {
   interface Session {
@@ -30,7 +30,7 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
 
           try {
             
-            const { data } = await externalApi.post('/login', credentials );
+            const { data } = await externalApiSinTocken.post('/login', credentials );
             
             const { ok } = data;
             
@@ -39,7 +39,18 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
             }
             
             const { usuario } = data;
-            
+            res.setHeader('Set-Cookie', `${'token'}=${ data.token }; path=/`)
+
+            // EL SIGUIENTE CODIGO NO FUNCIONA
+            // Usando serialize no me permite acceder a eliminar la cookie, debe haber algun cambio en el nombre con el que la esta guardando
+            // res.setHeader("Set-Cookie", cookie.serialize( 'token', data.token, {
+            //   httpOnly: true,
+            //   secure: process.env.NODE_ENV !== 'development',
+            //   maxAge: 60 * 60,
+            //   sameSite: 'strict',
+            //   path: '/',
+            // } ))
+
             const user = { 
               ...usuario,
               token: data.token
