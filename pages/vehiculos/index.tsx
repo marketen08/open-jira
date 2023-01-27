@@ -39,12 +39,8 @@ const Vehiculos:NextPage = () => {
 //- The data can be publicly cached (not user-specific).
 //- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
 import { GetStaticProps } from 'next'
-import externalApi from '../../apiAxios/externalApi';
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const resp2 = await externalApi.get('/vehiculos');
-
-  // console.log(resp2.data.vehiculos);
 
   return {
     props: {

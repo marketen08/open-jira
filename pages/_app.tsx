@@ -1,13 +1,14 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
-import { AuthProvider, ClientesProvider, EntriesProvider, PedidosProvider, UIProvider, VehiculosProvider } from '../context'
+import { AuthProvider, ChatProvider, ClientesProvider, EntriesProvider, PedidosProvider, UIProvider, VehiculosProvider } from '../context'
 
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
 
 import { darkTheme, lightTheme } from '../themes'
 import { SWRConfig } from 'swr'
+import { SocketProvider } from '../context/socket'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -20,24 +21,28 @@ export default function App({ Component, pageProps }: AppProps) {
             fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
           }}
         >
-      <AuthProvider>
-        <SnackbarProvider maxSnack={ 3 }>
-          <UIProvider>
-            <PedidosProvider>
-              <VehiculosProvider>
-                <EntriesProvider>
-                  <ClientesProvider>
-                    <ThemeProvider theme={ darkTheme }>
-                      <CssBaseline />
-                      <Component {...pageProps} />
-                    </ThemeProvider>
-                  </ClientesProvider>
-                </EntriesProvider>
-              </VehiculosProvider>
-            </PedidosProvider>
-          </UIProvider>
-        </SnackbarProvider>
-      </AuthProvider>
+        <ChatProvider>
+          <AuthProvider>
+            <SocketProvider>
+              <SnackbarProvider maxSnack={ 3 }>
+                <UIProvider>
+                  <PedidosProvider>
+                    <VehiculosProvider>
+                      <EntriesProvider>
+                        <ClientesProvider>
+                          <ThemeProvider theme={ darkTheme }>
+                            <CssBaseline />
+                            <Component {...pageProps} />
+                          </ThemeProvider>
+                        </ClientesProvider>
+                      </EntriesProvider>
+                    </VehiculosProvider>
+                  </PedidosProvider>
+                </UIProvider>
+              </SnackbarProvider>
+            </SocketProvider>
+          </AuthProvider>
+        </ChatProvider>
       </SWRConfig>
     </SessionProvider>
     )

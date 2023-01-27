@@ -11,7 +11,8 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { Cliente, ClienteCondicionIva, ClienteTipoDeDocumento } from "../../interfaces";
 import { ClientesContext } from '../../context/clientes';
 import { dateFunctions } from '../../utils';
-import { externalApi } from '../../apiAxios';
+import { externalApiConToken } from '../../apiAxios';
+import Cookies from 'js-cookie';
 
 const validTipoDocumento: ClienteTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
 const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
@@ -214,15 +215,17 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
 
-    const { id } = ctx.params as { id: string };
+    const { id } = params as { id: string };
 
-    const { data:cliente } = await externalApi.get(`/clientes/${ id }`);
+    const { data } = await externalApiConToken.get(`/clientes/${ id }`, {
+        headers: {
+            'x-token': req.cookies.token
+        }
+    });
 
-    console.log(cliente);
-
-    if ( !cliente ) {
+    if ( !data ) {
         return {
             redirect: {
                 destination: '/',
@@ -233,7 +236,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     
     return {
         props: {
-            cliente
+            cliente: data
         }
     }
 }

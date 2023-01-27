@@ -1,13 +1,12 @@
 import { FC, useReducer, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
-
 import axios from 'axios';
 import Cookies from 'js-cookie';
+// import { useRouter } from 'next/router';
 
 import { AuthContext, authReducer } from './';
 
-import { externalApi } from '../../apiAxios';
+import { externalApiConToken, externalApiSinTocken } from '../../apiAxios';
 import { IUsuario } from '../../interfaces';
 
 interface Props {
@@ -30,30 +29,34 @@ export const AuthProvider:FC<Props> = ({ children }) => {
 
     const [state, dispatch] = useReducer( authReducer, AUTH_INITIAL_STATE );
     const { data, status } = useSession();
-    const router = useRouter();
+    // const router = useRouter();
 
     useEffect(() => {
       if ( status === 'authenticated' ) {
-        console.log({user: data?.user, status}, 'es por aca');
-        dispatch({ type: '[Auth] - Login', payload: data?.user as IUsuario })
+          // Disparo el checkToken porque estoy usando NextAuth + token en cada uno de los llamados al backend
+          checkToken();
+
+        // Usando unicamente NextAuth
+        // dispatch({ type: '[Auth] - Login', payload: data?.user as IUsuario })
       }
-    
     }, [ status, data ])
 
 
     const checkToken = async() => {
 
         if ( !Cookies.get('token') ) {
+            logout();
             return;
         }
 
         try {
-            const { data } = await externalApi.get('/login/renew');
+            const { data } = await externalApiConToken.get('/login/renew');
             const { token, usuario } = data;
             Cookies.set('token', token );
-            dispatch({ type: '[Auth] - Login', payload: usuario });
+            dispatch({ type: '[Auth] - Login', payload: usuario as IUsuario });
         } catch (error) {
             Cookies.remove('token');
+            console.log('eror en renew')
         }
     }
     
@@ -62,7 +65,7 @@ export const AuthProvider:FC<Props> = ({ children }) => {
     const loginUser = async( email: string, password: string ): Promise<boolean> => {
 
         try {
-            const { data } = await externalApi.post('/login', { email, password });
+            const { data } = await externalApiSinTocken.post('/login', { email, password });
             const { token, usuario } = data;
             Cookies.set('token', token );
             dispatch({ type: '[Auth] - Login', payload: usuario });
@@ -76,10 +79,11 @@ export const AuthProvider:FC<Props> = ({ children }) => {
 
     const registerUser = async( name: string, email: string, password: string ): Promise<{hasError: boolean; message?: string}> => {
         try {
-            const { data } = await externalApi.post('/login/new', { name, email, password });
+            const { data } = await externalApiConToken.post('/login/new', { name, email, password });
             const { token, usuario } = data;
-            Cookies.set('token', token );
-            dispatch({ type: '[Auth] - Login', payload: usuario });
+            // LAS SIGUIENTES LINEAS SON PARA LOGUEAR CON EL USUARIO QUE SE REGISTRA
+            // Cookies.set('token', token );
+            // dispatch({ type: '[Auth] - Login', payload: usuario });
             return {
                 hasError: false
             }
@@ -101,19 +105,19 @@ export const AuthProvider:FC<Props> = ({ children }) => {
 
 
     const logout = () => {
-        Cookies.remove('cart');
-        Cookies.remove('firstName');
-        Cookies.remove('lastName');
-        Cookies.remove('address');
-        Cookies.remove('address2');
-        Cookies.remove('zip');
-        Cookies.remove('city');
-        Cookies.remove('country');
-        Cookies.remove('phone');
+        // Cookies.remove('cart');
+        // Cookies.remove('firstName');
+        // Cookies.remove('lastName');
+        // Cookies.remove('address');
+        // Cookies.remove('address2');
+        // Cookies.remove('zip');
+        // Cookies.remove('city');
+        // Cookies.remove('country');
+        // Cookies.remove('phone');
+        Cookies.remove('token');
         
         signOut();
         // router.reload();
-        // Cookies.remove('token');
     }
 
 

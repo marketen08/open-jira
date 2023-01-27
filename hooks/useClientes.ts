@@ -1,18 +1,25 @@
 import useSWR, { SWRConfiguration } from 'swr';
-import { baseURL } from '../apiAxios/externalApi';
+import { baseURL } from '../apiAxios';
 import { Cliente } from '../interfaces';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
+type IClientesResumen = {
+    total: number,
+    clientes: Cliente[]
+}
 
+export function useClientes( url: string ) {
+    
+    const tokenCookies = Cookies.get('token')?.toString();
 
-// const fetcher = (...args: [key: string]) => fetch(...args).then(res => res.json());
-
-export function useClientes(url: string, config: SWRConfiguration = {}) {
-
-    // const { data, error } = useSWR<IProduct[]>(`/api${ url }`, fetcher, config );
-    const { data, error } = useSWR<Cliente[]>(`${baseURL}${url}`, config);
+    const fetcher = (url:string, token:string) => axios.get(url, { headers: { 'x-token': tokenCookies } })
+      .then((res) => res.data);
+    
+    const { data, error } = useSWR<IClientesResumen>(`${baseURL}${url}`, fetcher );
 
     return {
-        clientes: data || [],
+        clientesResumen: data,
         isLoading: !error && !data,
         isError: error
     };
