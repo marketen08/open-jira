@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {io, Socket} from 'socket.io-client';
+import Cookies from 'js-cookie';
 
 
 export const useSocket = ( serverPath:string ) => {
@@ -14,7 +15,7 @@ export const useSocket = ( serverPath:string ) => {
 
     const conectarSocket = useCallback( () => {
 
-        const token = localStorage.getItem('token');
+        const token = Cookies.get('token')
 
         const socketTemp:Socket = io( serverPath, { 
             transports: ['websocket'],
@@ -24,7 +25,7 @@ export const useSocket = ( serverPath:string ) => {
             
             
             query: {
-                'x-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2M2M5OGVhNjVkMjE1NDgwMzdlMGQ1MGIiLCJpYXQiOjE2NzQ2NTMwOTksImV4cCI6MTY3NDczOTQ5OX0.Qxeb4PnhBUmvHK4uP4hqe-5wLUn7rm998u7WmfXKGCI'
+                'x-token': token
             }
         });
         setSocket( socketTemp );
