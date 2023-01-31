@@ -2,16 +2,24 @@ import { Grid, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Typ
 import { NextPage } from "next";
 import { VehiculoLista } from "../../components/vehiculos";
 import { Layout } from "../../components/layouts";
+import { useVehiculos } from "../../hooks/useVehiculos";
+import { FullScreenLoading } from "../../components/ui";
 
 const Vehiculos:NextPage = () => {
+
+  const { vehiculosResumen, isLoading } = useVehiculos('/vehiculos');
+
+  const vehiculos = vehiculosResumen?.vehiculos;
+
   return (
     <Layout title='Vehiculos'>
       
-      <Grid container spacing={ 2 }>
+      <Grid container padding={ 2 }>
 
-        <Typography variant='h4' padding={ 3 }>Vehiculos</Typography>
-        
-        <TableContainer component={ Paper }>
+        <Typography variant='h4' paddingBottom={ 2 }>Vehiculos</Typography>
+        {
+          isLoading ? <FullScreenLoading /> : 
+        <TableContainer component={ Paper } sx={{ maxHeight: 440 }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
             <TableRow>
@@ -23,29 +31,15 @@ const Vehiculos:NextPage = () => {
                 <TableCell>Email</TableCell>
             </TableRow>
             </TableHead>
-            <VehiculoLista  />
+            <VehiculoLista vehiculos={ vehiculos }/>
         </Table>
         </TableContainer>
-
+      }
       </Grid>
       
     </Layout>
   )
 }
 
-// You should use getStaticProps when:
-//- The data required to render the page is available at build time ahead of a user’s request.
-//- The data comes from a headless CMS.
-//- The data can be publicly cached (not user-specific).
-//- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
-import { GetStaticProps } from 'next'
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
-
-  return {
-    props: {
-      
-    }
-  }
-}
 export default Vehiculos;

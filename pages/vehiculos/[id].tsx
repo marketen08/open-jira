@@ -9,7 +9,7 @@ import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Vehiculo } from "../../interfaces";
-import { VehiculosContext } from '../../context';
+import { VehiculosContext } from '../../context/vehiculos';
 import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
 
@@ -18,10 +18,6 @@ interface Props {
 }
 
 export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
-
-    // const { updateVehiculo } = useContext(VehiculosContext);
-
-    // const { codigo, tipoDeDocumento, numero, razonSocial, nombre, condicionIva, domicilio, provincia, localidad, telefono, email } = vehiculo;
 
     const onSave = ( values: any ) => {
         console.log(values);
@@ -34,7 +30,7 @@ export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
         <Grid
             container
             justifyContent='center'
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 2, padding: 2 }}
         >
             <Typography gutterBottom variant="h5" >
                 Detalle del Vehiculo
@@ -47,15 +43,24 @@ export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
                     onSave( values );
                 }}
                 validationSchema={ Yup.object({
-                    numero: Yup.string()
-                                .max(20, 'Debe de tener 20 caracteres o menos')
+                    patente: Yup.string()
+                                .max(7, 'Debe de tener 7 caracteres o menos')
                                 .required('El número es requerido'),
+                    marca: Yup.string()
+                                .max(50, 'Debe de tener 50 caracteres o menos')
+                                .required('Requerido'),
+                    modelo: Yup.string()
+                                .max(50, 'Debe de tener 50 caracteres o menos')
+                                .required('Requerido'),
                     nombre: Yup.string()
                                 .max(50, 'Debe de tener 50 caracteres o menos')
                                 .required('Requerido'),
-                    razonSocial: Yup.string()
-                                .max(20, 'Debe de tener 20 caracteres o menos')
-                                .required('La razon social es requerida'),
+                    celular: Yup.string()
+                                .max(50, 'Debe de tener 50 caracteres o menos')
+                                .required('Requerido'),
+                    email: Yup.string()
+                                .max(100, 'Debe de tener 50 caracteres o menos')
+                                .required('Requerido'),
                 })
             }>
 
@@ -63,43 +68,69 @@ export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
                     <Form autoComplete="off">
                         <Field
                             as={ TextField }
-                            name='codigo'
+                            name='patente'
                             type='text'
                             fullWidth
-                            disabled
-                            label='Código'
+                            label='Patente'
                             sx={{ mt: 1.5, mb: 1 }}
                             size='small'
-                        />
-                        
-                        
-                       
-                        <Field
-                            as={ TextField }
-                            name='localidad'
-                            type='text'
-                            fullWidth
-                            label='Localidad'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
+                            error={ touched.patente && errors.patente }
+                            helperText={ touched.patente && errors.patente && 'Ingrese la patente del vehículo' }
                         />
                         <Field
                             as={ TextField }
-                            name='telefono'
+                            name='marca'
                             type='text'
                             fullWidth
-                            label='telefono'
+                            label='Marca'
                             sx={{ mt: 1.5, mb: 1 }}
                             size='small'
+                            error={ touched.marca && errors.marca }
+                            helperText={ touched.marca && errors.marca && 'Ingrese la marca del vehículo' }
+                        />
+                        <Field
+                            as={ TextField }
+                            name='modelo'
+                            type='text'
+                            fullWidth
+                            label='Modelo'
+                            sx={{ mt: 1.5, mb: 1 }}
+                            size='small'
+                            error={ touched.modelo && errors.modelo }
+                            helperText={ touched.modelo && errors.modelo && 'Ingrese el modelo del vehículo' }
+                        />
+                        <Field
+                            as={ TextField }
+                            name='nombre'
+                            type='text'
+                            fullWidth
+                            label='Nombre del propietario'
+                            sx={{ mt: 1.5, mb: 1 }}
+                            size='small'
+                            error={ touched.nombre && errors.nombre }
+                            helperText={ touched.nombre && errors.nombre && 'Ingrese el nombre del propietario del vehículo' }
+                        />
+                        <Field
+                            as={ TextField }
+                            name='celular'
+                            type='text'
+                            fullWidth
+                            label='Celular del propietario'
+                            sx={{ mt: 1.5, mb: 1 }}
+                            size='small'
+                            error={ touched.celular && errors.celular }
+                            helperText={ touched.celular && errors.celular && 'Ingrese el número del celular del propietario del vehículo, solo números' }
                         />
                         <Field
                             as={ TextField }
                             name='email'
                             type='text'
                             fullWidth
-                            label='Email'
+                            label='Email del propietario'
                             sx={{ mt: 1.5, mb: 1 }}
                             size='small'
+                            error={ touched.email && errors.email }
+                            helperText={ touched.email && errors.email && 'Ingrese el email del propietario' }
                         />
                         <Button
                             type='submit'
@@ -130,13 +161,17 @@ export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
 
-    const { id } = ctx.params as { id: string };
+    const { id } = params as { id: string };
 
-    const { data:vehiculo } = await externalApiConToken.get(`/vehiculos/${ id }`);
+    const { data } = await externalApiConToken.get(`/vehiculos/${ id }`, {
+        headers: {
+            'x-token': req.cookies.token
+        }
+    });
 
-    if ( !vehiculo ) {
+    if ( !data ) {
         return {
             redirect: {
                 destination: '/',
@@ -147,7 +182,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     
     return {
         props: {
-            vehiculo
+            vehiculo: data
         }
     }
 }

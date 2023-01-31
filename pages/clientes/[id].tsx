@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 import { ErrorMessage, Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup } from "@mui/material";
+import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card } from '@mui/material';
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -43,8 +43,12 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
         <Grid
             container
             justifyContent='center'
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 2, padding: 2 }}
         >
+            <Card>
+                <CardContent>
+
+      
             <Typography gutterBottom variant="h5" >
                 Detalle del Cliente
             </Typography>
@@ -200,6 +204,8 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                     )
                 }
             </Formik>
+            </CardContent>
+        </Card>
         </Grid>
 
         <IconButton sx={{

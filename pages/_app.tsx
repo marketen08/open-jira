@@ -30,7 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     <VehiculosProvider>
                       <EntriesProvider>
                         <ClientesProvider>
-                          <ThemeProvider theme={ darkTheme }>
+                          <ThemeProvider theme={ lightTheme }>
                             <CssBaseline />
                             <Component {...pageProps} />
                           </ThemeProvider>

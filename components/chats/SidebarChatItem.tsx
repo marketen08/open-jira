@@ -1,35 +1,47 @@
 import { useContext } from 'react'
 import { ChatContext } from '../../context';
-import { scrollToBottom } from '../../utils/scrollToBottom';
+import { scrollToBottom, scrollToBottomAnimated } from '../../utils/scrollToBottom';
+import { Avatar, Divider, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 export const SidebarChatItem = ({ usuario }:any) => {
     
-    const { activarChat, cargarMensajes, chatActivo } = useContext(ChatContext);
+    const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
 
     const handleActivarChat = async() => {
+        
         activarChat( usuario.uid )
         cargarMensajes( usuario.uid )
-        scrollToBottom('mensajes');
+        scrollToBottomAnimated('mensajes');
     }
 
     return (
-        <div 
-            className={`chat_list ${ usuario.uid === chatActivo && 'active_chat'}`}
-            onClick={ handleActivarChat }
-        >
-            <div className="chat_people">
-                <div className="chat_img"> 
-                    <img src="https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png" alt="sunil" width={ 100 } />
-                </div>
-                <div className="chat_ib">
-                    <h5>{ usuario.nombre }</h5>
-                    {
-                        ( usuario.online )
-                        ? <span className="text-success">Online</span>
-                        : <span className="text-danger">Offline</span>
-                    }
-                </div>
-            </div>
-        </div>
+        <>
+            <ListItemButton alignItems="flex-start" onClick={ handleActivarChat } sx={{ cursor:'pointer', padding: 2, backgroundColor: 'white' }}> 
+                <ListItemAvatar>
+                    <Avatar alt="Remy Sharp" src="https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png" />
+                </ListItemAvatar>
+                <ListItemText
+                    primary={ usuario.nombre }
+                    secondary={
+                            <>
+                                <Typography
+                                    sx={{ display: 'inline', paddingRight: 1 }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                >
+                                    { '11-3352-0349' }
+                                </Typography>
+                                {
+                                    ( usuario.online )
+                                    ? <span className="text-success">Online</span>
+                                    : <span className="text-danger">Offline</span>
+                                }
+                            </>
+                        }
+                    />
+            </ListItemButton>
+            <Divider variant="inset" component="li" />
+        </>
     )
 }

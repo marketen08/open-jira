@@ -1,19 +1,22 @@
-import React, { FC } from 'react'
+import { Box, Card, Typography } from '@mui/material'
+import { FC } from 'react'
 import { horaMes } from '../../utils/horaMes'
+
+
 
 export const IncomingMessage:FC<any> = ({ msg }) => {
 
     return (
-        <div className="incoming_msg">
-            <div className="incoming_msg_img">
-                <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" />
-            </div>
-            <div className="received_msg">
-                <div className="received_withd_msg">
-                    <p>{ msg.mensaje }</p>
-                    <span className="time_date"> { horaMes( msg.createdAt ) }</span>
-                </div>
-            </div>
-        </div>
+        <Box display="flex">
+            <Card sx={{ margin: 1, backgroundColor: 'white', color: 'black', maxWidth: '450px', padding: 2, paddingBottom: 1 }}>
+                <Typography sx={{ textAlign: 'left', paddingBottom: 1}}>
+                    { msg.mensaje }
+                </Typography>
+                <Typography sx={{ textAlign: 'left'}}>
+                    { horaMes( msg.createdAt ) }
+                </Typography>
+            </Card>
+        </Box>
+
     )
 }

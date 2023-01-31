@@ -40,6 +40,11 @@ const menuItems: menuItem[] = [
     titulo: 'CLIENTES',
     url: '/clientes',
     icono: <SummarizeOutlinedIcon />
+  },
+  {
+    titulo: 'CHAT',
+    url: '/chat',
+    icono: <SummarizeOutlinedIcon />
   }
 ]
 
@@ -53,6 +58,7 @@ export const SideBar = () => {
             anchor='left'
             open={ sidemenuOpen }
             onClose={ () => closeSideMenu() }
+            
           >
             <Box sx={{ width: 250 }}></Box>
             <Box sx={{ padding: '5px 5px' }} >

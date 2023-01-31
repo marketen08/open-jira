@@ -1,5 +1,5 @@
+import { useContext, useState, ChangeEvent, FormEvent } from 'react';
 import { Box, Button, TextField } from '@mui/material';
-import React, { useContext, useState, ChangeEvent, FormEvent } from 'react';
 import { AuthContext, ChatContext } from '../../context';
 import { SocketContext } from '../../context/socket'
 
@@ -32,22 +32,19 @@ export const SendMessage = () => {
 
     return (
         <form onSubmit={ onSubmit } autoComplete="off">
-            <Box>
-              <Box>
-                <Button variant='outlined' color='success' >
-                  {/* <i className="feather icon-paperclip" /> */}
-                  Adjuntar
-                </Button>
-              </Box>
+            <Box display='flex' >
               <TextField 
                   type="text" 
                   name="h-chat-text" 
                   className="h-send-chat" 
-                  placeholder="Mensaje. . . " 
+                  placeholder="Escribi tu mensaje. . . " 
                   value={ mensaje }
                   onChange={ onChange }
+                  multiline
+                  fullWidth
+                  sx={{ margin: 1}}
               />
-              <Button variant='outlined' type="submit" color='primary'>
+              <Button variant='outlined' type="submit" color='primary' sx={{ margin: 1}}>
                 {/* <i className="feather icon-message-circle" /> */}
                 Enviar
               </Button>

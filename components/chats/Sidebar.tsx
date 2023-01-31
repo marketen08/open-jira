@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { List } from '@mui/material';
 import { AuthContext, ChatContext } from '../../context';
 import { SidebarChatItem } from './SidebarChatItem'
 
@@ -7,11 +8,8 @@ export const Sidebar = () => {
     const { user } = useContext( AuthContext );
     const { usuarios } = useContext( ChatContext );
 
-    // console.log('ChatContext Sidebar1', usuarios);
-
-
     return (
-        <div className="inbox_chat">
+        <List sx={{ width: '100%', padding: 1 }}>
             {
                 usuarios
                     .filter( us => us.uid !== user?.uid )
@@ -22,11 +20,6 @@ export const Sidebar = () => {
                     />
                 ))
             }
-            {/* <!-- Espacio extra para scroll --> */}
-            <div className="extra_space"></div>
-
-
-        </div>
-
+        </List>
     )
 }

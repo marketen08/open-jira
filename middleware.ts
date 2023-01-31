@@ -10,7 +10,7 @@ export async function middleware(req: NextRequest) {
 
     const token = req.cookies.get('token')?.value
 
-    if ( !session || !token ) {
+    if ( !session || (!token &&  !req.nextUrl.pathname.startsWith( '/auth/login' ))) {
         const requestedPage = req.nextUrl.pathname;
         const url = req.nextUrl.clone();
         url.pathname = `/auth/login`;
