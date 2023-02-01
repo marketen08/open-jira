@@ -22,6 +22,11 @@ const menuItems: menuItem[] = [
     icono: <HomeOutlinedIcon />
   },
   {
+    titulo: 'INGRESO',
+    url: '/ingreso',
+    icono: <FolderCopyOutlinedIcon />
+  },
+  {
     titulo: 'PEDIDOS',
     url: '/pedidos',
     icono: <FolderCopyOutlinedIcon />
