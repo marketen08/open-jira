@@ -3,6 +3,7 @@ import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, Lis
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import { UIContext } from "../../../context/ui";
 import NextLink from "next/link";
 import Button from "@mui/material/Button";
@@ -24,7 +25,7 @@ const menuItems: menuItem[] = [
   {
     titulo: 'INGRESO',
     url: '/ingreso',
-    icono: <FolderCopyOutlinedIcon />
+    icono: <SummarizeOutlinedIcon />
   },
   {
     titulo: 'PEDIDOS',
@@ -32,24 +33,19 @@ const menuItems: menuItem[] = [
     icono: <FolderCopyOutlinedIcon />
   },
   {
-    titulo: 'PRESUPUESTOS',
-    url: '/presupuestos',
-    icono: <SummarizeOutlinedIcon />
-  },
-  {
     titulo: 'VEHÍCULOS',
     url: '/vehiculos',
-    icono: <SummarizeOutlinedIcon />
+    icono: <FolderCopyOutlinedIcon />
   },
   {
     titulo: 'CLIENTES',
     url: '/clientes',
-    icono: <SummarizeOutlinedIcon />
+    icono: <FolderCopyOutlinedIcon />
   },
   {
     titulo: 'CHAT',
     url: '/chat',
-    icono: <SummarizeOutlinedIcon />
+    icono: <ChatOutlinedIcon />
   }
 ]
 

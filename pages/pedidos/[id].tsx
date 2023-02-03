@@ -19,20 +19,45 @@ interface Props {
 
 export const PedidoPage:FC<Props> = ({ pedido }) => {
 
-    const onSave = ( values: any ) => {
-        console.log(values);
+    const [modificar, setModificar] = useState(false);
+    const [cotizar, setCotizar] = useState(false);
+
+    const onSave = async( values: Pedido ) => {
+        const { id, descripcion, servicio, importe } = values;
+        
+        if ( modificar ) {
+            const modificar = await externalApiConToken.put(`/pedidos/${ id }`, { descripcion })
+        }
+
+        if ( cotizar ) {
+            values.estado = 'Cotizando'
+            const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { servicio, importe })
+        }
+
+        setModificar(false);
+        setCotizar(false);
+
+    }
+
+    const onCotizarEnviar = async( values: Pedido ) => {
+        const { id, servicio, importe } = values;
+
+        values.estado = 'Cotizado'
+        const cotizarEnviar = await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { servicio, importe })
+
+        setModificar(false);
+        setCotizar(false);
 
     }
 
   return (
-    
-    
             <Formik
                 initialValues={{ 
                     ...pedido
                 }}
-                onSubmit={ ( values ) => {
+                onSubmit={ ( values, actions ) => {
                     onSave( values );
+                    actions.setSubmitting(false);
                 }}
                 validationSchema={ Yup.object({
                     descripcion: Yup.string()
@@ -40,7 +65,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                 })
             }>
 
-                {( { values, errors, touched, isSubmitting, isValidating } ) => (
+                {( { values, errors, touched, isSubmitting, isValidating, setSubmitting } ) => (
                     <Layout title={ `Pedido #${ values.numero }` }>
                         <Grid
                             justifyContent='center'
@@ -63,13 +88,13 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                             { values.vehiculo.marca } { values.vehiculo.modelo }
                                         </Typography>
                                         <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                            Propietario: { values.vehiculo.nombre }
+                                            Propietario: { values.vehiculo.cliente.nombre }
                                         </Typography>
                                         <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                            Celular: { values.vehiculo.celular }
+                                            Celular: { values.vehiculo.cliente.celular }
                                         </Typography>
                                         <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                            Email: { values.vehiculo.email }
+                                            Email: { values.vehiculo.cliente.email }
                                         </Typography>
                                         <Field
                                             as={ TextField }
@@ -77,43 +102,100 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                             type='text'
                                             fullWidth
                                             multiline
+                                            disabled={ !modificar }
                                             rows={ 6 }
                                             label='Descripción del servicio'
                                             sx={{ mt: 3, mb: 1 }}
+                                            
                                             error={ touched.descripcion && errors.descripcion }
                                             helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
                                         />
+                                        <Hidden xlDown={ !cotizar && values.estado === 'Nuevo' }>
+                                            <Field
+                                                as={ TextField }
+                                                name='servicio'
+                                                type='text'
+                                                fullWidth
+                                                multiline
+                                                disabled={ !cotizar }
+                                                rows={ 6 }
+                                                label='Detalle de la cotización'
+                                                sx={{ mt: 3, mb: 1 }}
+                                                error={ touched.descripcion && errors.descripcion }
+                                                helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                            />
+                                            <Field
+                                                as={ TextField }
+                                                name='importe'
+                                                type='number'
+                                                fullWidth
+                                                disabled={ !cotizar }
+                                                label='Importe presupuestado'
+                                                sx={{ mt: 3, mb: 1 }}
+                                                error={ touched.descripcion && errors.descripcion }
+                                                helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                            />
+                                        </Hidden>
                                     </CardContent>
                                     <CardActions>
-                                        <Button
-                                            type='submit'
-                                            variant='outlined'
-                                            color='primary'
-                                            disabled={ isSubmitting || isValidating }
-                                        >
-                                            <SaveOutlinedIcon />
-                                            <Typography>Modificar</Typography>
-                                        </Button>
-                                        <Button
-                                            type='submit'
-                                            variant='outlined'
-                                            color='warning'
-                                            disabled={ isSubmitting || isValidating }
-                                        >
-                                            <SaveOutlinedIcon />
-                                            <Typography>Preparar</Typography>
-                                        </Button>
-                                        <Hidden>
-
+                                        <Hidden xlDown={ modificar || cotizar }>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='primary'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => setModificar(true) }
+                                                >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Modificar</Typography>
+                                            </Button>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='warning'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => setCotizar(true) }
+                                                >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Cotizar</Typography>
+                                            </Button>
+                                        </Hidden>
+                                        <Hidden xlDown={ !modificar && !cotizar }>
                                             <Button
                                                 type='submit'
                                                 variant='outlined'
                                                 color='success'
                                                 disabled={ isSubmitting || isValidating }
                                                 
-                                                >
+                                            >
                                                 <SaveOutlinedIcon />
                                                 <Typography>Guardar</Typography>
+                                            </Button>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='secondary'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => {
+                                                    setModificar(false);
+                                                    setCotizar(false);
+                                                } }
+                                                >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Cancelar</Typography>
+                                            </Button>
+                                        </Hidden>
+                                        <Hidden xlDown={ !cotizar }>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='primary'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => onCotizarEnviar( values ) }
+
+                                            >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Enviar</Typography>
                                             </Button>
                                         </Hidden>
                                     </CardActions>

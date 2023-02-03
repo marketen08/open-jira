@@ -19,7 +19,7 @@ export const ChatPage = () => {
     const { chatActivo } = useContext( ChatContext );
    
     return (
-        <Layout title='Home - OpenJira'>
+        <Layout>
             <Grid container spacing={ 2 }>
                 <Grid item xs>
                     <Item sx={{ height: 'calc(100vh - 100px)'}}>

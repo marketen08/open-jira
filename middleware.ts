@@ -54,6 +54,7 @@ export const config = {
         '/api/entries/:path*',
         '/clientes/:path*',
         '/clientes',
+        '/ingreso',
         '/',
     ]
 }

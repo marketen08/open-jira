@@ -1,14 +1,22 @@
-import { Box, Button, Card, CardContent, CircularProgress, Grid, Step, StepLabel, Stepper } from '@mui/material';
+import { Box, Button, Card, CardContent, CircularProgress, Grid, MenuItem, Step, StepLabel, Stepper } from '@mui/material';
 import { Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
 import { TextField } from 'formik-mui';
-import React, { ReactNode, useState } from 'react';
+import React, { FocusEvent, ReactNode, useState } from 'react';
 import { number, object, string } from 'yup';
 import { NextPage } from 'next';
 import { Layout } from '../../components/layouts';
 import { externalApiConToken } from '../../apiAxios/externalApi';
-import { Vehiculo } from '../../interfaces';
+import { ClienteCondicionIva, ClienteTipoDeDocumento, Vehiculo } from '../../interfaces';
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router';
+
+const validTipoDocumento: ClienteTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
+const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
+                                                    'Responsable Monotributo',
+                                                    'IVA Sujeto Exento',
+                                                    'Cliente del Exterior',
+                                                    'Consumidor Final',
+                                                    'IVA No Alcanzado' ];
 
 const sleep = (time:any) => new Promise((acc) => setTimeout(acc, time));
 
@@ -18,9 +26,9 @@ const Ingreso:NextPage = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const handleSubmit = async( values: any ) => {
-        // console.log('values', values);
+        console.log('values', values);
         try {
-            await externalApiConToken.post<Vehiculo>('/vehiculos/pedido', values );    
+            await externalApiConToken.post<Vehiculo>('/pedidos/ingreso', values );    
             enqueueSnackbar('Ingreso de servicio actualizado', {
                 variant: 'success',
                 autoHideDuration: 3000,
@@ -39,6 +47,23 @@ const Ingreso:NextPage = () => {
         }
     }
 
+    const existeDocumento = async(e: FocusEvent<HTMLInputElement>) => {
+      
+      const documento = e.target.value;
+
+      try {
+        const existeDocumento = await externalApiConToken.get<Vehiculo>(`/clientes?documento=${ documento }` ); 
+      
+        if ( existeDocumento ) {
+        
+        }
+
+      } catch (error) {
+        
+      }
+
+    }
+
     return (
         <Layout title='Pedidos'>
       
@@ -46,13 +71,20 @@ const Ingreso:NextPage = () => {
             <Card>
                 <CardContent>
                     <FormikStepper
+                      
                         initialValues={{
+                            numero: '',
+                            tipoDeDocumento: 'DNI',
+                            nombre: '',
+                            email: '',
+                            celular: '',
+                            domicilio: '',
+                            provincia: '',
+                            localidad: '',
+                            condicionIva: 'Consumidor Final',
                             patente: '',
                             marca: '',
                             modelo: '',
-                            nombre: '',
-                            celular: '',
-                            email: '',
                             description: '',
                         }}
                         onSubmit={async (values) => {
@@ -61,7 +93,62 @@ const Ingreso:NextPage = () => {
                             handleSubmit( values );
                         }}
                     >
-                    <FormikStep label="Datos del vehículo"
+                      <FormikStep label="Datos del cliente"
+                        validationSchema={object({
+                          numero: string().required('El número de documento es obligatorio'), 
+                          tipoDeDocumento: string().required('El número de documento es obligatorio'),
+                          nombre: string().required('El nombre y apellido es obligatorio'),
+                          celular: number()
+                                  .typeError("Por favor ingresar solo números")
+                                  .positive("Por favor ingresar solo números no guiones")
+                                  .integer("Por favor ingresar solo números sin punto")
+                                  .min(1000000000, 'El celular debe tener 10 caracteres')
+                                  .max(9999999999, 'El celular debe tener 10 caracteres')
+                                  .required('El celular es obligatorio'),
+                          email: string().email('El mail no es valido').required('El email es obligatorio'),
+                        })}
+                      >
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="numero" component={TextField} label="Número de documento" 
+                              onBlur={ (e:FocusEvent<HTMLInputElement>) => {
+                                const documento = e.target.value;
+                                console.log(documento);
+                            } } />
+                        </Box>
+                        <Box paddingBottom={2}>
+                          <Field fullWidth name="tipoDeDocumento" component={TextField} label="Tipo de Documento" select>
+                            {
+                                validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                            }
+                          </Field>
+                        </Box>
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="nombre" component={TextField} label="Nombre y Apellido / Razon Social" inputProps={{ style: { textTransform: "uppercase" } }} />
+                        </Box>
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="email" component={TextField} label="Email" />
+                        </Box>
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="celular" component={TextField} label="Celular" />
+                        </Box>
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="domicilio" component={TextField} label="Domicilio" inputProps={{ style: { textTransform: "uppercase" } }} />
+                        </Box>
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="provincia" component={TextField} label="Provincia" inputProps={{ style: { textTransform: "uppercase" } }} />
+                        </Box>
+                        <Box paddingBottom={2}>
+                            <Field fullWidth name="localidad" component={TextField} label="Localidad" inputProps={{ style: { textTransform: "uppercase" } }} />
+                        </Box>
+                        <Box paddingBottom={2}>
+                          <Field fullWidth name="condicionIva" component={TextField} label="Condición de Iva" select>
+                            {
+                              validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                            }
+                          </Field>
+                        </Box>
+                      </FormikStep>
+                      <FormikStep label="Datos del vehículo"
                         validationSchema={object({
                         patente: string().min(6, 'La patente debe tener como mínimo 6 caracteres')
                                         .required('La patente es obligatoria'),
@@ -77,36 +164,27 @@ const Ingreso:NextPage = () => {
                                 .required('El celular es obligatorio'),
                         email: string().email('El mail no es valido').required('El email es obligatorio'),
                         })}
-                    >
+                      >
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="patente" component={TextField} label="Patente" />
+                            <Field fullWidth name="patente" component={TextField} label="Patente" inputProps={{ style: { textTransform: "uppercase" } }} />
                         </Box>
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="marca" component={TextField} label="Marca" />
+                            <Field fullWidth name="marca" component={TextField} label="Marca" inputProps={{ style: { textTransform: "uppercase" } }}/>
                         </Box>
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="modelo" component={TextField} label="Modelo" />
+                            <Field fullWidth name="modelo" component={TextField} label="Modelo" inputProps={{ style: { textTransform: "uppercase" } }} />
                         </Box>
-                        <Box paddingBottom={2}>
-                            <Field fullWidth name="nombre" component={TextField} label="Nombre y Apellido" />
-                        </Box>
-                        <Box paddingBottom={2}>
-                            <Field fullWidth name="celular" component={TextField} label="Celular" />
-                        </Box>
-                        <Box paddingBottom={2}>
-                            <Field fullWidth name="email" component={TextField} label="Email" />
-                        </Box>
-                    </FormikStep>
-                    <FormikStep 
+                      </FormikStep>
+                      <FormikStep 
                         label="Datos del servicio"
                         validationSchema={object({
                             descripcion: string().required('La descripción del servicio es obligatoria')
                         })}
-                    >
+                      >
                         <Box paddingBottom={2}>
                             <Field fullWidth name="descripcion" component={TextField} label="Descripción del servicio" multiline rows={6} />
                         </Box>
-                    </FormikStep>
+                      </FormikStep>
                     </FormikStepper>
                 </CardContent>
             </Card>

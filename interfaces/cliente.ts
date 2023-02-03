@@ -1,16 +1,17 @@
 export interface Cliente {
   id: string;
   codigo: number;
-  tipoDeDocumento: ClienteTipoDeDocumento;
   numero: string;
-  razonSocial: string;
+  tipoDeDocumento: ClienteTipoDeDocumento;
   nombre: string;
+  email: string;
+  celular: string;
+  razonSocial: string;
   condicionIva: ClienteCondicionIva;
   domicilio: string;
   provincia: string;
   localidad: string;
   telefono: string;
-  email: string;
   activo: boolean;
 
   createdAt: number;

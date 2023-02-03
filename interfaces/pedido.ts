@@ -4,7 +4,10 @@ export interface Pedido {
   numero: string;
   vehiculo: Vehiculo;
   descripcion: string;
-  estado: string;
+  servicio: string;
+  importe: string;
+  estado: PedidoEstados;
+  enviado: boolean;
   activo: boolean;
 
   createdAt: number;
@@ -12,4 +15,4 @@ export interface Pedido {
 
 }
 
-
+export type PedidoEstados = 'Nuevo' | 'Cotizando' | 'Cotizado' | 'En curso' | 'Rechazado' | 'Finalizado';
