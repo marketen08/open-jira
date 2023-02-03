@@ -27,9 +27,9 @@ export const VehiculoItem:FC<Props> = ({ vehiculo }) => {
       </TableCell>
       <TableCell>{ vehiculo.marca }</TableCell>
       <TableCell>{ vehiculo.modelo }</TableCell>
-      <TableCell>{ vehiculo.nombre }</TableCell>
-      <TableCell>{ vehiculo.celular }</TableCell>
-      <TableCell>{ vehiculo.email }</TableCell>
+      <TableCell>{ vehiculo.cliente.nombre }</TableCell>
+      <TableCell>{ vehiculo.cliente.celular }</TableCell>
+      <TableCell>{ vehiculo.cliente.email }</TableCell>
     </TableRow>
   )
 }

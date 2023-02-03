@@ -23,6 +23,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
     const [cotizar, setCotizar] = useState(false);
 
     const onSave = async( values: Pedido ) => {
+        console.log(values);
         const { id, descripcion, servicio, importe } = values;
         
         if ( modificar ) {

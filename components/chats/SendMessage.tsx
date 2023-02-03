@@ -48,6 +48,10 @@ export const SendMessage = () => {
                 {/* <i className="feather icon-message-circle" /> */}
                 Enviar
               </Button>
+              <Button variant='outlined' type="submit" color='primary' sx={{ margin: 1}}>
+                {/* <i className="feather icon-message-circle" /> */}
+                Adjuntar
+              </Button>
             </Box>
         </form>
     )

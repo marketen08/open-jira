@@ -52,9 +52,11 @@ export const config = {
 //   matcher: '/about/:path*',
     matcher: [
         '/api/entries/:path*',
+        '/chat',
         '/clientes/:path*',
         '/clientes',
         '/ingreso',
+        '/pedidos',
         '/',
     ]
 }

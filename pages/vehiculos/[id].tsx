@@ -99,39 +99,6 @@ export const VehiculoPage:FC<Props> = ({ vehiculo }) => {
                             error={ touched.modelo && errors.modelo }
                             helperText={ touched.modelo && errors.modelo && 'Ingrese el modelo del vehículo' }
                         />
-                        <Field
-                            as={ TextField }
-                            name='nombre'
-                            type='text'
-                            fullWidth
-                            label='Nombre del propietario'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                            error={ touched.nombre && errors.nombre }
-                            helperText={ touched.nombre && errors.nombre && 'Ingrese el nombre del propietario del vehículo' }
-                        />
-                        <Field
-                            as={ TextField }
-                            name='celular'
-                            type='text'
-                            fullWidth
-                            label='Celular del propietario'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                            error={ touched.celular && errors.celular }
-                            helperText={ touched.celular && errors.celular && 'Ingrese el número del celular del propietario del vehículo, solo números' }
-                        />
-                        <Field
-                            as={ TextField }
-                            name='email'
-                            type='text'
-                            fullWidth
-                            label='Email del propietario'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                            error={ touched.email && errors.email }
-                            helperText={ touched.email && errors.email && 'Ingrese el email del propietario' }
-                        />
                         <Button
                             type='submit'
                             variant='outlined'
