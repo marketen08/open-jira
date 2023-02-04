@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 import { ErrorMessage, Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, Card, CardMedia, CardContent, CardActions, Hidden } from "@mui/material";
+import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, Card, CardMedia, CardContent, CardActions, Hidden, Box, CardHeader } from "@mui/material";
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -37,7 +37,6 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
 
         setModificar(false);
         setCotizar(false);
-
     }
 
     const onCotizarEnviar = async( values: Pedido ) => {
@@ -48,7 +47,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
 
         setModificar(false);
         setCotizar(false);
-
+        
     }
 
   return (
@@ -72,31 +71,45 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                             justifyContent='center'
                             sx={{ padding: 2 }}
                         >
-                            <Typography gutterBottom variant="h5" >
-                                Detalle del pedido #{ values.numero }
-                            </Typography>
+                            
 
                             <Form autoComplete="off">
-                                <Card>
-                                    {/* <CardMedia
-                                        component="img"
-                                        alt="green iguana"
-                                        height="140"
-                                        image="/static/images/cards/contemplative-reptile.jpg"
-                                    /> */}
+                                <Card sx={{ backgroundColor: 'whitesmoke'}}>
                                     <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
-                                            { values.vehiculo.marca } { values.vehiculo.modelo }
+                                        <Typography gutterBottom variant="h5" >
+                                            Detalle del pedido #{ values.numero }
                                         </Typography>
-                                        <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                            Propietario: { values.vehiculo.cliente.nombre }
-                                        </Typography>
-                                        <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                            Celular: { values.vehiculo.cliente.celular }
-                                        </Typography>
-                                        <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                            Email: { values.vehiculo.cliente.email }
-                                        </Typography>
+                                        <Grid container sx={{ marginTop: 2 }} >
+                                            <Grid xs={ 6 } sm={ 6 } md={ 6 }>
+                                                <Typography gutterBottom variant="h5" component="div">
+                                                    { values.vehiculo.marca } { values.vehiculo.modelo }
+                                                </Typography>
+                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                    Propietario: { values.vehiculo.cliente.nombre }
+                                                </Typography>
+                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                    Celular: { values.vehiculo.cliente.celular }
+                                                </Typography>
+                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                    Email: { values.vehiculo.cliente.email }
+                                                </Typography>
+                                            </Grid>
+                                            <Grid xs={ 6 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'block' } : { display: 'none' } }>
+                                                <Typography gutterBottom variant="h5" component="div">
+                                                    VER DETALLE DE COTIZACIÓN
+                                                </Typography>
+                                                <Button
+                                                    type='button'
+                                                    variant='outlined'
+                                                    color='error'
+                                                    disabled={ isSubmitting || isValidating }
+                                                    onClick={ () => onCotizarEnviar( values ) }
+                                                >
+                                                    <SaveOutlinedIcon />
+                                                    <Typography>Volver a cotizar</Typography>
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
                                         <Field
                                             as={ TextField }
                                             name='descripcion'
@@ -111,7 +124,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                             error={ touched.descripcion && errors.descripcion }
                                             helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
                                         />
-                                        <Hidden xlDown={ !cotizar && values.estado === 'Nuevo' }>
+                                        <Box sx={ !cotizar && values.estado === 'Nuevo' ? { display: 'none' } : { display: 'block'}}>
                                             <Field
                                                 as={ TextField }
                                                 name='servicio'
@@ -136,17 +149,18 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                 error={ touched.descripcion && errors.descripcion }
                                                 helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
                                             />
-                                        </Hidden>
+                                        </Box>
                                     </CardContent>
                                     <CardActions>
-                                        <Hidden xlDown={ modificar || cotizar }>
+                                        <Box sx={ modificar || cotizar || values.estado === 'Cotizado' ? { display: 'none' } : { display: 'block' } }>
                                             <Button
                                                 type='button'
                                                 variant='outlined'
                                                 color='primary'
                                                 disabled={ isSubmitting || isValidating }
                                                 onClick={ () => setModificar(true) }
-                                                >
+                                                sx={{ margin: 1 }}
+                                            >
                                                 <SaveOutlinedIcon />
                                                 <Typography>Modificar</Typography>
                                             </Button>
@@ -156,18 +170,19 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                 color='warning'
                                                 disabled={ isSubmitting || isValidating }
                                                 onClick={ () => setCotizar(true) }
+                                                sx={{ margin: 1 }}
                                                 >
                                                 <SaveOutlinedIcon />
                                                 <Typography>Cotizar</Typography>
                                             </Button>
-                                        </Hidden>
-                                        <Hidden xlDown={ !modificar && !cotizar }>
+                                        </Box>
+                                        <Box sx={ !modificar && !cotizar ? { display: 'none' } : { display: 'block' } } >
                                             <Button
                                                 type='submit'
                                                 variant='outlined'
                                                 color='success'
                                                 disabled={ isSubmitting || isValidating }
-                                                
+                                                sx={{ margin: 1 }}
                                             >
                                                 <SaveOutlinedIcon />
                                                 <Typography>Guardar</Typography>
@@ -181,12 +196,13 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                     setModificar(false);
                                                     setCotizar(false);
                                                 } }
+                                                sx={{ margin: 1 }}
                                                 >
                                                 <SaveOutlinedIcon />
                                                 <Typography>Cancelar</Typography>
                                             </Button>
-                                        </Hidden>
-                                        <Hidden xlDown={ !cotizar }>
+                                        </Box>
+                                        <Box sx={ !cotizar ? { display: 'none' } : { display: 'block' } } >
                                             <Button
                                                 type='button'
                                                 variant='outlined'
@@ -198,7 +214,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                 <SaveOutlinedIcon />
                                                 <Typography>Enviar</Typography>
                                             </Button>
-                                        </Hidden>
+                                        </Box>
                                     </CardActions>
                                 </Card>
                             </Form>

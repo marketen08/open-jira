@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import { Layout } from '../../components/layouts';
 
 const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#cccccc',
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : 'whitesmoke',
     ...theme.typography.body2,
     padding: theme.spacing(1),
     textAlign: 'center',
