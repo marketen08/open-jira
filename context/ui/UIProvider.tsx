@@ -7,12 +7,14 @@ interface Props {
 
 export interface UIState {
     sidemenuOpen: boolean;
+    chatmenuOpen: boolean;
     isAddingEntry: boolean;
     isDragging: boolean;
 }
 
 const UI_INITIAL_STATE: UIState = {
     sidemenuOpen: false,
+    chatmenuOpen: false,
     isAddingEntry: false,
     isDragging: false,
 }
@@ -27,6 +29,14 @@ export const UIProvider:FC<Props> = ({ children }) => {
 
     const closeSideMenu = () => {
         dispatch({ type: 'UI - Close Sidebar' })
+    }
+
+    const openChatMenu = () => {
+        dispatch({ type: 'UI - Open ChatBar' })
+    }
+
+    const closeChatMenu = () => {
+        dispatch({ type: 'UI - Close ChatBar' })
     }
 
     const setIsAddingEntry = ( isAdding: boolean ) => {
@@ -46,8 +56,11 @@ export const UIProvider:FC<Props> = ({ children }) => {
             ...state,
 
             // Funciones
+            closeChatMenu,
             closeSideMenu,
+            openChatMenu,
             openSideMenu,
+
             setIsAddingEntry,
 
             startDragging,

@@ -22,13 +22,14 @@ export const ClienteItem:FC<Props> = ({ cliente }) => {
             onClick={ onClick }
             hover
     >
+      <TableCell>{ cliente.codigo }</TableCell>
       <TableCell component="th" scope="row">
           { cliente.nombre }
       </TableCell>
-      <TableCell>{ cliente.codigo }</TableCell>
-      <TableCell>{ cliente.razonSocial }</TableCell>
-      <TableCell>{ cliente.condicionIva }</TableCell>
+      <TableCell>{ cliente.tipoDeDocumento } { cliente.numero }</TableCell>
       <TableCell>{ cliente.email }</TableCell>
+      <TableCell>{ cliente.celular }</TableCell>
+      <TableCell>{ cliente.domicilio }</TableCell>
     </TableRow>
   )
 }

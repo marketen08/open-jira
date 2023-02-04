@@ -5,8 +5,8 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
-import { EntriesContext } from '../../../context/entries';
-import { UIContext } from '../../../context/ui/UIContext';
+import { EntriesContext } from '../../context/entries';
+import { UIContext } from '../../context/ui/UIContext';
 
 export const NewEntry = () => {
 
@@ -33,7 +33,7 @@ export const NewEntry = () => {
     }
 
     return (
-    <Box sx={{ marginBottom: 2, paddingX: 1 }}>
+    <Box sx={{ marginBottom: 2, paddingX: 1, marginTop: 2 }}>
 
         {
             isAddingEntry ? (

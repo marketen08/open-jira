@@ -57,6 +57,8 @@ export const config = {
         '/clientes',
         '/ingreso',
         '/pedidos',
+        '/vehiculos/:path*',
+        '/vehiculos',
         '/',
     ]
 }

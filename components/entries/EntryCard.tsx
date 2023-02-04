@@ -1,9 +1,9 @@
 import { DragEvent, FC, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { Card, CardActionArea, CardActions, CardContent, Typography } from '@mui/material';
-import { Entry } from '../../../interfaces';
-import { UIContext } from '../../../context/ui';
-import { dateFunctions } from '../../../utils';
+import { Entry } from '../../interfaces';
+import { UIContext } from '../../context/ui';
+import { dateFunctions } from '../../utils';
 
 
 interface Props {

@@ -85,11 +85,11 @@ export const SideBar = () => {
                 ))
               }
               <ListItemButton component='a' onClick={ logout }>
-                      <ListItemIcon>
-                        <LoginOutlined />
-                      </ListItemIcon>
-                      <ListItemText primary='Salir' />
-                    </ListItemButton>
+                <ListItemIcon>
+                  <LoginOutlined />
+                </ListItemIcon>
+                <ListItemText primary='Salir' />
+              </ListItemButton>
             </List>
 
             <Divider />

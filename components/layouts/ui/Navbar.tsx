@@ -5,12 +5,15 @@ import { useContext, useState } from 'react';
 import { UIContext } from "../../../context/ui";
 import NextLink from "next/link";
 import { AccountCircle, EmailOutlined } from "@mui/icons-material";
+import { AuthContext } from "../../../context";
 
 export const Navbar = () => {
 
-  const { openSideMenu } = useContext( UIContext )
+  const { openSideMenu, openChatMenu } = useContext( UIContext )
+  const { logout } = useContext(  AuthContext );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
 
   // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setAuth(event.target.checked);
@@ -54,7 +57,7 @@ export const Navbar = () => {
                 aria-label="account of current user"
                 // aria-controls="menu-appbar"
                 // aria-haspopup="true"
-                // onClick={handleMenu}
+                onClick={ openChatMenu }
                 color="inherit"
               >
                 <EmailOutlined />
@@ -89,9 +92,8 @@ export const Navbar = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Chat</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleClose}>Cambiar contraseña</MenuItem>
+                <MenuItem onClick={logout}>Salir</MenuItem>
               </Menu>
             </div>
           )}

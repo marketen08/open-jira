@@ -3,6 +3,8 @@ import { UIState } from './';
 type UIActionType = 
 | { type: 'UI - Open Sidebar' }
 | { type: 'UI - Close Sidebar' }
+| { type: 'UI - Open ChatBar' }
+| { type: 'UI - Close ChatBar' }
 | { type: 'UI - Set isAddingEntry', payload: boolean }
 | { type: 'UI - Start Dragging' }
 | { type: 'UI - End Dragging' }
@@ -20,6 +22,18 @@ export const uiReducer = ( state: UIState, action: UIActionType ):UIState => {
             return {
                 ...state,
                 sidemenuOpen: false,
+            }
+
+        case 'UI - Open ChatBar':
+            return {
+                ...state,
+                chatmenuOpen: true,
+            }
+
+        case 'UI - Close ChatBar':
+            return {
+                ...state,
+                chatmenuOpen: false,
             }
 
         case 'UI - Set isAddingEntry':

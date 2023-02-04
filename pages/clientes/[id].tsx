@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 import { ErrorMessage, Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card } from '@mui/material';
+import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card, CardHeader } from '@mui/material';
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -39,65 +39,59 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
 
   return (
     
-    <Layout title={ 'titulo prueba' }>
+    <Layout title={ 'Detalle del cliente' }>
         <Grid
             container
             justifyContent='center'
             sx={{ marginTop: 2, padding: 2 }}
         >
             <Card>
+                <CardHeader title="Detalle del Cliente" sx={{ backgroundColor: 'gray', color: 'white'}} />
                 <CardContent>
-
-      
-            <Typography gutterBottom variant="h5" >
-                Detalle del Cliente
-            </Typography>
-            <Formik
-                initialValues={{ 
-                    ...cliente
-                }}
-                onSubmit={ ( values ) => {
-                    onSave( values );
-                }}
-                validationSchema={ Yup.object({
-                    numero: Yup.string()
-                                .max(20, 'Debe de tener 20 caracteres o menos')
-                                .required('El número es requerido'),
-                    nombre: Yup.string()
-                                .max(50, 'Debe de tener 50 caracteres o menos')
-                                .required('Requerido'),
-                    razonSocial: Yup.string()
-                                .max(20, 'Debe de tener 20 caracteres o menos')
-                                .required('La razon social es requerida'),
-                })
-            }>
-
-                {( { values, errors, touched, isSubmitting, isValidating } ) => (
-                    <Form autoComplete="off">
-                        <Field
-                            as={ TextField }
-                            name='codigo'
-                            type='text'
-                            fullWidth
-                            disabled
-                            label='Código'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field 
-                            as={ TextField }
-                            name='tipoDeDocumento'
-                            fullWidth
-                            size='small'
-                            label='Tipo de Documento'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            select
-                        >
-                            {
-                                validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                            }
-                        </Field>
-                        <FormGroup>
+                    <Formik
+                        initialValues={{ 
+                            ...cliente
+                        }}
+                        onSubmit={ ( values ) => {
+                            onSave( values );
+                        }}
+                        validationSchema={ Yup.object({
+                            numero: Yup.string()
+                                        .max(20, 'Debe de tener 20 caracteres o menos')
+                                        .required('El número es requerido'),
+                            nombre: Yup.string()
+                                        .max(50, 'Debe de tener 50 caracteres o menos')
+                                        .required('Requerido'),
+                            razonSocial: Yup.string()
+                                        .max(20, 'Debe de tener 20 caracteres o menos')
+                                        .required('La razon social es requerida'),
+                        })
+                    }>
+                    {( { values, errors, touched, isSubmitting, isValidating } ) => (
+                        <Form autoComplete="off">
+                            <Field
+                                as={ TextField }
+                                name='codigo'
+                                type='text'
+                                fullWidth
+                                disabled
+                                label='Código'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                            />
+                            <Field 
+                                as={ TextField }
+                                name='tipoDeDocumento'
+                                fullWidth
+                                size='small'
+                                label='Tipo de Documento'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                select
+                            >
+                                {
+                                    validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                                }
+                            </Field>
                             <Field
                                 as={ TextField }
                                 name='numero'
@@ -109,8 +103,6 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 error={ touched.numero && errors.numero }
                                 helperText={ touched.numero && errors.numero && 'Ingrese el número' }
                             />
-                        </FormGroup>
-                        <FormGroup>
                             <Field
                                 as={ TextField }
                                 name='razonSocial'
@@ -122,90 +114,88 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 error={ touched.razonSocial && errors.razonSocial }
                                 helperText={ touched.razonSocial && errors.razonSocial && 'Ingrese la razon social' }
                             />
-                        </FormGroup>
-                        <Field
-                            as={ TextField }
-                            name='nombre'
-                            type='text'
-                            fullWidth
-                            label='Nombre'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field 
-                            as={ TextField }
-                            name='condicionIva'
-                            fullWidth
-                            size='small'
-                            label='Condición Iva'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            select
-                        >
-                            {
-                                validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                            }
-                        </Field>
-                        <Field
-                            as={ TextField }
-                            name='domicilio'
-                            type='text'
-                            fullWidth
-                            label='Domicilio'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='provincia'
-                            type='text'
-                            fullWidth
-                            label='Provincia'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'    
-                        />
-                        <Field
-                            as={ TextField }
-                            name='localidad'
-                            type='text'
-                            fullWidth
-                            label='Localidad'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='telefono'
-                            type='text'
-                            fullWidth
-                            label='telefono'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='email'
-                            type='text'
-                            fullWidth
-                            label='Email'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Button
-                            type='submit'
-                            variant='outlined'
-                            color='success'
-                            disabled={ isSubmitting || isValidating }
-                        >
-                            <SaveOutlinedIcon />
-                            <Typography>Guardar</Typography>
-                            
-                        </Button>
-                    </Form>
-                    )
-                }
-            </Formik>
-            </CardContent>
-        </Card>
+                            <Field
+                                as={ TextField }
+                                name='nombre'
+                                type='text'
+                                fullWidth
+                                label='Nombre'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                            />
+                            <Field 
+                                as={ TextField }
+                                name='condicionIva'
+                                fullWidth
+                                size='small'
+                                label='Condición Iva'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                select
+                            >
+                                {
+                                    validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                                }
+                            </Field>
+                            <Field
+                                as={ TextField }
+                                name='domicilio'
+                                type='text'
+                                fullWidth
+                                label='Domicilio'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                            />
+                            <Field
+                                as={ TextField }
+                                name='provincia'
+                                type='text'
+                                fullWidth
+                                label='Provincia'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'    
+                            />
+                            <Field
+                                as={ TextField }
+                                name='localidad'
+                                type='text'
+                                fullWidth
+                                label='Localidad'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                            />
+                            <Field
+                                as={ TextField }
+                                name='telefono'
+                                type='text'
+                                fullWidth
+                                label='telefono'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                            />
+                            <Field
+                                as={ TextField }
+                                name='email'
+                                type='text'
+                                fullWidth
+                                label='Email'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                            />
+                            <Button
+                                type='submit'
+                                variant='outlined'
+                                color='success'
+                                disabled={ isSubmitting || isValidating }
+                            >
+                                <SaveOutlinedIcon />
+                                <Typography>Guardar</Typography>
+                                
+                            </Button>
+                        </Form>
+                    )}
+                    </Formik>
+                </CardContent>
+            </Card>
         </Grid>
 
         <IconButton sx={{

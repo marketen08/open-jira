@@ -1,14 +1,22 @@
 import { useContext } from 'react'
-import { ChatContext } from '../../context';
+import { ChatContext, UIContext } from '../../context';
 import { scrollToBottom, scrollToBottomAnimated } from '../../utils/scrollToBottom';
 import { Avatar, Divider, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 
 export const SidebarChatItem = ({ usuario }:any) => {
     
+    const router = useRouter();
+
     const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
+
+    const { closeChatMenu } = useContext( UIContext );
 
     const handleActivarChat = async() => {
         
+        closeChatMenu()
+        router.push('/chat');
+
         activarChat( usuario.uid )
         cargarMensajes( usuario.uid )
         scrollToBottomAnimated('mensajes');

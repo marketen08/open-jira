@@ -80,7 +80,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                             Detalle del pedido #{ values.numero }
                                         </Typography>
                                         <Grid container sx={{ marginTop: 2 }} >
-                                            <Grid xs={ 6 } sm={ 6 } md={ 6 }>
+                                            <Grid item xs={ 6 } sm={ 6 } md={ 6 }>
                                                 <Typography gutterBottom variant="h5" component="div">
                                                     { values.vehiculo.marca } { values.vehiculo.modelo }
                                                 </Typography>
@@ -94,7 +94,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                     Email: { values.vehiculo.cliente.email }
                                                 </Typography>
                                             </Grid>
-                                            <Grid xs={ 6 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'block' } : { display: 'none' } }>
+                                            <Grid item xs={ 6 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'block' } : { display: 'none' } }>
                                                 <Typography gutterBottom variant="h5" component="div">
                                                     VER DETALLE DE COTIZACIÓN
                                                 </Typography>

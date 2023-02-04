@@ -56,11 +56,11 @@ const LoginPage = () => {
 
     return (
         <AuthLayout title={'Ingresar'}>
-            <form onSubmit={ handleSubmit(onLoginUser) } noValidate>
-                <Box sx={{ width: 350, padding:'10px 20px' }}>
+            <form onSubmit={ handleSubmit(onLoginUser) } autoComplete='off' noValidate>
+                <Box sx={{ width: 350, padding: 5, backgroundColor: 'whitesmoke' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant='h1' component="h1">Iniciar Sesión</Typography>
+                            <Typography variant='h4'>Iniciar Sesión</Typography>
                             <Chip 
                                 label="No reconocemos ese usuario / contraseña"
                                 color="error"
@@ -103,17 +103,17 @@ const LoginPage = () => {
 
                         <Grid item xs={12}>
                             <Button
-                                type="submit"
-                                color="secondary"
-                                className='circular-btn'
+                                type='submit'
+                                color='secondary'
                                 size='large'
                                 fullWidth
+                                variant='outlined'
                             >
                                 Ingresar
                             </Button>
                         </Grid>
 
-                        <Grid item xs={12} display='flex' justifyContent='end'>
+                        {/* <Grid item xs={12} display='flex' justifyContent='end'>
                             <NextLink 
                                 href={ router.query.callbackUrl ? `/auth/register?callbackUrl=${ router.query.callbackUrl }`: '/auth/register' } 
                                 passHref
@@ -123,7 +123,7 @@ const LoginPage = () => {
                                     ¿No tienes cuenta?
                                 </Link>
                             </NextLink>
-                        </Grid>
+                        </Grid> */}
 
                             
                         <Grid item xs={12} display='flex' flexDirection='column' justifyContent='end'>

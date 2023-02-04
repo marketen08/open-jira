@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { Box, Typography } from '@mui/material'
 import Head from 'next/head'
-import { Navbar, SideBar } from './ui';
+import { ChatBar, Navbar, SideBar } from './ui';
 
 interface Props {
     children: ReactNode;
@@ -16,6 +16,7 @@ export const Layout:FC<Props> = ({ title = 'Gestión de servicios', children }) 
 
         <Navbar />
         <SideBar />
+        <ChatBar />
 
         <Box sx={{ padding: '10px 20px' }}>
             { children }
