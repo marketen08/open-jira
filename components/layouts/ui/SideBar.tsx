@@ -3,6 +3,7 @@ import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, Lis
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import { UIContext } from "../../../context/ui";
 import NextLink from "next/link";
 import Button from "@mui/material/Button";
@@ -22,24 +23,29 @@ const menuItems: menuItem[] = [
     icono: <HomeOutlinedIcon />
   },
   {
+    titulo: 'INGRESO',
+    url: '/ingreso',
+    icono: <SummarizeOutlinedIcon />
+  },
+  {
     titulo: 'PEDIDOS',
     url: '/pedidos',
     icono: <FolderCopyOutlinedIcon />
   },
   {
-    titulo: 'PRESUPUESTOS',
-    url: '/presupuestos',
-    icono: <SummarizeOutlinedIcon />
-  },
-  {
     titulo: 'VEHÍCULOS',
     url: '/vehiculos',
-    icono: <SummarizeOutlinedIcon />
+    icono: <FolderCopyOutlinedIcon />
   },
   {
     titulo: 'CLIENTES',
     url: '/clientes',
-    icono: <SummarizeOutlinedIcon />
+    icono: <FolderCopyOutlinedIcon />
+  },
+  {
+    titulo: 'CHAT',
+    url: '/chat',
+    icono: <ChatOutlinedIcon />
   }
 ]
 
@@ -53,6 +59,7 @@ export const SideBar = () => {
             anchor='left'
             open={ sidemenuOpen }
             onClose={ () => closeSideMenu() }
+            
           >
             <Box sx={{ width: 250 }}></Box>
             <Box sx={{ padding: '5px 5px' }} >

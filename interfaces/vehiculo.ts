@@ -1,12 +1,11 @@
+import { Cliente } from "./cliente";
+
 export interface Vehiculo {
   id: string;
   patente: string;
+  cliente: Cliente
   marca: string;
   modelo: string;
-  nombre: string;
-  celular: string;
-  telefono: string;
-  email: string;
   activo: boolean;
 
   createdAt: number;

@@ -4,20 +4,14 @@ import { GetServerSideProps } from 'next'
 import { ErrorMessage, Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup } from "@mui/material";
+import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, Card, CardMedia, CardContent, CardActions, Hidden, Box, CardHeader } from "@mui/material";
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { Pedido, PedidoCondicionIva, PedidoTipoDeDocumento } from "../../interfaces";
+import { Pedido } from "../../interfaces";
+import { PedidosContext } from '../../context/pedidos';
+import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
-
-const validTipoDocumento: PedidoTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
-const validCondicionIva: PedidoCondicionIva[] = [  'IVA Responsable Inscripto',
-                                                    'Responsable Monotributo',
-                                                    'IVA Sujeto Exento',
-                                                    'Pedido del Exterior',
-                                                    'Consumidor Final',
-                                                    'IVA No Alcanzado' ];
 
 interface Props {
     pedido: Pedido
@@ -25,190 +19,236 @@ interface Props {
 
 export const PedidoPage:FC<Props> = ({ pedido }) => {
 
-    // const { updatePedido } = useContext(PedidosContext);
+    const [modificar, setModificar] = useState(false);
+    const [cotizar, setCotizar] = useState(false);
 
-    // const { codigo, tipoDeDocumento, numero, razonSocial, nombre, condicionIva, domicilio, provincia, localidad, telefono, email } = pedido;
-
-    const onSave = ( values: any ) => {
+    const onSave = async( values: Pedido ) => {
         console.log(values);
+        const { id, descripcion, servicio, importe } = values;
+        
+        if ( modificar ) {
+            const modificar = await externalApiConToken.put(`/pedidos/${ id }`, { descripcion })
+        }
 
+        if ( cotizar ) {
+            values.estado = 'Cotizando'
+            const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { servicio, importe })
+        }
+
+        setModificar(false);
+        setCotizar(false);
+    }
+
+    const onCotizarEnviar = async( values: Pedido ) => {
+        const { id, servicio, importe } = values;
+
+        values.estado = 'Cotizado'
+        const cotizarEnviar = await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { servicio, importe })
+
+        setModificar(false);
+        setCotizar(false);
+        
     }
 
   return (
-    
-    <Layout title={ 'titulo prueba' }>
-        <Grid
-            container
-            justifyContent='center'
-            sx={{ marginTop: 2 }}
-        >
-            <Typography gutterBottom variant="h5" >
-                Detalle del Pedido
-            </Typography>
             <Formik
                 initialValues={{ 
                     ...pedido
                 }}
-                onSubmit={ ( values ) => {
+                onSubmit={ ( values, actions ) => {
                     onSave( values );
+                    actions.setSubmitting(false);
                 }}
                 validationSchema={ Yup.object({
-                    numero: Yup.string()
-                                .max(20, 'Debe de tener 20 caracteres o menos')
-                                .required('El número es requerido'),
-                    nombre: Yup.string()
-                                .max(50, 'Debe de tener 50 caracteres o menos')
-                                .required('Requerido'),
-                    razonSocial: Yup.string()
-                                .max(20, 'Debe de tener 20 caracteres o menos')
-                                .required('La razon social es requerida'),
+                    descripcion: Yup.string()
+                                .required('La descripción es requerida')
                 })
             }>
 
-                {( { values, errors, touched, isSubmitting, isValidating } ) => (
-                    <Form autoComplete="off">
-                        <Field
-                            as={ TextField }
-                            name='codigo'
-                            type='text'
-                            fullWidth
-                            disabled
-                            label='Código'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field 
-                            as={ TextField }
-                            name='tipoDeDocumento'
-                            fullWidth
-                            size='small'
-                            label='Tipo de Documento'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            select
-                            >
-                            {
-                                validTipoDocumento.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                            }
-                        </Field>
-                        <FormGroup>
-                            <Field
-                                as={ TextField }
-                                name='numero'
-                                type='text'
-                                fullWidth
-                                label='Número'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                                error={ touched.numero && errors.numero }
-                                helperText={ touched.numero && errors.numero && 'Ingrese el número' }
-                            />
-                        </FormGroup>
-                       
-                        <Field
-                            as={ TextField }
-                            name='nombre'
-                            type='text'
-                            fullWidth
-                            label='Nombre'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field 
-                            as={ TextField }
-                            name='condicionIva'
-                            fullWidth
-                            size='small'
-                            label='Condición Iva'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            select
+                {( { values, errors, touched, isSubmitting, isValidating, setSubmitting } ) => (
+                    <Layout title={ `Pedido #${ values.numero }` }>
+                        <Grid
+                            justifyContent='center'
+                            sx={{ padding: 2 }}
                         >
-                            {
-                                validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                            }
-                        </Field>
-                        <Field
-                            as={ TextField }
-                            name='domicilio'
-                            type='text'
-                            fullWidth
-                            label='Domicilio'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='provincia'
-                            type='text'
-                            fullWidth
-                            label='Provincia'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'    
-                        />
-                        <Field
-                            as={ TextField }
-                            name='localidad'
-                            type='text'
-                            fullWidth
-                            label='Localidad'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='telefono'
-                            type='text'
-                            fullWidth
-                            label='telefono'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Field
-                            as={ TextField }
-                            name='email'
-                            type='text'
-                            fullWidth
-                            label='Email'
-                            sx={{ mt: 1.5, mb: 1 }}
-                            size='small'
-                        />
-                        <Button
-                            type='submit'
-                            variant='outlined'
-                            color='success'
-                            disabled={ isSubmitting || isValidating }
-                        >
-                            <SaveOutlinedIcon />
-                            <Typography>Guardar</Typography>
                             
-                        </Button>
-                    </Form>
+
+                            <Form autoComplete="off">
+                                <Card sx={{ backgroundColor: 'whitesmoke'}}>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" >
+                                            Detalle del pedido #{ values.numero }
+                                        </Typography>
+                                        <Grid container sx={{ marginTop: 2 }} >
+                                            <Grid xs={ 6 } sm={ 6 } md={ 6 }>
+                                                <Typography gutterBottom variant="h5" component="div">
+                                                    { values.vehiculo.marca } { values.vehiculo.modelo }
+                                                </Typography>
+                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                    Propietario: { values.vehiculo.cliente.nombre }
+                                                </Typography>
+                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                    Celular: { values.vehiculo.cliente.celular }
+                                                </Typography>
+                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                    Email: { values.vehiculo.cliente.email }
+                                                </Typography>
+                                            </Grid>
+                                            <Grid xs={ 6 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'block' } : { display: 'none' } }>
+                                                <Typography gutterBottom variant="h5" component="div">
+                                                    VER DETALLE DE COTIZACIÓN
+                                                </Typography>
+                                                <Button
+                                                    type='button'
+                                                    variant='outlined'
+                                                    color='error'
+                                                    disabled={ isSubmitting || isValidating }
+                                                    onClick={ () => onCotizarEnviar( values ) }
+                                                >
+                                                    <SaveOutlinedIcon />
+                                                    <Typography>Volver a cotizar</Typography>
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                        <Field
+                                            as={ TextField }
+                                            name='descripcion'
+                                            type='text'
+                                            fullWidth
+                                            multiline
+                                            disabled={ !modificar }
+                                            rows={ 6 }
+                                            label='Descripción del servicio'
+                                            sx={{ mt: 3, mb: 1 }}
+                                            
+                                            error={ touched.descripcion && errors.descripcion }
+                                            helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                        />
+                                        <Box sx={ !cotizar && values.estado === 'Nuevo' ? { display: 'none' } : { display: 'block'}}>
+                                            <Field
+                                                as={ TextField }
+                                                name='servicio'
+                                                type='text'
+                                                fullWidth
+                                                multiline
+                                                disabled={ !cotizar }
+                                                rows={ 6 }
+                                                label='Detalle de la cotización'
+                                                sx={{ mt: 3, mb: 1 }}
+                                                error={ touched.descripcion && errors.descripcion }
+                                                helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                            />
+                                            <Field
+                                                as={ TextField }
+                                                name='importe'
+                                                type='number'
+                                                fullWidth
+                                                disabled={ !cotizar }
+                                                label='Importe presupuestado'
+                                                sx={{ mt: 3, mb: 1 }}
+                                                error={ touched.descripcion && errors.descripcion }
+                                                helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                            />
+                                        </Box>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Box sx={ modificar || cotizar || values.estado === 'Cotizado' ? { display: 'none' } : { display: 'block' } }>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='primary'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => setModificar(true) }
+                                                sx={{ margin: 1 }}
+                                            >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Modificar</Typography>
+                                            </Button>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='warning'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => setCotizar(true) }
+                                                sx={{ margin: 1 }}
+                                                >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Cotizar</Typography>
+                                            </Button>
+                                        </Box>
+                                        <Box sx={ !modificar && !cotizar ? { display: 'none' } : { display: 'block' } } >
+                                            <Button
+                                                type='submit'
+                                                variant='outlined'
+                                                color='success'
+                                                disabled={ isSubmitting || isValidating }
+                                                sx={{ margin: 1 }}
+                                            >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Guardar</Typography>
+                                            </Button>
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='secondary'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => {
+                                                    setModificar(false);
+                                                    setCotizar(false);
+                                                } }
+                                                sx={{ margin: 1 }}
+                                                >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Cancelar</Typography>
+                                            </Button>
+                                        </Box>
+                                        <Box sx={ !cotizar ? { display: 'none' } : { display: 'block' } } >
+                                            <Button
+                                                type='button'
+                                                variant='outlined'
+                                                color='primary'
+                                                disabled={ isSubmitting || isValidating }
+                                                onClick={ () => onCotizarEnviar( values ) }
+
+                                            >
+                                                <SaveOutlinedIcon />
+                                                <Typography>Enviar</Typography>
+                                            </Button>
+                                        </Box>
+                                    </CardActions>
+                                </Card>
+                            </Form>
+                        </Grid>
+
+                            <IconButton sx={{
+                                position:'fixed',
+                                bottom: 30,
+                                right: 30,
+                                border: 1,
+                                color: 'red'
+                            }}>
+                                <DeleteOutlineOutlinedIcon />
+                            </IconButton>
+                    </Layout>
                     )
                 }
             </Formik>
-        </Grid>
-
-        <IconButton sx={{
-            position:'fixed',
-            bottom: 30,
-            right: 30,
-            background: 'error.dark'
-        }}>
-            <DeleteOutlineOutlinedIcon />
-        </IconButton>
-    </Layout>
+        
 
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
 
-    const { id } = ctx.params as { id: string };
+    const { id } = params as { id: string };
 
-    const { data:pedido } = await externalApiConToken.get(`/pedidos/${ id }`);
+    const { data } = await externalApiConToken.get(`/pedidos/${ id }`, {
+        headers: {
+            'x-token': req.cookies.token
+        }
+    });
 
-    console.log(pedido);
-
-    if ( !pedido ) {
+    if ( !data ) {
         return {
             redirect: {
                 destination: '/',
@@ -219,7 +259,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     
     return {
         props: {
-            pedido
+            pedido: data
         }
     }
 }

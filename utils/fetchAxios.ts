@@ -14,7 +14,7 @@ const axiosConToken = ( endpoint:string, data:{}|[] = {}, method:string = 'GET',
 
     // console.log(session)
 
-    const url = `${ baseUrl }/${ endpoint }`;
+    const url = `${ baseUrl }${ endpoint }`;
 
     if ( method === 'GET' ){
         return axios( url, {

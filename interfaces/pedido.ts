@@ -1,9 +1,13 @@
+import { Vehiculo } from './vehiculo';
 export interface Pedido {
   id: string;
   numero: string;
-  vehiculo: string;
+  vehiculo: Vehiculo;
   descripcion: string;
-  estado: string;
+  servicio: string;
+  importe: string;
+  estado: PedidoEstados;
+  enviado: boolean;
   activo: boolean;
 
   createdAt: number;
@@ -11,11 +15,4 @@ export interface Pedido {
 
 }
 
-export type PedidoTipoDeDocumento = 'CUIT' | 'CUIL' | 'DNI' | 'Otros'
-export type PedidoCondicionIva =
-  | 'IVA Responsable Inscripto'
-  | 'Responsable Monotributo'
-  | 'IVA Sujeto Exento'
-  | 'Pedido del Exterior'
-  | 'Consumidor Final'
-  | 'IVA No Alcanzado'
+export type PedidoEstados = 'Nuevo' | 'Cotizando' | 'Cotizado' | 'En curso' | 'Rechazado' | 'Finalizado';

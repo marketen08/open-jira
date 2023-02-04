@@ -32,6 +32,7 @@ export const Navbar = () => {
                 size='large'
                 edge='start'
                 onClick={ openSideMenu }
+                color='inherit'
             >
                 <MenuOutlinedIcon />
             </IconButton>

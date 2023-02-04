@@ -25,7 +25,7 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
       <TableCell component="th" scope="row">
           { pedido.numero }
       </TableCell>
-      <TableCell>{ pedido.vehiculo }</TableCell>
+      <TableCell>{ pedido.vehiculo.marca } { pedido.vehiculo.modelo }</TableCell>
       <TableCell  sx={{ maxWidth: '250px' }}>{ pedido.descripcion }</TableCell>
       <TableCell>{ pedido.estado }</TableCell>
     </TableRow>
