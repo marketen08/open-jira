@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Card, Grid, Paper, Table, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
+import { Card, Grid, IconButton, Paper, Table, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { NextPage } from "next";
 import { ClienteLista } from "../../components/clientes";
 import { Layout } from "../../components/layouts";
 import { FullScreenLoading } from "../../components/ui";
 import { useClientes } from "../../hooks";
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import { useRouter } from 'next/router';
 
 const Clientes:NextPage = () => {
 
-
+  const router = useRouter();
 
   const [buscar, setBuscar] = useState('');
 
@@ -24,6 +26,10 @@ const Clientes:NextPage = () => {
 
   const handleChange = () => {
 
+  }
+
+  const handleNuevo = () => {
+    router.push('/clientes/nuevo')
   }
 
   return (
@@ -84,7 +90,17 @@ const Clientes:NextPage = () => {
         }
 
       </Grid>
-      
+      <IconButton 
+        onClick={ handleNuevo }
+        sx={{
+            position:'fixed',
+            bottom: 30,
+            right: 30,
+            color: 'green'
+        }}
+      >
+        <AddCircleOutlineOutlinedIcon fontSize='large'  />
+      </IconButton>
     </Layout>
   )
 }

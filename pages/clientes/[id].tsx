@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useMemo, useState, useContext } from 'react';
 import { GetServerSideProps } from 'next'
 
 import { ErrorMessage, Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { number, object, string } from 'yup';
 
 import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card, CardHeader } from '@mui/material';
 import { Layout } from "../../components/layouts";
@@ -13,6 +13,7 @@ import { ClientesContext } from '../../context/clientes';
 import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 const validTipoDocumento: ClienteTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
 const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
@@ -28,12 +29,22 @@ interface Props {
 
 export const ClientePage:FC<Props> = ({ cliente }) => {
 
-    // const { updateCliente } = useContext(ClientesContext);
+    const router = useRouter();
 
+    // const { updateCliente } = useContext(ClientesContext);
     // const { codigo, tipoDeDocumento, numero, razonSocial, nombre, condicionIva, domicilio, provincia, localidad, telefono, email } = cliente;
 
-    const onSave = ( values: any ) => {
-        console.log(values);
+    const onSave = async ( values: Cliente ) => {
+
+        if ( values.codigo === 0 ){
+            // NUEVO CLIENTE
+            await externalApiConToken.post(`/clientes`, { ...values });
+            router.push('/clientes')
+        } else {
+            // ACTUALIZAR CLIENTE
+            await externalApiConToken.put(`/clientes/${ values.id }`, { ...values });
+            router.push('/clientes')
+        }
 
     }
 
@@ -55,19 +66,21 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                         onSubmit={ ( values ) => {
                             onSave( values );
                         }}
-                        validationSchema={ Yup.object({
-                            numero: Yup.string()
-                                        .max(20, 'Debe de tener 20 caracteres o menos')
-                                        .required('El número es requerido'),
-                            nombre: Yup.string()
-                                        .max(50, 'Debe de tener 50 caracteres o menos')
-                                        .required('Requerido'),
-                            razonSocial: Yup.string()
-                                        .max(20, 'Debe de tener 20 caracteres o menos')
-                                        .required('La razon social es requerida'),
+                        validationSchema={ object({
+                            tipoDeDocumento: string().required('El tipo de documento es obligatorio'),
+                            numero: string().required('El número de documento es obligatorio'), 
+                            nombre: string().required('El nombre y apellido es obligatorio'),
+                            celular: number()
+                                    .typeError("Por favor ingresar solo números")
+                                    .positive("Por favor ingresar solo números no guiones")
+                                    .integer("Por favor ingresar solo números sin punto")
+                                    .min(1000000000, 'El celular debe tener 10 caracteres')
+                                    .max(9999999999, 'El celular debe tener 10 caracteres')
+                                    .required('El celular es obligatorio'),
+                            email: string().email('El mail no es valido').required('El email es obligatorio'),
                         })
                     }>
-                    {( { values, errors, touched, isSubmitting, isValidating } ) => (
+                    {( { values, errors, touched, isSubmitting, isValidating }:any ) => (
                         <Form autoComplete="off">
                             <Field
                                 as={ TextField }
@@ -101,7 +114,41 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
                                 error={ touched.numero && errors.numero }
-                                helperText={ touched.numero && errors.numero && 'Ingrese el número' }
+                                helperText={ touched.numero && errors.numero && errors.numero }
+                            />
+                            
+                            <Field
+                                as={ TextField }
+                                name='nombre'
+                                type='text'
+                                fullWidth
+                                label='Nombre'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                                error={ touched.nombre && errors.nombre }
+                                helperText={ touched.nombre && errors.nombre && errors.nombre  }
+                            />
+                            <Field
+                                as={ TextField }
+                                name='email'
+                                type='text'
+                                fullWidth
+                                label='Email'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                                error={ touched.email && errors.email }
+                                helperText={ touched.email && errors.email && errors.email }
+                            />
+                            <Field
+                                as={ TextField }
+                                name='celular'
+                                type='text'
+                                fullWidth
+                                label='Celular'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                size='small'
+                                error={ touched.celular && errors.celular }
+                                helperText={ touched.celular && errors.celular && errors.celular  }
                             />
                             <Field
                                 as={ TextField }
@@ -109,17 +156,6 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 type='text'
                                 fullWidth
                                 label='Razon Social'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                                error={ touched.razonSocial && errors.razonSocial }
-                                helperText={ touched.razonSocial && errors.razonSocial && 'Ingrese la razon social' }
-                            />
-                            <Field
-                                as={ TextField }
-                                name='nombre'
-                                type='text'
-                                fullWidth
-                                label='Nombre'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
                             />
@@ -168,24 +204,16 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 name='telefono'
                                 type='text'
                                 fullWidth
-                                label='telefono'
+                                label='Teléfono'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
                             />
-                            <Field
-                                as={ TextField }
-                                name='email'
-                                type='text'
-                                fullWidth
-                                label='Email'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                            />
+                           
                             <Button
                                 type='submit'
                                 variant='outlined'
                                 color='success'
-                                disabled={ isSubmitting || isValidating }
+                                // disabled={ isSubmitting || isValidating }
                             >
                                 <SaveOutlinedIcon />
                                 <Typography>Guardar</Typography>
@@ -215,13 +243,47 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
     const { id } = params as { id: string };
 
-    const { data } = await externalApiConToken.get(`/clientes/${ id }`, {
-        headers: {
-            'x-token': req.cookies.token
-        }
-    });
 
-    if ( !data ) {
+    if ( id === 'nuevo' ) {
+        const cliente : Cliente = {
+            id: '',
+            codigo: 0,
+            numero: '',
+            tipoDeDocumento: 'DNI',
+            nombre: '',
+            email: '',
+            celular: '',
+            razonSocial: '',
+            condicionIva: 'Consumidor Final',
+            domicilio: '',
+            provincia: '',
+            localidad: '',
+            telefono: '',
+            activo: false,
+            createdAt: 0
+        }
+
+        return {
+            props: {
+                cliente
+            }
+        }
+    }
+
+    try {
+        const { data } = await externalApiConToken.get(`/clientes/${ id }`, {
+            headers: {
+                'x-token': req.cookies.token
+            }
+        });
+
+        return {
+            props: {
+                cliente: data
+            }
+        }
+
+    } catch (error) {
         return {
             redirect: {
                 destination: '/',
@@ -229,12 +291,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
             }
         }
     }
+
     
-    return {
-        props: {
-            cliente: data
-        }
-    }
+
+    
+    
+    
 }
 
 export default ClientePage;
