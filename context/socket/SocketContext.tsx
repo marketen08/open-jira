@@ -20,6 +20,7 @@ interface Props {
 export const SocketProvider:FC<Props> = ({ children }) => {
 
     const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com/');
     
     const { cargarMensajes, cargarUsuarios } = useContext( ChatContext );
 
@@ -47,11 +48,20 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     
     useEffect(() => {
         socket?.on('mensaje-personal', (mensaje) => {
+            console.log('mensaje-personal')
             cargarMensajes( mensaje.para );
             scrollToBottomAnimated('mensajes');
         })
     }, [socket])
     
+    useEffect(() => {
+        socket?.on('mensaje-wa', (mensaje) => {
+            console.log('mensaje-wa')
+            cargarMensajes( mensaje.de );
+            scrollToBottomAnimated('mensajes');
+        })
+    }, [socket])
+
     return (
         <SocketContext.Provider value={{ socket, online }}>
             { children }

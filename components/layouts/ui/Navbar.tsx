@@ -29,7 +29,7 @@ export const Navbar = () => {
 
 
   return (
-    <AppBar position='sticky'>
+    <AppBar position="sticky" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
             <IconButton
                 size='large'

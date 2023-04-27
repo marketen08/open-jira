@@ -25,8 +25,11 @@ const Pedidos:NextPage = () => {
             <TableRow>
               <TableCell>Número</TableCell>
               <TableCell>Vehículo</TableCell>
+              <TableCell>Patente</TableCell>
+              <TableCell>Cliente</TableCell>
               <TableCell>Descripción</TableCell>
               <TableCell>Estado</TableCell>
+              <TableCell></TableCell>
             </TableRow>
             </TableHead>
             <PedidoLista pedidos={ pedidos }/>

@@ -59,7 +59,7 @@ export const EntryPage:FC<Props> = ({ entry }) => {
                 <Card>
                     <CardHeader 
                         title={ `Entrada:` }
-                        subheader={`Creada: ${ dateFunctions.getFormatDistanceToNow( entry.createdAt ) }`}
+                        subheader={`Creada: ${ dateFunctions.getFormatDistanceToNow( new Date( entry.createdAt )) }`}
                     />
                     <CardContent>
                         <TextField 

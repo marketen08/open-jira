@@ -23,6 +23,7 @@ export const entriesReducer = ( state: EntriesState, action: EntriesActionType )
                     if ( entry._id === action.payload._id ) {
                         entry.status = action.payload.status;
                         entry.description = action.payload.description;
+                        entry.updatedAt = action.payload.updatedAt;
                     }
                     return entry;
                 })

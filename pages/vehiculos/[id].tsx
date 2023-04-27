@@ -2,33 +2,45 @@ import { FC } from 'react';
 import { GetServerSideProps } from 'next'
 
 import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { number, object, string } from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card, CardHeader } from '@mui/material';
+import { Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card, CardHeader } from '@mui/material';
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Cliente, Vehiculo } from "../../interfaces";
 import { externalApiConToken } from '../../apiAxios';
+import { useRouter } from 'next/router';
 
 interface Props {
     vehiculo: Vehiculo,
-    clientes: Cliente[]
+    clientes: {
+        total: number,
+        clientes: Cliente[]
+    } 
 }
 
 export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
 
-    // const { updateVehiculo } = useContext(VehiculosContext);
-    console.log(clientes);
+    const router = useRouter();
 
-    const onSave = ( values: any ) => {
-        console.log(values);
+    const onSave = async ( values: Vehiculo ) => {
+
+        if ( values.id === '' ){
+            // NUEVO VEHICULO
+            await externalApiConToken.post(`/vehiculos`, { ...values });
+            router.push('/vehiculos')
+        } else {
+            // ACTUALIZAR VEHICULO
+            await externalApiConToken.put(`/vehiculos/${ values.id }`, { ...values });
+            router.push('/vehiculos')
+        }
 
     }
 
   return (
     
-    <Layout title={ 'Detalle del Vehiculo' }>
+    <Layout title={ 'Detalle del vehiculo' }>
         <Grid
             container
             justifyContent='center'
@@ -44,21 +56,20 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                         onSubmit={ ( values ) => {
                             onSave( values );
                         }}
-                        validationSchema={ Yup.object({
-                            patente: Yup.string()
+                        validationSchema={ object({
+                            patente: string()
                                         .max(10, 'Debe de tener 10 caracteres o menos')
                                         .required('La patente es requerida'),
-                            marca: Yup.string()
+                            marca: string()
                                         .max(50, 'Debe de tener 50 caracteres o menos')
                                         .required('La marca es requerida'),
-                            modelo: Yup.string()
+                            modelo: string()
                                         .max(100, 'Debe de tener 100 caracteres o menos')
                                         .required('El modelo es requerido'),
-                            cliente: Yup.string()
-                                        .required('El cliente es requerido'),
+                            
                         })
                     }>
-                    {( { values, errors, touched, isSubmitting, isValidating } ) => (
+                    {( { values, errors, touched, isSubmitting, isValidating  }:any ) => (
                         <Form autoComplete="off">
                             <Field
                                 as={ TextField }
@@ -68,7 +79,7 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                                 label='Patente'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
-                                error={ touched.patente && errors.patente }
+                                error={ touched.patente && errors.patente ? true : false }
                                 helperText={ touched.patente && errors.patente && errors.patente }
                             />
                             <Field
@@ -79,8 +90,8 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                                 label='Marca'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
-                                error={ touched.marca && errors.marca }
-                                helperText={ touched.marca && errors.marca&& errors.marca }
+                                error={ touched.marca && errors.marca ? true : false }
+                                helperText={ touched.marca && errors.marca && errors.marca }
                             />
                             <Field
                                 as={ TextField }
@@ -90,8 +101,8 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                                 label='Modelo'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
-                                error={ touched.modelo && errors.modelo }
-                                helperText={ touched.modelo && errors.modelo&& errors.modelo }
+                                error={ touched.modelo && errors.modelo ? true : false }
+                                helperText={ touched.modelo && errors.modelo && errors.modelo }
                             />
                             <Field 
                                 as={ TextField }
@@ -101,16 +112,18 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                                 label='Cliente'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 select
-                                >
+                            >
                                 {
-                                    clientes.map( cli => <MenuItem value={ cli.id } key={ cli.id }>{ cli.nombre }</MenuItem> )
+                                    clientes.clientes.map( cli => 
+                                           <MenuItem value={ cli.id } key={ cli.id }>{ cli.nombre }</MenuItem> 
+                                    )
                                 }
                             </Field>
                             <Button
                                 type='submit'
                                 variant='outlined'
                                 color='success'
-                                disabled={ isSubmitting || isValidating }
+                                // disabled={ isSubmitting || isValidating }
                             >
                                 <SaveOutlinedIcon />
                                 <Typography>Guardar</Typography>
@@ -141,24 +154,47 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
     const { id } = params as { id: string };
 
     try {
-        const { data:vehiculo } = await externalApiConToken.get(`/vehiculos/${ id }`, {
-            headers: {
-                'x-token': req.cookies.token
-            }
-        });
-    
-        const { data:clientes } = await externalApiConToken.get(`/clientes`, {
+        const { data:clientes } = await externalApiConToken.get(`/clientes/`, {
             headers: {
                 'x-token': req.cookies.token
             }
         });
 
-        return {
-            props: {
-                vehiculo,
-                clientes: clientes.clientes
+        if ( id === 'nuevo' ) {
+            const vehiculo : Vehiculo = {
+                id: '',
+                patente: '',
+                marca: '',
+                modelo: '',
+                cliente: '',
+                activo: false,
+                createdAt: 0
+            }
+
+            return {
+                props: {
+                    vehiculo,
+                    clientes
+                }
             }
         }
+
+    
+        const { data } = await externalApiConToken.get(`/vehiculos/${ id }`, {
+            headers: {
+                'x-token': req.cookies.token
+            }
+        });
+
+        
+        return {
+            props: {
+                vehiculo: data,
+                clientes
+            }
+        }
+
+    
 
     } catch (error) {
         return {
@@ -168,6 +204,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
             }
         }
     }
+
+    
+    
     
 }
 

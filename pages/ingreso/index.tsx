@@ -78,6 +78,7 @@ const Ingreso:NextPage = () => {
                             nombre: '',
                             email: '',
                             celular: '',
+                            telefono: '',
                             domicilio: '',
                             provincia: '',
                             localidad: '',
@@ -132,13 +133,16 @@ const Ingreso:NextPage = () => {
                             <Field fullWidth name="celular" component={TextField} label="Celular" />
                         </Box>
                         <Box paddingBottom={2}>
+                            <Field fullWidth name="telefono" component={TextField} label="Teléfono" />
+                        </Box>
+                        <Box paddingBottom={2}>
                             <Field fullWidth name="domicilio" component={TextField} label="Domicilio" inputProps={{ style: { textTransform: "uppercase" } }} />
                         </Box>
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="provincia" component={TextField} label="Provincia" inputProps={{ style: { textTransform: "uppercase" } }} />
+                            <Field fullWidth name="localidad" component={TextField} label="Localidad" inputProps={{ style: { textTransform: "uppercase" } }} />
                         </Box>
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="localidad" component={TextField} label="Localidad" inputProps={{ style: { textTransform: "uppercase" } }} />
+                            <Field fullWidth name="provincia" component={TextField} label="Provincia" inputProps={{ style: { textTransform: "uppercase" } }} />
                         </Box>
                         <Box paddingBottom={2}>
                           <Field fullWidth name="condicionIva" component={TextField} label="Condición de Iva" select>

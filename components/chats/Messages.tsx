@@ -14,7 +14,7 @@ export const Messages = () => {
 
     useEffect(() => {
         scrollToBottomAnimated('mensajes');
-      }, [mensajes])
+    }, [mensajes])
 
       
     return (

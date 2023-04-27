@@ -10,12 +10,14 @@ export async function middleware(req: NextRequest) {
 
     const token = req.cookies.get('token')?.value
 
-    if ( !session || (!token &&  !req.nextUrl.pathname.startsWith( '/auth/login' ))) {
-        const requestedPage = req.nextUrl.pathname;
-        const url = req.nextUrl.clone();
-        url.pathname = `/auth/login`;
-        url.search = `callbackUrl=${requestedPage}`;
-        return NextResponse.redirect(url);
+    if (!req.nextUrl.pathname.startsWith( '/auth/login' )) {
+        if ( !session || !token ) {
+            const requestedPage = req.nextUrl.pathname;
+            const url = req.nextUrl.clone();
+            url.pathname = `/auth/login`;
+            url.search = `callbackUrl=${requestedPage}`;
+            return NextResponse.redirect(url);
+        }
     }
 
     if ( req.nextUrl.pathname.startsWith( '/api/entries/' )) {
@@ -51,14 +53,16 @@ export async function middleware(req: NextRequest) {
 export const config = {
 //   matcher: '/about/:path*',
     matcher: [
+        '/api/entries',
         '/api/entries/:path*',
         '/chat',
-        '/clientes/:path*',
         '/clientes',
+        '/clientes/:path*',
         '/ingreso',
         '/pedidos',
-        '/vehiculos/:path*',
+        '/pedidos/:path*',
         '/vehiculos',
+        '/vehiculos/:path*',
         '/',
     ]
 }

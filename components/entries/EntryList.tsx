@@ -6,6 +6,8 @@ import { EntriesContext } from '../../context/entries';
 import { UIContext } from '../../context/ui';
 
 import styles from './EntryList.module.css';
+import { dateFunctions } from '../../utils';
+import { isBefore, addDays, isAfter } from 'date-fns';
 
 interface Props {
   status: EntryStatus;
@@ -17,7 +19,10 @@ export const EntryList:FC<Props> = ({ status }) => {
   const { isDragging, endDragging } = useContext(UIContext);
 
   // Memoriza los valores cada vez que cambian los valores de '[ entries ]'
-  const entriesByStatus = useMemo( () => entries.filter( entry => entry.status === status ), [ entries, status ] );
+  // const entriesByStatus = useMemo( () => entries.filter( entry => entry.status === status ), [ entries, status ] );
+  // if ( status === 'finished' ) {
+  //   entriesByStatus = useMemo( () => entries.filter( entry => entry.status === status && entry.updatedAt <= agregarDias( -1 ) ), [ entries, status ] );
+  // }
   
   const allowDrop = ( event: DragEvent<HTMLDivElement> ) => {
     event.preventDefault();
@@ -28,6 +33,7 @@ export const EntryList:FC<Props> = ({ status }) => {
 
     const entry = entries.find( e => e._id === id )!;
     entry.status = status;
+    entry.updatedAt = new Date()
     updateEntry( entry );
     endDragging();
   }
@@ -48,9 +54,19 @@ export const EntryList:FC<Props> = ({ status }) => {
 
             <List sx={{ opacity: isDragging ? 0.3 : 1, transition: 'all .2s' }}>
                 {
-                  entriesByStatus.map( entry => (
-                    <EntryCard key={ entry._id } entry={ entry } />
-                  ))
+                  entries.filter( entry => entry.status === status ).map( entry => {
+                    if ( status !== 'finished' ) {
+                      return (
+                        <EntryCard key={ entry._id } entry={ entry } />
+                      )
+                    } else {
+                      if ( isAfter( new Date( entry.updatedAt ), addDays( new Date(), -1 ))){
+                        return (
+                          <EntryCard key={ entry._id } entry={ entry } />
+                        )
+                      }
+                    }
+                  })
                 }
             </List>
 

@@ -1,6 +1,7 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, Link, Typography } from '@mui/material'
 import { FC } from 'react'
 import { horaMes } from '../../utils/horaMes'
+import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
 
 
 
@@ -9,9 +10,51 @@ export const IncomingMessage:FC<any> = ({ msg }) => {
     return (
         <Box display="flex">
             <Card sx={{ margin: 1, backgroundColor: 'white', color: 'black', maxWidth: '450px', padding: 2, paddingBottom: 1 }}>
-                <Typography sx={{ textAlign: 'left', paddingBottom: 1}}>
-                    { msg.mensaje }
-                </Typography>
+                {
+                    msg.tipo === 'texto' &&
+                    <Typography sx={{ textAlign: 'left', paddingBottom: 1}}>
+                        { msg.mensaje } - { msg.tipo }
+                    </Typography>
+                }
+                {
+                    msg.tipo === 'documento' &&
+                        <Box>
+                            <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
+                                <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }}>
+                                    { msg.mensaje }
+                                </Link>
+                                <Link href={ msg.link } underline="none">
+                                    <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
+                                </Link>
+                            </Typography>
+                        </Box>
+                }
+                {
+                    msg.tipo === 'image' &&
+                        <Box>
+                            <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
+                                <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }} download>
+                                    <img src={ msg.link } alt="Imagen" height={ 200 } />
+                                </Link>
+                                <Link href={ msg.link } underline="none">
+                                    <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
+                                </Link>
+                            </Typography>
+                        </Box>
+                }
+                {
+                    msg.tipo === 'voice' &&
+                        <Box>
+                            <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
+                                <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }}>
+                                    { msg.link }
+                                </Link>
+                                <Link href={ msg.link } underline="none">
+                                    <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
+                                </Link>
+                            </Typography>
+                        </Box>
+                }
                 <Typography sx={{ textAlign: 'left'}}>
                     { horaMes( msg.createdAt ) }
                 </Typography>

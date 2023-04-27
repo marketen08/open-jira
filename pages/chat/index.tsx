@@ -5,6 +5,7 @@ import { ChatContext } from '../../context/chat/ChatContext';
 
 import { styled } from '@mui/material/styles';
 import { Layout } from '../../components/layouts';
+import { ClientesContext } from '../../context';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : 'whitesmoke',
@@ -16,8 +17,12 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export const ChatPage = () => {
 
-    const { chatActivo } = useContext( ChatContext );
-   
+    const { chatActivo, usuarios } = useContext( ChatContext );
+    const { clientes } = useContext( ClientesContext );
+
+    const usuarioActivo = usuarios.filter( usuario => usuario.uid === chatActivo )[0]
+    const cliente = clientes.filter( cliente => cliente.email === usuarioActivo.email )[0]
+
     return (
         <Layout>
             <Grid container spacing={ 2 }>
@@ -39,10 +44,29 @@ export const ChatPage = () => {
                 </Grid>
                 <Grid item xs>
                     <Item sx={{ height: 'calc(100vh - 100px)'}}>
-                    <CardHeader title="Detalle" sx={{ backgroundColor: 'gray', color: 'white'}} />
-                    <Typography sx={{ padding: 2 }}>
-                        Detalle del usuario selecionado
-                    </Typography>
+                        <CardHeader title="Detalle" sx={{ backgroundColor: 'gray', color: 'white'}} />
+                        { cliente &&
+                            <Box>
+                                <Typography sx={{ paddingTop: 1 }}>
+                                    { cliente.nombre }
+                                </Typography>
+                                <Typography sx={{ paddingTop: 1 }}>
+                                    { cliente.tipoDeDocumento } { cliente.numero }
+                                </Typography>
+                                <Typography sx={{ paddingTop: 1 }}>
+                                    Email: { cliente.email }
+                                </Typography>
+                                <Typography sx={{ paddingTop: 1 }}>
+                                    Celular: { cliente.celular }
+                                </Typography>
+                                <Typography sx={{ paddingTop: 1 }}>
+                                    Domicilio: { cliente.domicilio }
+                                </Typography>
+                                <Typography sx={{ paddingTop: 1 }}>
+                                    Localidad: { cliente.localidad }
+                                </Typography>
+                            </Box>
+                        }
                     </Item>
                 </Grid>
             </Grid>

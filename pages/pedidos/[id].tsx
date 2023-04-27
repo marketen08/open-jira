@@ -1,10 +1,13 @@
 import { ChangeEvent, FC, useMemo, useState, useContext } from 'react';
 import { GetServerSideProps } from 'next'
 
-import { ErrorMessage, Formik, Form, Field } from 'formik';
+import { ErrorMessage, Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, Card, CardMedia, CardContent, CardActions, Hidden, Box, CardHeader } from "@mui/material";
+import { Autocomplete, Button, Grid, IconButton,
+        TextField, Typography, MenuItem, FormGroup, 
+        Card, CardMedia, CardContent, CardActions, 
+        Hidden, Box, CardHeader } from "@mui/material";
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -12,6 +15,7 @@ import { Pedido } from "../../interfaces";
 import { PedidosContext } from '../../context/pedidos';
 import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
+import { useRouter } from 'next/router';
 
 interface Props {
     pedido: Pedido
@@ -19,12 +23,16 @@ interface Props {
 
 export const PedidoPage:FC<Props> = ({ pedido }) => {
 
+    const router = useRouter();
+
+    const formularioInicial = { servicio: '', importe: 0 };
+    
     const [modificar, setModificar] = useState(false);
     const [cotizar, setCotizar] = useState(false);
 
     const onSave = async( values: Pedido ) => {
         console.log(values);
-        const { id, descripcion, servicio, importe } = values;
+        const { id, descripcion, listaItems } = values;
         
         if ( modificar ) {
             const modificar = await externalApiConToken.put(`/pedidos/${ id }`, { descripcion })
@@ -32,18 +40,36 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
 
         if ( cotizar ) {
             values.estado = 'Cotizando'
-            const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { servicio, importe })
+            const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { listaItems })
         }
 
         setModificar(false);
         setCotizar(false);
     }
 
+    const onVolverCotizar = async( values: Pedido ) => {
+        const { id, listaItems } = values;
+        
+        values.estado = 'Cotizando'
+        const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { listaItems })
+
+        setModificar(false);
+        setCotizar(false);
+    }
+
+    const onVerCotizacion = async( values: Pedido ) => {
+        const { urlPropuesta } = values;
+        
+        router.push(urlPropuesta);
+    }
+
     const onCotizarEnviar = async( values: Pedido ) => {
-        const { id, servicio, importe } = values;
+        console.log(values);
+
+        const { id, listaItems } = values;
 
         values.estado = 'Cotizado'
-        const cotizarEnviar = await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { servicio, importe })
+        const cotizarEnviar = await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { listaItems })
 
         setModificar(false);
         setCotizar(false);
@@ -79,31 +105,45 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                         <Typography gutterBottom variant="h5" >
                                             Detalle del pedido #{ values.numero }
                                         </Typography>
-                                        <Grid container sx={{ marginTop: 2 }} >
-                                            <Grid item xs={ 6 } sm={ 6 } md={ 6 }>
+                                        <Grid container spacing={2} >
+                                            <Grid item xs={ 12 } sm={ 6 } md={ 6 }>
                                                 <Typography gutterBottom variant="h5" component="div">
                                                     { values.vehiculo.marca } { values.vehiculo.modelo }
                                                 </Typography>
-                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                                    Propietario: { values.vehiculo.cliente.nombre }
-                                                </Typography>
-                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                                    Celular: { values.vehiculo.cliente.celular }
-                                                </Typography>
-                                                <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
-                                                    Email: { values.vehiculo.cliente.email }
-                                                </Typography>
+                                                {
+                                                    (typeof values.vehiculo.cliente === 'object' ) &&
+                                                    <>
+                                                        <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                            Propietario: { values.vehiculo.cliente.nombre }
+                                                        </Typography>
+                                                        <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                            Celular: { values.vehiculo.cliente.celular }
+                                                        </Typography>
+                                                        <Typography variant="body2" color="text.primary" sx={{ padding: 0.5 }}>
+                                                            Email: { values.vehiculo.cliente.email }
+                                                        </Typography>
+                                                    </>
+                                                }
                                             </Grid>
-                                            <Grid item xs={ 6 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'block' } : { display: 'none' } }>
-                                                <Typography gutterBottom variant="h5" component="div">
-                                                    VER DETALLE DE COTIZACIÓN
-                                                </Typography>
+                                            <Grid item xs={ 12 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' } : { display: 'none' } }>
+                                                <Button
+                                                    type='button'
+                                                    variant='outlined'
+                                                    color='success'
+                                                    disabled={ isSubmitting || isValidating }
+                                                    onClick={ () => onVerCotizacion( values ) }
+                                                    sx={ values.urlPropuesta ? { marginRight: 1, height: 40 } : { display: 'none' }}
+                                                >
+                                                    <SaveOutlinedIcon />
+                                                    <Typography>Ver cotización</Typography>
+                                                </Button>
                                                 <Button
                                                     type='button'
                                                     variant='outlined'
                                                     color='error'
                                                     disabled={ isSubmitting || isValidating }
-                                                    onClick={ () => onCotizarEnviar( values ) }
+                                                    onClick={ () => onVolverCotizar( values ) }
+                                                    sx={{ height: 40 }}
                                                 >
                                                     <SaveOutlinedIcon />
                                                     <Typography>Volver a cotizar</Typography>
@@ -125,30 +165,73 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                             helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
                                         />
                                         <Box sx={ !cotizar && values.estado === 'Nuevo' ? { display: 'none' } : { display: 'block'}}>
-                                            <Field
-                                                as={ TextField }
-                                                name='servicio'
-                                                type='text'
-                                                fullWidth
-                                                multiline
-                                                disabled={ !cotizar }
-                                                rows={ 6 }
-                                                label='Detalle de la cotización'
-                                                sx={{ mt: 3, mb: 1 }}
-                                                error={ touched.descripcion && errors.descripcion }
-                                                helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
-                                            />
-                                            <Field
-                                                as={ TextField }
-                                                name='importe'
-                                                type='number'
-                                                fullWidth
-                                                disabled={ !cotizar }
-                                                label='Importe presupuestado'
-                                                sx={{ mt: 3, mb: 1 }}
-                                                error={ touched.descripcion && errors.descripcion }
-                                                helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
-                                            />
+                                            <FieldArray name="listaItems">
+                                                {({ push, remove }) => (
+                                                <>
+                                                    { values.listaItems.map(( opcion, indiceFormulario) => (
+                                                        <div key={ indiceFormulario }>
+                                                            
+                                                            <Box sx={{ display: 'flex' } }>
+                                                                <Field
+                                                                    as={ TextField }
+                                                                    name={`listaItems.${indiceFormulario}.servicio`}
+                                                                    type='text'
+                                                                    fullWidth
+                                                                    multiline
+                                                                    disabled={ !cotizar }
+                                                                    rows={ 1 }
+                                                                    label='Detalle de la cotización'
+                                                                    sx={{ mt: 1, mb: 1 }}
+
+                                                                    error={ touched.descripcion && errors.descripcion }
+                                                                    helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                                                />
+                                                                <Field
+                                                                    as={ TextField }
+                                                                    name={`listaItems.${indiceFormulario}.importe`}
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    disabled={ !cotizar }
+                                                                    label='Importe'
+                                                                    sx={{ m: 1, width: 150  }}
+                                                                    error={ touched.descripcion && errors.descripcion }
+                                                                    helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                                                />
+                                                                <Button
+                                                                    disabled={isSubmitting}
+                                                                    onClick={() => remove(indiceFormulario)}
+                                                                    type='button'
+                                                                    variant='outlined'
+                                                                    color='error'
+                                                                    sx={ !cotizar ? { display: 'none' } : { mt: 1, mb: 1 }}
+                                                                >
+                                                                    Delete
+                                                                </Button>
+                                                            </Box>
+                                                        </div>
+                                                    ))}
+                            
+                                                    <div>
+                                                        { typeof errors.listaItems === 'string' ? (
+                                                            <>
+                                                                { errors.listaItems }
+                                                            </>
+                                                        ) : null }
+                                                    </div>
+                                                    <Box sx={ !cotizar ? { display: 'none' } : { display: 'block' } } >
+                                                        <Button
+                                                            type='button'
+                                                            variant='outlined'
+                                                            color='success'
+                                                            disabled={ isSubmitting || isValidating }
+                                                            onClick={() => push(formularioInicial)}
+                                                            >
+                                                            Agregar nuevo item
+                                                        </Button>
+                                                    </Box>
+                                                </>
+                                                )}
+                                            </FieldArray>
                                         </Box>
                                     </CardContent>
                                     <CardActions>

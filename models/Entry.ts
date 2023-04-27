@@ -6,7 +6,6 @@ export interface IEntry extends Entry {
 
 const entrySchema = new Schema({
     description: { type: String, require: true },
-    createdAt: { type: Number },
     status: {
         type: String,
         enum: {
@@ -16,6 +15,8 @@ const entrySchema = new Schema({
         default: 'pending',
         require: true
     }
+},{
+    timestamps: true
 });
 
 

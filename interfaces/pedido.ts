@@ -4,10 +4,15 @@ export interface Pedido {
   numero: string;
   vehiculo: Vehiculo;
   descripcion: string;
-  servicio: string;
-  importe: string;
+  listaItems: [
+    {
+      servicio: string;
+      importe: string;
+    }
+  ];
   estado: PedidoEstados;
   enviado: boolean;
+  urlPropuesta: string;
   activo: boolean;
 
   createdAt: number;

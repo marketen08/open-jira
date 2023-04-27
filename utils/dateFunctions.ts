@@ -1,7 +1,7 @@
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, addDays } from 'date-fns';
 import { es } from 'date-fns/locale'
 
-export const getFormatDistanceToNow = ( date: number ) => {
+export const getFormatDistanceToNow = ( date: Date ) => {
 
     const fromNow = formatDistanceToNow( date, { locale: es } );
 

@@ -82,16 +82,32 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                     }>
                     {( { values, errors, touched, isSubmitting, isValidating }:any ) => (
                         <Form autoComplete="off">
-                            <Field
+                            {
+                                values.codigo !== 0 &&
+                                <Field
+                                    as={ TextField }
+                                    name='codigo'
+                                    type='text'
+                                    fullWidth
+                                    disabled
+                                    label='Código'
+                                    sx={{ mt: 1.5, mb: 1 }}
+                                    size='small'
+                                />
+                            }
+                            <Field 
                                 as={ TextField }
-                                name='codigo'
-                                type='text'
+                                name='condicionIva'
                                 fullWidth
-                                disabled
-                                label='Código'
-                                sx={{ mt: 1.5, mb: 1 }}
                                 size='small'
-                            />
+                                label='Condición Iva'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                select
+                            >
+                                {
+                                    validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                                }
+                            </Field>
                             <Field 
                                 as={ TextField }
                                 name='tipoDeDocumento'
@@ -112,7 +128,6 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Número'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
                                 error={ touched.numero && errors.numero }
                                 helperText={ touched.numero && errors.numero && errors.numero }
                             />
@@ -124,7 +139,6 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Nombre'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
                                 error={ touched.nombre && errors.nombre }
                                 helperText={ touched.nombre && errors.nombre && errors.nombre  }
                             />
@@ -135,7 +149,6 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Email'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
                                 error={ touched.email && errors.email }
                                 helperText={ touched.email && errors.email && errors.email }
                             />
@@ -146,58 +159,8 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Celular'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
                                 error={ touched.celular && errors.celular }
                                 helperText={ touched.celular && errors.celular && errors.celular  }
-                            />
-                            <Field
-                                as={ TextField }
-                                name='razonSocial'
-                                type='text'
-                                fullWidth
-                                label='Razon Social'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                            />
-                            <Field 
-                                as={ TextField }
-                                name='condicionIva'
-                                fullWidth
-                                size='small'
-                                label='Condición Iva'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                select
-                            >
-                                {
-                                    validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
-                                }
-                            </Field>
-                            <Field
-                                as={ TextField }
-                                name='domicilio'
-                                type='text'
-                                fullWidth
-                                label='Domicilio'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
-                            />
-                            <Field
-                                as={ TextField }
-                                name='provincia'
-                                type='text'
-                                fullWidth
-                                label='Provincia'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'    
-                            />
-                            <Field
-                                as={ TextField }
-                                name='localidad'
-                                type='text'
-                                fullWidth
-                                label='Localidad'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
                             />
                             <Field
                                 as={ TextField }
@@ -206,7 +169,39 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Teléfono'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                size='small'
+                            />
+                            <Field
+                                as={ TextField }
+                                name='razonSocial'
+                                type='text'
+                                fullWidth
+                                label='Razon Social'
+                                sx={{ mt: 1.5, mb: 1 }}
+                            />
+                            
+                            <Field
+                                as={ TextField }
+                                name='domicilio'
+                                type='text'
+                                fullWidth
+                                label='Domicilio'
+                                sx={{ mt: 1.5, mb: 1 }}
+                            />
+                            <Field
+                                as={ TextField }
+                                name='localidad'
+                                type='text'
+                                fullWidth
+                                label='Localidad'
+                                sx={{ mt: 1.5, mb: 1 }}
+                            />
+                            <Field
+                                as={ TextField }
+                                name='provincia'
+                                type='text'
+                                fullWidth
+                                label='Provincia'
+                                sx={{ mt: 1.5, mb: 1 }}
                             />
                            
                             <Button

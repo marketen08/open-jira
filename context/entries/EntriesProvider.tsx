@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack'
 import { entriesApi } from '../../apiAxios';
 import { Entry } from '../../interfaces';
 import { EntriesContext, entriesReducer } from './';
+import { useSession } from 'next-auth/react';
 
 interface Props {
     children: ReactNode
@@ -18,6 +19,9 @@ const Entries_INITIAL_STATE: EntriesState = {
 
 export const EntriesProvider:FC<Props> = ({ children }) => {
 
+    const { status } = useSession();
+
+    
     const [state, dispatch] = useReducer( entriesReducer, Entries_INITIAL_STATE )
     const { enqueueSnackbar } = useSnackbar();
 
@@ -53,8 +57,10 @@ export const EntriesProvider:FC<Props> = ({ children }) => {
     }
 
     useEffect(() => {
-        refreshEntries();
-    }, []);
+        if ( status === 'authenticated' ) {
+            refreshEntries();
+        } 
+    }, [status]);
     
     return (
         <EntriesContext.Provider value={{
