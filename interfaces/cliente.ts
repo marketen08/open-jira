@@ -1,3 +1,4 @@
+import { IUsuario } from './usuarios';
 export interface Cliente {
   id: string;
   codigo: number;
@@ -13,6 +14,7 @@ export interface Cliente {
   localidad: string;
   telefono: string;
   activo: boolean;
+  usuarioCliente: IUsuario;
 
   createdAt: number;
   updatedAt?: number;

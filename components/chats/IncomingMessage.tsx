@@ -2,6 +2,8 @@ import { Box, Card, Link, Typography } from '@mui/material'
 import { FC } from 'react'
 import { horaMes } from '../../utils/horaMes'
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
+import ReactPlayer from 'react-player/lazy'
+import ReactAudioPlayer from 'react-audio-player';
 
 
 
@@ -45,14 +47,12 @@ export const IncomingMessage:FC<any> = ({ msg }) => {
                 {
                     msg.tipo === 'voice' &&
                         <Box>
-                            <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
-                                <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }}>
-                                    { msg.link }
-                                </Link>
-                                <Link href={ msg.link } underline="none">
-                                    <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
-                                </Link>
-                            </Typography>
+                            <ReactAudioPlayer
+                                src={ msg.link }
+                                controls
+                            />
+                            {/* <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
+                            </Typography> */}
                         </Box>
                 }
                 <Typography sx={{ textAlign: 'left'}}>

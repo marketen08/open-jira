@@ -50,7 +50,7 @@ export const Navbar = () => {
                 </Link>
               </NextLink>
             </Typography>
-            {true && (
+            {/* {true && (
             <div>
               <IconButton
                 size="large"
@@ -64,7 +64,7 @@ export const Navbar = () => {
               </IconButton>
               
             </div>
-          )}
+          )} */}
           {true && (
             <div>
               <IconButton

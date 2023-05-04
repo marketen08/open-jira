@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useMemo, useState, useContext } from 'react';
+import { ChangeEvent, FC, useMemo, useState, useContext, useEffect } from 'react';
 import { GetServerSideProps } from 'next'
 
 import { ErrorMessage, Formik, Form, Field, FieldArray } from 'formik';
@@ -16,14 +16,36 @@ import { PedidosContext } from '../../context/pedidos';
 import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
 import { useRouter } from 'next/router';
+import { PedidoUploadFile } from '../../components/pedidos/PedidoUploadFile';
+import { AdjuntoLista } from '../../components/adjuntos/AdjuntoLista';
+import { EmailOutlined } from '@mui/icons-material';
+import { ChatContext, UIContext } from '../../context';
+import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
+import { AdjuntosContext } from '../../context/adjuntos/AdjuntosContext';
 
 interface Props {
-    pedido: Pedido
+    pedido: Pedido,
+    id: string
 }
 
-export const PedidoPage:FC<Props> = ({ pedido }) => {
+export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
     const router = useRouter();
+
+    const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
+    const { refreshAdjuntos } = useContext(AdjuntosContext)
+  
+    // const { closeChatMenu } = useContext( UIContext );
+  
+    const handleActivarChat = async() => {
+    //   closeChatMenu()
+      router.push('/chat');
+  
+      activarChat( pedido.vehiculo.cliente.usuarioCliente )
+      cargarMensajes( pedido.vehiculo.cliente.usuarioCliente )
+      scrollToBottomAnimated('mensajes');
+    }
+  
 
     const formularioInicial = { servicio: '', importe: 0 };
     
@@ -76,6 +98,12 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
         
     }
 
+    useEffect(() => {
+        // FALTA RESOLVER QUE EL REFRESH DE ADJUNTOS FUNCIONE CUANDO SE INGRESA DIRECTAMENTE AL LINK
+        // EL PROBLEMA ESTA EN QUE NO TIENE CREDENCIALES PARA PODER EJECUTAR LA CONSULTA EN EL REFRECH DEL CONTEXT
+        refreshAdjuntos( id );
+    }, []);
+
   return (
             <Formik
                 initialValues={{ 
@@ -105,6 +133,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                         <Typography gutterBottom variant="h5" >
                                             Detalle del pedido #{ values.numero }
                                         </Typography>
+                                        
                                         <Grid container spacing={2} >
                                             <Grid item xs={ 12 } sm={ 6 } md={ 6 }>
                                                 <Typography gutterBottom variant="h5" component="div">
@@ -125,6 +154,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                     </>
                                                 }
                                             </Grid>
+                                            
                                             <Grid item xs={ 12 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' } : { display: 'none' } }>
                                                 <Button
                                                     type='button'
@@ -148,6 +178,12 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                     <SaveOutlinedIcon />
                                                     <Typography>Volver a cotizar</Typography>
                                                 </Button>
+                                            </Grid>
+                                        </Grid>
+                                        <PedidoUploadFile id={ id } />
+                                        <Grid container>
+                                            <Grid item xs={12} md={6}>
+                                                <AdjuntoLista id={ id } />
                                             </Grid>
                                         </Grid>
                                         <Field
@@ -292,6 +328,7 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                                                 color='primary'
                                                 disabled={ isSubmitting || isValidating }
                                                 onClick={ () => onCotizarEnviar( values ) }
+                                                
 
                                             >
                                                 <SaveOutlinedIcon />
@@ -303,14 +340,17 @@ export const PedidoPage:FC<Props> = ({ pedido }) => {
                             </Form>
                         </Grid>
 
-                            <IconButton sx={{
-                                position:'fixed',
-                                bottom: 30,
-                                right: 30,
-                                border: 1,
-                                color: 'red'
-                            }}>
-                                <DeleteOutlineOutlinedIcon />
+                            <IconButton 
+                                sx={{
+                                    position:'fixed',
+                                    bottom: 30,
+                                    right: 30,
+                                    border: 1,
+                                    color: 'blue'
+                                }}
+                                onClick={ () => handleActivarChat() }
+                            >
+                                <EmailOutlined />
                             </IconButton>
                     </Layout>
                     )
@@ -342,7 +382,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
     
     return {
         props: {
-            pedido: data
+            pedido: data,
+            id
         }
     }
 }

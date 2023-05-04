@@ -1,3 +1,4 @@
+export * from './adjuntos';
 export * from './auth';
 export * from './chat';
 export * from './clientes';

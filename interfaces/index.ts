@@ -1,3 +1,4 @@
+export * from './adjunto';
 export * from './cliente';
 export * from './entry';
 export * from './pedido';

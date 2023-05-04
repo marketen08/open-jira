@@ -48,7 +48,7 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     
     useEffect(() => {
         socket?.on('mensaje-personal', (mensaje) => {
-            console.log('mensaje-personal')
+            console.log('mensaje-enviado')
             cargarMensajes( mensaje.para );
             scrollToBottomAnimated('mensajes');
         })
@@ -57,6 +57,7 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     useEffect(() => {
         socket?.on('mensaje-wa', (mensaje) => {
             console.log('mensaje-wa')
+            console.log(mensaje)
             cargarMensajes( mensaje.de );
             scrollToBottomAnimated('mensajes');
         })

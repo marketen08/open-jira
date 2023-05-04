@@ -41,11 +41,6 @@ const menuItems: menuItem[] = [
     titulo: 'CLIENTES',
     url: '/clientes',
     icono: <FolderCopyOutlinedIcon />
-  },
-  {
-    titulo: 'CHAT',
-    url: '/chat',
-    icono: <ChatOutlinedIcon />
   }
 ]
 

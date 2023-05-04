@@ -1,8 +1,10 @@
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { IconButton, Menu, TableCell, TableRow, Typography, MenuItem } from '@mui/material';
 import { Pedido } from '../../interfaces';
 import { MoreVertOutlined } from '@mui/icons-material';
+import { ChatContext, UIContext } from '../../context';
+import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
 
 interface Props {
     pedido: Pedido;
@@ -11,6 +13,20 @@ interface Props {
 export const PedidoItem:FC<Props> = ({ pedido }) => {
 
   const router = useRouter();
+
+
+  const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
+
+  const { closeChatMenu } = useContext( UIContext );
+
+  const handleActivarChat = async() => {
+    closeChatMenu()
+    router.push('/chat');
+
+    activarChat( pedido.vehiculo.cliente.usuarioCliente )
+    cargarMensajes( pedido.vehiculo.cliente.usuarioCliente )
+    scrollToBottomAnimated('mensajes');
+  }
 
   
   const [openMenu, setOpenMenu] = useState(false);
@@ -78,6 +94,7 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
           >
             <MenuItem onClick={onCrearNuevoPedido}>Crear nuevo pedido</MenuItem>
             <MenuItem onClick={onClick}>Editar</MenuItem>
+            <MenuItem onClick={handleActivarChat}>Chat</MenuItem>
           </Menu>
         </div>
       </TableCell>
