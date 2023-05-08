@@ -1,7 +1,6 @@
 import { IUsuario } from './usuarios';
-export interface Cliente {
-  id: string;
-  codigo: number;
+
+export interface ClienteNuevo {
   numero: string;
   tipoDeDocumento: ClienteTipoDeDocumento;
   nombre: string;
@@ -13,6 +12,11 @@ export interface Cliente {
   provincia: string;
   localidad: string;
   telefono: string;
+}
+
+export interface Cliente extends ClienteNuevo {
+  id: string;
+  codigo: number;
   activo: boolean;
   usuarioCliente: IUsuario;
 

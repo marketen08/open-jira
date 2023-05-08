@@ -8,7 +8,7 @@ import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { Cliente, ClienteCondicionIva, ClienteTipoDeDocumento } from "../../interfaces";
+import { Cliente, ClienteCondicionIva, ClienteNuevo, ClienteTipoDeDocumento } from "../../interfaces";
 import { ClientesContext } from '../../context/clientes';
 import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
@@ -30,9 +30,6 @@ interface Props {
 export const ClientePage:FC<Props> = ({ cliente }) => {
 
     const router = useRouter();
-
-    // const { updateCliente } = useContext(ClientesContext);
-    // const { codigo, tipoDeDocumento, numero, razonSocial, nombre, condicionIva, domicilio, provincia, localidad, telefono, email } = cliente;
 
     const onSave = async ( values: Cliente ) => {
 
@@ -240,9 +237,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
 
     if ( id === 'nuevo' ) {
-        const cliente : Cliente = {
-            id: '',
-            codigo: 0,
+        const cliente : ClienteNuevo = {
             numero: '',
             tipoDeDocumento: 'DNI',
             nombre: '',
@@ -253,9 +248,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
             domicilio: '',
             provincia: '',
             localidad: '',
-            telefono: '',
-            activo: false,
-            createdAt: 0
+            telefono: ''
         }
 
         return {
