@@ -1,4 +1,4 @@
-import { IUsuario } from './usuarios';
+import { IUsuario, IMensaje } from './';
 
 export interface ClienteNuevo {
   numero: string;
@@ -12,6 +12,18 @@ export interface ClienteNuevo {
   provincia: string;
   localidad: string;
   telefono: string;
+}
+
+export interface ClienteConMensajes {
+  id: string;
+  codigo: string;
+  tipoDeDocumento: ClienteTipoDeDocumento;
+  numero: string;
+  nombre: string;
+  celular: string;
+  email: string;
+  usuarioCliente: string
+  mensajes: IMensaje
 }
 
 export interface Cliente extends ClienteNuevo {

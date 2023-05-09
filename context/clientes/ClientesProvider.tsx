@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack'
 import Cookies from 'js-cookie';
 
 import { externalApiConToken } from '../../apiAxios';
-import { Cliente } from '../../interfaces';
+import { Cliente, ClienteConMensajes } from '../../interfaces';
 import { ClientesContext, clientesReducer } from './';
 import { AuthContext } from '../auth';
 
@@ -16,12 +16,21 @@ interface ListadoDeClientesApi {
     clientes: Cliente[];
 }
 
+export interface ListadoDeClientesConMensajesApi {
+    total: number;
+    clientes: ClienteConMensajes[];
+}
+
 export interface ClientesState {
     clientes: Cliente[];
+    clientesConMensajes: ClienteConMensajes[];
+    totalMensajesNoLeidos: number;
 }
 
 const Clientes_INITIAL_STATE: ClientesState = {
-    clientes: []
+    clientes: [],
+    clientesConMensajes: [],
+    totalMensajesNoLeidos: 0
 }
 
 export const ClientesProvider:FC<Props> = ({ children }) => {
@@ -71,8 +80,22 @@ export const ClientesProvider:FC<Props> = ({ children }) => {
         }
     }
 
+    const refreshClientesConMensajes = async() => {
+
+        if ( Cookies.get('token')  ) {
+            try {
+                const { data } = await externalApiConToken.get<ListadoDeClientesConMensajesApi>('/clientes/conmensajes/noleidos');
+                // const { clientes } = data;
+                dispatch({ type: '[Cliente] - Refresh Data con mensajes', payload: data });
+            } catch (error) {
+                console.log('Sin credenciales')                
+            }
+        }
+    }
+
     useEffect(() => {
         refreshClientes();
+        refreshClientesConMensajes();
     }, []);
     
     return (

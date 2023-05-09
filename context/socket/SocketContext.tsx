@@ -41,14 +41,14 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     // Escuchar los cambios en los usuarios conectados
     useEffect(() => {
         socket?.on( 'lista-usuarios', ( usuarios ) => {
-            // console.log('first')
+            console.log('cargarUsuarios')
             cargarUsuarios( usuarios );
         })
     }, [ socket ]);
     
     useEffect(() => {
         socket?.on('mensaje-personal', (mensaje) => {
-            console.log('mensaje-enviado')
+            console.log('mensaje-enviado', mensaje)
             cargarMensajes( mensaje.para );
             scrollToBottomAnimated('mensajes');
         })

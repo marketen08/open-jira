@@ -1,11 +1,17 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { ChatContext, UIContext } from '../../context';
 import { scrollToBottom, scrollToBottomAnimated } from '../../utils/scrollToBottom';
 import { Avatar, Divider, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import { ClienteConMensajes } from '../../interfaces';
 
-export const SidebarChatItem = ({ usuario }:any) => {
+interface Props {
+    cliente: ClienteConMensajes
+}
+
+export const SidebarChatItem:FC<Props> = ({ cliente }) => {
     
+    // console.log(cliente)
     const router = useRouter();
 
     const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
@@ -17,8 +23,8 @@ export const SidebarChatItem = ({ usuario }:any) => {
         closeChatMenu()
         router.push('/chat');
 
-        activarChat( usuario.uid )
-        cargarMensajes( usuario.uid )
+        activarChat( cliente.usuarioCliente )
+        cargarMensajes( cliente.usuarioCliente )
         scrollToBottomAnimated('mensajes');
     }
 
@@ -29,7 +35,7 @@ export const SidebarChatItem = ({ usuario }:any) => {
                     <Avatar alt="Remy Sharp" src="https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png" />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={ usuario.nombre }
+                    primary={ cliente.nombre }
                     secondary={
                             <>
                                 <Typography
@@ -38,13 +44,13 @@ export const SidebarChatItem = ({ usuario }:any) => {
                                     variant="body2"
                                     color="text.primary"
                                 >
-                                    { '11-3352-0349' }
+                                    { cliente.celular }
                                 </Typography>
-                                {
-                                    ( usuario.online )
+                                {/* {
+                                    ( cliente.email )
                                     ? <span className="text-success">Online</span>
                                     : <span className="text-danger">Offline</span>
-                                }
+                                } */}
                             </>
                         }
                     />

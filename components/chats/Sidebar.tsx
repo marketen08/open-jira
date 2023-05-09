@@ -1,22 +1,23 @@
 import { useContext } from 'react';
 import { List } from '@mui/material';
-import { AuthContext, ChatContext } from '../../context';
+import { AuthContext, ChatContext, ClientesContext } from '../../context';
 import { SidebarChatItem } from './SidebarChatItem'
 
 export const Sidebar = () => {
     
     const { user } = useContext( AuthContext );
-    const { usuarios } = useContext( ChatContext );
+    const { clientesConMensajes } = useContext( ClientesContext );
 
+    console.log('ccm', clientesConMensajes);
     return (
         <List sx={{ width: '100%', padding: 1 }}>
             {
-                usuarios
-                    .filter( us => us.uid !== user?.uid )
-                    .map( ( usuario ) => (
+                clientesConMensajes
+                    .filter( cliente => cliente.id !== user?.uid )
+                    .map( ( cliente ) => (
                     <SidebarChatItem 
-                        key={ usuario.uid }
-                        usuario={ usuario }
+                        key={ cliente.id }
+                        cliente={ cliente }
                     />
                 ))
             }

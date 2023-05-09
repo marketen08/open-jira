@@ -1,13 +1,15 @@
-import { AppBar, IconButton, Link, Menu, MenuItem, Toolbar } from "@mui/material"
+import { AppBar, Badge, IconButton, Link, Menu, MenuItem, Toolbar } from "@mui/material"
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from 'react';
 import { UIContext } from "../../../context/ui";
 import NextLink from "next/link";
 import { AccountCircle, EmailOutlined } from "@mui/icons-material";
-import { AuthContext } from "../../../context";
+import { AuthContext, ClientesContext } from "../../../context";
 
 export const Navbar = () => {
+
+  const { totalMensajesNoLeidos  } = useContext(  ClientesContext );
 
   const { openSideMenu, openChatMenu } = useContext( UIContext )
   const { logout } = useContext(  AuthContext );
@@ -50,7 +52,7 @@ export const Navbar = () => {
                 </Link>
               </NextLink>
             </Typography>
-            {/* {true && (
+            {true && (
             <div>
               <IconButton
                 size="large"
@@ -60,11 +62,13 @@ export const Navbar = () => {
                 onClick={ openChatMenu }
                 color="inherit"
               >
-                <EmailOutlined />
+                <Badge badgeContent={ totalMensajesNoLeidos } color="primary">
+                  <EmailOutlined />
+                </Badge>
               </IconButton>
               
             </div>
-          )} */}
+          )}
           {true && (
             <div>
               <IconButton

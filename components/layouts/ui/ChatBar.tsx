@@ -8,7 +8,7 @@ import { UIContext } from "../../../context/ui";
 import NextLink from "next/link";
 import Button from "@mui/material/Button";
 import { LoginOutlined } from "@mui/icons-material";
-import { AuthContext, ChatContext } from "../../../context";
+import { AuthContext, ChatContext, ClientesContext } from "../../../context";
 import { SidebarChatItem } from "../../chats";
 
 export const ChatBar = () => {
@@ -16,7 +16,7 @@ export const ChatBar = () => {
   const { chatmenuOpen, closeChatMenu } = useContext( UIContext)
   const { user, isLoggedIn, logout } = useContext(  AuthContext );
 
-  const { usuarios } = useContext( ChatContext );
+  const { clientesConMensajes } = useContext( ClientesContext );
 
   return (
           <Drawer
@@ -32,13 +32,13 @@ export const ChatBar = () => {
 
             <List sx={{ width: '100%', padding: 1 }}>
               {
-                  usuarios
-                      .filter( us => us.uid !== user?.uid )
-                      .map( ( usuario ) => (
-                      <SidebarChatItem
-                          key={ usuario.uid }
-                          usuario={ usuario }
-                      />
+                  clientesConMensajes
+                      // .filter( cliente => cliente.id !== user?.uid )
+                      .map( ( cliente ) => (
+                        <SidebarChatItem
+                            key={ cliente.id }
+                            cliente={ cliente }
+                        />
                   ))
               }
           </List>

@@ -1,13 +1,14 @@
 import { createContext } from 'react';
-import { Cliente } from '../../interfaces';
+import { Cliente, ClienteConMensajes } from '../../interfaces';
 
 interface ContextProps {
     clientes: Cliente[];
-    
+    clientesConMensajes: ClienteConMensajes[];
+    totalMensajesNoLeidos: number;
     // Methods
     addNewCliente: (description: string) => void;
     updateCliente: (cliente: Cliente, showSnackbar?: boolean ) => void;
-    refreshClientes: () => Promise<void>
+    refreshClientes: () => Promise<void>;
 }
 
 
