@@ -29,6 +29,9 @@ export const SendMessage = () => {
 
     }
 
+    const onTerminar = () => {
+        
+    }
 
     return (
         <form onSubmit={ onSubmit } autoComplete="off">
@@ -48,9 +51,9 @@ export const SendMessage = () => {
                 {/* <i className="feather icon-message-circle" /> */}
                 Enviar
               </Button>
-              <Button variant='outlined' type="submit" color='primary' sx={{ margin: 1}}>
+              <Button variant='outlined' type="button" color='primary' sx={{ margin: 1}} onClick={ onTerminar }>
                 {/* <i className="feather icon-message-circle" /> */}
-                Adjuntar
+                Terminar
               </Button>
             </Box>
         </form>

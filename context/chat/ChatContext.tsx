@@ -11,6 +11,7 @@ interface ContextProps {
     cargarMensajes: (uid: string) => void;
     cargarUsuarios: (usuarios: IUsuario[]) => void;
     activarChat: (uid: string) => void;
+    // cargarMensajes2: () => void;
     // updateCliente: (cliente: Cliente, showSnackbar?: boolean ) => void;
 }
 

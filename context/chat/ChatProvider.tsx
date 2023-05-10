@@ -1,4 +1,5 @@
 import { FC, ReactNode, useReducer } from 'react';
+
 import { externalApiConToken } from '../../apiAxios';
 import { IUsuario } from '../../interfaces';
 import { IMensaje } from '../../interfaces/mensaje';
@@ -40,6 +41,12 @@ export const ChatProvider:FC<Props> = ({ children }) => {
         dispatch({ type: 'Chat - Activar', payload: uid });
     }
 
+    const cargarMensajes2 = async( ) => {
+        // const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
+        // dispatch({ type: 'Chat - Mensajes cargados', payload: data.mensajes });
+        console.log('object');
+    }
+
     return (
         <ChatContext.Provider value={{
             ...state,
@@ -47,7 +54,8 @@ export const ChatProvider:FC<Props> = ({ children }) => {
             // Methods
             cargarMensajes,
             cargarUsuarios,
-            activarChat
+            activarChat,
+            // cargarMensajes2
         }} >
             { children }
         </ChatContext.Provider>

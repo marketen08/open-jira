@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { Box, Card, CardHeader, Grid, Paper, Typography } from '@mui/material';
 import { ChatSelect, InboxPeople, Messages } from '../../components/chats';
 import { ChatContext } from '../../context/chat/ChatContext';
@@ -6,6 +6,10 @@ import { ChatContext } from '../../context/chat/ChatContext';
 import { styled } from '@mui/material/styles';
 import { Layout } from '../../components/layouts';
 import { ClientesContext } from '../../context';
+import { GetServerSideProps } from 'next';
+import { externalApiConToken } from '../../apiAxios';
+import { Cliente, ClienteConMensajes } from '../../interfaces';
+import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : 'whitesmoke',
@@ -15,14 +19,20 @@ const Item = styled(Paper)(({ theme }) => ({
     
   }));
 
-export const ChatPage = () => {
+interface Props {
+    cliente: ClienteConMensajes
+}
 
-    const { chatActivo, usuarios } = useContext( ChatContext );
-    const { clientes } = useContext( ClientesContext );
+export const ChatPage:FC<Props> = ({ cliente }) => {
+    
+    const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
 
-    const usuarioActivo = usuarios.filter( usuario => usuario.uid === chatActivo )[0]
-    const cliente = clientes.filter( cliente => cliente.email === usuarioActivo.email )[0]
-
+    useEffect(() => {
+        activarChat( cliente.usuarioCliente )
+        cargarMensajes( cliente.usuarioCliente )
+        scrollToBottomAnimated('mensajes');
+    }, [])
+    
     return (
         <Layout>
             <Grid container spacing={ 2 }>
@@ -73,5 +83,41 @@ export const ChatPage = () => {
         </Layout>
     )
 }
+
+
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+
+    const { id } = params as { id: string };
+
+    try {
+        const { data } = await externalApiConToken.get(`/clientes/${ id }`, {
+            headers: {
+                'x-token': req.cookies.token
+            }
+        });
+
+        return {
+            props: {
+                cliente: data
+            }
+        }
+
+    } catch (error) {
+        console.log(error)
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false
+            }
+        }
+    }
+
+    
+
+    
+    
+    
+}
+
 
 export default ChatPage;

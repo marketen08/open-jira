@@ -4,6 +4,7 @@ import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
 import { Socket } from 'socket.io-client';
 import { AuthContext } from '../auth';
 import { ChatContext } from '../chat';
+import { ClientesContext } from '../clientes';
 
 interface ContextProps {
     socket: Socket|null
@@ -19,13 +20,17 @@ interface Props {
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
-    const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com/');
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com');
+    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-ve-production.up.railway.app');
     
     const { cargarMensajes, cargarUsuarios } = useContext( ChatContext );
+    // const { addNewMensajeNoLeido } = useContext( ClientesContext )    
 
     const { isLoggedIn } = useContext( AuthContext )    
 
+
+    
     useEffect(() => {
         if ( isLoggedIn ) {
             conectarSocket();
@@ -56,11 +61,12 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     
     useEffect(() => {
         socket?.on('mensaje-wa', (mensaje) => {
-            console.log('mensaje-wa')
-            console.log(mensaje)
+            console.log('mensaje-wa');
+            console.log(mensaje);
             cargarMensajes( mensaje.de );
             scrollToBottomAnimated('mensajes');
         })
+        // addNewMensajeNoLeido();
     }, [socket])
 
     return (

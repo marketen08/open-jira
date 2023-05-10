@@ -1,11 +1,10 @@
-import { FC, ReactNode, useContext, useEffect, useReducer } from 'react';
+import { FC, ReactNode, useEffect, useReducer } from 'react';
 import { useSnackbar } from 'notistack'
 import Cookies from 'js-cookie';
 
 import { externalApiConToken } from '../../apiAxios';
 import { Cliente, ClienteConMensajes } from '../../interfaces';
 import { ClientesContext, clientesReducer } from './';
-import { AuthContext } from '../auth';
 
 interface Props {
     children: ReactNode
@@ -35,7 +34,7 @@ const Clientes_INITIAL_STATE: ClientesState = {
 
 export const ClientesProvider:FC<Props> = ({ children }) => {
 
-    const { isLoggedIn } = useContext( AuthContext )
+    // const { isLoggedIn } = useContext( AuthContext )
 
     const [state, dispatch] = useReducer( clientesReducer, Clientes_INITIAL_STATE )
     const { enqueueSnackbar } = useSnackbar();
@@ -93,6 +92,11 @@ export const ClientesProvider:FC<Props> = ({ children }) => {
         }
     }
 
+    const addNewMensajeNoLeido = async() => {
+        console.log('description');
+        // dispatch({ type: '[Cliente] - Agregar mensaje no leido', payload: 1 });
+    }
+
     useEffect(() => {
         refreshClientes();
         refreshClientesConMensajes();
@@ -106,6 +110,7 @@ export const ClientesProvider:FC<Props> = ({ children }) => {
             addNewCliente,
             updateCliente,
             refreshClientes,
+            // addNewMensajeNoLeido
         }} >
             { children }
         </ClientesContext.Provider>

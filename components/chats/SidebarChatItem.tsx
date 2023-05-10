@@ -21,11 +21,11 @@ export const SidebarChatItem:FC<Props> = ({ cliente }) => {
     const handleActivarChat = async() => {
         
         closeChatMenu()
-        router.push('/chat');
-
-        activarChat( cliente.usuarioCliente )
-        cargarMensajes( cliente.usuarioCliente )
-        scrollToBottomAnimated('mensajes');
+        //activarChat( cliente.usuarioCliente )
+        router.push(`/chat/${ cliente.id }`);
+        // console.log(cliente.id)
+        // cargarMensajes( cliente.usuarioCliente )
+        // scrollToBottomAnimated('mensajes');
     }
 
     return (

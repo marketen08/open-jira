@@ -22,6 +22,8 @@ export interface ClienteConMensajes {
   nombre: string;
   celular: string;
   email: string;
+  domicilio: string;
+  localidad: string;
   usuarioCliente: string
   mensajes: IMensaje
 }

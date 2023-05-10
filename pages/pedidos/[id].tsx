@@ -1,26 +1,21 @@
-import { ChangeEvent, FC, useMemo, useState, useContext, useEffect } from 'react';
+import { FC, useState, useContext, useEffect } from 'react';
 import { GetServerSideProps } from 'next'
 
-import { ErrorMessage, Formik, Form, Field, FieldArray } from 'formik';
+import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
-import { Autocomplete, Button, Grid, IconButton,
-        TextField, Typography, MenuItem, FormGroup, 
-        Card, CardMedia, CardContent, CardActions, 
-        Hidden, Box, CardHeader } from "@mui/material";
+import { Button, Grid, IconButton,
+        TextField, Typography,  
+        Card, CardContent, CardActions, 
+        Box } from "@mui/material";
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Pedido } from "../../interfaces";
-import { PedidosContext } from '../../context/pedidos';
-import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
 import { useRouter } from 'next/router';
 import { PedidoUploadFile } from '../../components/pedidos/PedidoUploadFile';
 import { AdjuntoLista } from '../../components/adjuntos/AdjuntoLista';
 import { EmailOutlined } from '@mui/icons-material';
-import { ChatContext, UIContext } from '../../context';
-import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
 import { AdjuntosContext } from '../../context/adjuntos/AdjuntosContext';
 
 interface Props {
@@ -32,28 +27,19 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
     const router = useRouter();
 
-    const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
     const { refreshAdjuntos } = useContext(AdjuntosContext)
   
-    // const { closeChatMenu } = useContext( UIContext );
-  
     const handleActivarChat = async() => {
-    //   closeChatMenu()
-      router.push('/chat');
-  
-      activarChat( pedido.vehiculo.cliente.usuarioCliente )
-      cargarMensajes( pedido.vehiculo.cliente.usuarioCliente )
-      scrollToBottomAnimated('mensajes');
+        router.push(`/chat/${ pedido.vehiculo.cliente._id }`);
     }
   
-
     const formularioInicial = { servicio: '', importe: 0 };
     
     const [modificar, setModificar] = useState(false);
     const [cotizar, setCotizar] = useState(false);
 
     const onSave = async( values: Pedido ) => {
-        console.log(values);
+
         const { id, descripcion, listaItems } = values;
         
         if ( modificar ) {
@@ -70,6 +56,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
     }
 
     const onVolverCotizar = async( values: Pedido ) => {
+        
         const { id, listaItems } = values;
         
         values.estado = 'Cotizando'
@@ -80,22 +67,22 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
     }
 
     const onVerCotizacion = async( values: Pedido ) => {
+        
         const { urlPropuesta } = values;
         
         router.push(urlPropuesta);
     }
 
     const onCotizarEnviar = async( values: Pedido ) => {
-        console.log(values);
 
         const { id, listaItems } = values;
 
         values.estado = 'Cotizado'
-        const cotizarEnviar = await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { listaItems })
+
+        await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { listaItems })
 
         setModificar(false);
         setCotizar(false);
-        
     }
 
     useEffect(() => {

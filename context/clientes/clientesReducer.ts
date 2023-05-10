@@ -1,13 +1,12 @@
 import { Cliente } from '../../interfaces';
 import { ClientesState, ListadoDeClientesConMensajesApi } from './';
-import { ClienteConMensajes } from '../../interfaces/cliente';
 
 type ClientesActionType = 
 | { type: '[Cliente] - Agregar entrada', payload: Cliente }
 | { type: '[Cliente] - Actualizar entrada', payload: Cliente }
 | { type: '[Cliente] - Refresh Data', payload: Cliente[] }
 | { type: '[Cliente] - Refresh Data con mensajes', payload: ListadoDeClientesConMensajesApi }
-
+| { type: '[Cliente] - Agregar mensaje no leido', payload: number }
 
 export const clientesReducer = ( state: ClientesState, action: ClientesActionType ):ClientesState => {
     
@@ -40,6 +39,12 @@ export const clientesReducer = ( state: ClientesState, action: ClientesActionTyp
                 ...state,
                 clientesConMensajes: [ ...action.payload.clientes ],
                 totalMensajesNoLeidos: action.payload.total
+            }
+
+        case '[Cliente] - Agregar mensaje no leido':
+            return {
+                ...state,
+                totalMensajesNoLeidos: state.totalMensajesNoLeidos + action.payload
             }
 
         default:
