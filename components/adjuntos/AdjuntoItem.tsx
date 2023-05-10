@@ -84,7 +84,7 @@ export const AdjuntoItem:FC<Props> = ({ adjunto }) => {
     >
       <ListItemAvatar>
         <Avatar>
-          <a href={ adjunto.url } target="_blank" download>
+          <a href={ adjunto.url } target="_blank" rel="noopener noreferrer" download>
             <CloudDownloadOutlined color='primary' />
           </a>
         </Avatar>
