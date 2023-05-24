@@ -20,9 +20,9 @@ interface Props {
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
+    const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com');
-    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-ve-production.up.railway.app');
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-ve-production.up.railway.app');
     
     const { cargarMensajes, cargarUsuarios } = useContext( ChatContext );
     // const { addNewMensajeNoLeido } = useContext( ClientesContext )    
@@ -52,7 +52,7 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     }, [ socket ]);
     
     useEffect(() => {
-        socket?.on('mensaje-personal', (mensaje) => {
+        socket?.on('frontend:mensaje-personal', (mensaje) => {
             console.log('mensaje-enviado', mensaje)
             cargarMensajes( mensaje.para );
             scrollToBottomAnimated('mensajes');
@@ -60,9 +60,9 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     }, [socket])
     
     useEffect(() => {
-        socket?.on('mensaje-wa', (mensaje) => {
-            console.log('mensaje-wa');
-            console.log(mensaje);
+        socket?.on('backend:mensaje-wa', (mensaje) => {
+            console.log('backend:mensaje-wa');
+            // console.log(mensaje);
             cargarMensajes( mensaje.de );
             scrollToBottomAnimated('mensajes');
         })

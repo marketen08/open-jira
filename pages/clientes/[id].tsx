@@ -33,7 +33,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
 
     const onSave = async ( values: Cliente ) => {
 
-        if ( values.codigo === 0 ){
+        if ( !values.codigo ){
             // NUEVO CLIENTE
             await externalApiConToken.post(`/clientes`, { ...values });
             router.push('/clientes')

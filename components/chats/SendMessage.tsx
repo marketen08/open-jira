@@ -21,7 +21,7 @@ export const SendMessage = () => {
 
         setMensaje('');
 
-        socket?.emit('mensaje-personal', {
+        socket?.emit('frontend:mensaje-personal', {
             de: user?.uid,
             para: chatActivo,
             mensaje
