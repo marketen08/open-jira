@@ -1,4 +1,4 @@
-import { IUsuario, IMensaje } from './';
+import { IMensaje } from './';
 
 export interface ClienteNuevo {
   numero: string;
@@ -24,19 +24,18 @@ export interface ClienteConMensajes {
   email: string;
   domicilio: string;
   localidad: string;
-  usuarioCliente: string
-  mensajes: IMensaje
+  mensajes: IMensaje[]
 }
 
 export interface Cliente extends ClienteNuevo {
   id: string;
   codigo: number;
   activo: boolean;
-  usuarioCliente: IUsuario;
+  estado: string;
+  usuario: string;
 
   createdAt: number;
   updatedAt?: number;
-  // usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true }
 }
 
 export type ClienteTipoDeDocumento = 'CUIT' | 'CUIL' | 'DNI' | 'Otros'

@@ -28,10 +28,11 @@ export const ChatPage:FC<Props> = ({ cliente }) => {
     const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
 
     useEffect(() => {
-        activarChat( cliente.usuarioCliente )
-        cargarMensajes( cliente.usuarioCliente )
+        activarChat( cliente.id )
+        cargarMensajes( cliente.id )
         scrollToBottomAnimated('mensajes');
-    }, [])
+        // console.log('chatActivo IdChat', cliente.id)
+    }, [chatActivo, cliente.id])
     
     return (
         <Layout>
@@ -103,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
         }
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return {
             redirect: {
                 destination: '/',

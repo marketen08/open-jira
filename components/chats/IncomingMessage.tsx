@@ -2,12 +2,14 @@ import { Box, Card, Link, Typography } from '@mui/material'
 import { FC } from 'react'
 import { horaMes } from '../../utils/horaMes'
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
-import ReactPlayer from 'react-player/lazy'
 import ReactAudioPlayer from 'react-audio-player';
+import { IMensaje } from '../../interfaces';
 
+interface Props {
+    msg: IMensaje
+}
 
-
-export const IncomingMessage:FC<any> = ({ msg }) => {
+export const IncomingMessage:FC<Props> = ({ msg }) => {
 
     return (
         <Box display="flex">
@@ -15,7 +17,7 @@ export const IncomingMessage:FC<any> = ({ msg }) => {
                 {
                     msg.tipo === 'texto' &&
                     <Typography sx={{ textAlign: 'left', paddingBottom: 1}}>
-                        { msg.mensaje } - { msg.tipo }
+                        { msg.body }
                     </Typography>
                 }
                 {
@@ -23,7 +25,7 @@ export const IncomingMessage:FC<any> = ({ msg }) => {
                         <Box>
                             <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
                                 <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }}>
-                                    { msg.mensaje }
+                                    { msg.body }
                                 </Link>
                                 <Link href={ msg.link } underline="none">
                                     <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
@@ -38,9 +40,9 @@ export const IncomingMessage:FC<any> = ({ msg }) => {
                                 <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }} download>
                                     <img src={ msg.link } alt="Imagen" height={ 200 } />
                                 </Link>
-                                <Link href={ msg.link } underline="none">
+                                {/* <Link href={ msg.link } underline="none">
                                     <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
-                                </Link>
+                                </Link> */}
                             </Typography>
                         </Box>
                 }
@@ -56,7 +58,7 @@ export const IncomingMessage:FC<any> = ({ msg }) => {
                         </Box>
                 }
                 <Typography sx={{ textAlign: 'left'}}>
-                    { horaMes( msg.createdAt ) }
+                    { horaMes( msg.createdAt! ) }
                 </Typography>
             </Card>
         </Box>

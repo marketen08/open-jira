@@ -26,7 +26,7 @@ const Ingreso:NextPage = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const handleSubmit = async( values: any ) => {
-        console.log('values', values);
+        // console.log('values', values);
         try {
             await externalApiConToken.post<Vehiculo>('/pedidos/ingreso', values );    
             enqueueSnackbar('Ingreso de servicio actualizado', {
@@ -113,7 +113,7 @@ const Ingreso:NextPage = () => {
                             <Field fullWidth name="numero" component={TextField} label="Número de documento" 
                               onBlur={ (e:FocusEvent<HTMLInputElement>) => {
                                 const documento = e.target.value;
-                                console.log(documento);
+                                // console.log(documento);
                             } } />
                         </Box>
                         <Box paddingBottom={2}>

@@ -10,14 +10,14 @@ interface Props {
 }
 
 export interface ChatState {
-    uid: string;
+    idCliente: string;
     chatActivo: string | null;
     mensajes: IMensaje[];
     usuarios: IUsuario[];
 }
 
 const CHAT_INITIAL_STATE: ChatState = {
-    uid: '',
+    idCliente: '',
     chatActivo: null,
     mensajes: [],
     usuarios: []
@@ -27,8 +27,9 @@ export const ChatProvider:FC<Props> = ({ children }) => {
 
     const [state, dispatch] = useReducer( chatReducer, CHAT_INITIAL_STATE )
 
-    const cargarMensajes = async( uid: string ) => {
-        const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
+    const cargarMensajes = async( idCliente: string ) => {
+        // console.log('cargarMensajes idCliente', idCliente)
+        const { data } = await externalApiConToken.get(`mensajes/${ idCliente }`);
         dispatch({ type: 'Chat - Mensajes cargados', payload: data.mensajes });
     }
 
@@ -36,15 +37,9 @@ export const ChatProvider:FC<Props> = ({ children }) => {
         dispatch({ type: 'Chat - Cargar usuarios', payload: usuarios });
     }
 
-    const activarChat = async( uid: string ) => {
+    const activarChat = async( idCliente: string ) => {
         // const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
-        dispatch({ type: 'Chat - Activar', payload: uid });
-    }
-
-    const cargarMensajes2 = async( ) => {
-        // const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
-        // dispatch({ type: 'Chat - Mensajes cargados', payload: data.mensajes });
-        console.log('object');
+        dispatch({ type: 'Chat - Activar', payload: idCliente });
     }
 
     return (
@@ -55,7 +50,6 @@ export const ChatProvider:FC<Props> = ({ children }) => {
             cargarMensajes,
             cargarUsuarios,
             activarChat,
-            // cargarMensajes2
         }} >
             { children }
         </ChatContext.Provider>

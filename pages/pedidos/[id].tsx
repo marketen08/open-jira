@@ -10,7 +10,7 @@ import { Button, Grid, IconButton,
         Box } from "@mui/material";
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { Pedido } from "../../interfaces";
+import { IMensaje, Pedido } from "../../interfaces";
 import { externalApiConToken } from '../../apiAxios';
 import { useRouter } from 'next/router';
 import { PedidoUploadFile } from '../../components/pedidos/PedidoUploadFile';
@@ -83,13 +83,14 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
         await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { listaItems })
         
-        socket?.emit('frontend:mensaje-personal', {
-            de: '63c98ea65d21548037e0d50b',
-            para: pedido.vehiculo.cliente.usuarioCliente,
-            mensaje: '@'
-        });
+        const payload: IMensaje = {
+            cliente: values.vehiculo.cliente.id,
+            clase: 'enviado',
+            estado: 'leido'
+        }
 
-        
+        socket?.emit('frontend:enviar-cotizado', payload );
+
         setModificar(false);
         setCotizar(false);
     }

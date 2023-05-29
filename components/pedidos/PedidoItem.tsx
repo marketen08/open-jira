@@ -21,10 +21,12 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
 
   const handleActivarChat = async() => {
     closeChatMenu()
-    router.push(`/chat/${ pedido.vehiculo.cliente._id }`);
+    const idCliente = pedido.vehiculo.cliente.id;
 
-    activarChat( pedido.vehiculo.cliente.usuarioCliente )
-    cargarMensajes( pedido.vehiculo.cliente.usuarioCliente )
+    router.push(`/chat/${ idCliente }`);
+    // console.log('idCliente', idCliente)
+    activarChat( idCliente )
+    cargarMensajes( idCliente )
     scrollToBottomAnimated('mensajes');
   }
 

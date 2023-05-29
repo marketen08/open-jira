@@ -29,7 +29,7 @@ export const ClienteItem:FC<Props> = ({ cliente }) => {
       <TableCell>{ cliente.tipoDeDocumento } { cliente.numero }</TableCell>
       <TableCell>{ cliente.email }</TableCell>
       <TableCell>{ cliente.celular }</TableCell>
-      <TableCell>{ cliente.domicilio }</TableCell>
+      <TableCell>{ cliente.estado }</TableCell>
     </TableRow>
   )
 }

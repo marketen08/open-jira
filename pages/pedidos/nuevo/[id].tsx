@@ -29,7 +29,7 @@ export const PedidoNuevoPage:FC<Props> = ({ vehiculo }) => {
     const router = useRouter();
 
     const onSave = async( values: PedidoGuardar ) => {
-        console.log(values);
+        // console.log(values);
         // const { id, descripcion, vehiculo } = values;
         const data: PedidoGuardar = {
             descripcion: values.descripcion,

@@ -97,7 +97,7 @@ const Clientes:NextPage = () => {
                       <TableCell>Documento</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>Celular</TableCell>
-                      <TableCell>Domicilio</TableCell>
+                      <TableCell>Estado</TableCell>
                     </TableRow>
                   </TableHead>
                   <ClienteLista clientes={ clientes } page={ page } rowsPerPage={ rowsPerPage } />

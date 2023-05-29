@@ -34,7 +34,7 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
             
             const { ok } = data;
             
-            console.log(ok);
+            // console.log(ok);
             if ( !ok ) {
               return null
             }

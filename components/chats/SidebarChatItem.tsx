@@ -1,9 +1,10 @@
 import { FC, useContext } from 'react'
 import { ChatContext, UIContext } from '../../context';
 import { scrollToBottom, scrollToBottomAnimated } from '../../utils/scrollToBottom';
-import { Avatar, Divider, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Avatar, Badge, Divider, IconButton, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { ClienteConMensajes } from '../../interfaces';
+import { EmailOutlined } from '@mui/icons-material';
 
 interface Props {
     cliente: ClienteConMensajes
@@ -11,7 +12,7 @@ interface Props {
 
 export const SidebarChatItem:FC<Props> = ({ cliente }) => {
     
-    // console.log(cliente)
+    // console.log(cliente.mensajes.length)
     const router = useRouter();
 
     const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
@@ -21,9 +22,11 @@ export const SidebarChatItem:FC<Props> = ({ cliente }) => {
     const handleActivarChat = async() => {
         
         closeChatMenu()
-        //activarChat( cliente.usuarioCliente )
+        
+        activarChat( cliente.id )
+
         router.push(`/chat/${ cliente.id }`);
-        // console.log(cliente.id)
+        console.log(cliente.id)
         // cargarMensajes( cliente.usuarioCliente )
         // scrollToBottomAnimated('mensajes');
     }
@@ -46,11 +49,15 @@ export const SidebarChatItem:FC<Props> = ({ cliente }) => {
                                 >
                                     { cliente.celular }
                                 </Typography>
-                                {/* {
+                                {
                                     ( cliente.email )
                                     ? <span className="text-success">Online</span>
-                                    : <span className="text-danger">Offline</span>
-                                } */}
+                                    : <span className="text-danger">
+                                            <Badge badgeContent={ cliente.mensajes.length } color="primary">
+                                                <EmailOutlined />
+                                            </Badge>
+                                    </span>
+                                }
                             </>
                         }
                     />

@@ -5,6 +5,7 @@ import { Socket } from 'socket.io-client';
 import { AuthContext } from '../auth';
 import { ChatContext } from '../chat';
 import { ClientesContext } from '../clientes';
+import { useRouter } from 'next/router';
 
 interface ContextProps {
     socket: Socket|null
@@ -20,12 +21,14 @@ interface Props {
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
+    const router = useRouter();
+
     const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-ve-production.up.railway.app');
     
-    const { cargarMensajes, cargarUsuarios } = useContext( ChatContext );
-    // const { addNewMensajeNoLeido } = useContext( ClientesContext )    
+    const { cargarMensajes, cargarUsuarios, chatActivo } = useContext( ChatContext );
+    const { refreshClientesConMensajes } = useContext( ClientesContext );   
 
     const { isLoggedIn } = useContext( AuthContext )    
 
@@ -52,18 +55,30 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     }, [ socket ]);
     
     useEffect(() => {
-        socket?.on('frontend:mensaje-personal', (mensaje) => {
-            console.log('mensaje-enviado', mensaje)
-            cargarMensajes( mensaje.para );
-            scrollToBottomAnimated('mensajes');
+        socket?.on('backend:mensaje-personal', ( mensaje ) => {
+            // console.log('backend:mensaje-personal', mensaje)
+            refreshClientesConMensajes();
+            
+            const { pathname } = router;
+            const { id } = router.query;
+
+            // Ejemplo de código en base a la URL
+            console.log(mensaje.cliente, id);
+            console.log(pathname);
+            if (pathname.includes('/chat')) {
+                if ( mensaje.cliente === id ){
+                    cargarMensajes( mensaje.cliente );
+                    scrollToBottomAnimated('mensajes');
+                }
+            }
         })
     }, [socket])
     
     useEffect(() => {
         socket?.on('backend:mensaje-wa', (mensaje) => {
-            console.log('backend:mensaje-wa');
+            // console.log('backend:mensaje-wa');
             // console.log(mensaje);
-            cargarMensajes( mensaje.de );
+            cargarMensajes( mensaje.cliente );
             scrollToBottomAnimated('mensajes');
         })
         // addNewMensajeNoLeido();

@@ -23,10 +23,10 @@ export default function App({ Component, pageProps }: AppProps) {
         >
         <ChatProvider>
           <AuthProvider>
-            <SocketProvider>
               <SnackbarProvider maxSnack={ 3 }>
-                <UIProvider>
                   <ClientesProvider>
+            <SocketProvider>
+                <UIProvider>
                     <PedidosProvider>
                       <AdjuntosProvider>
                         <VehiculosProvider>
@@ -40,10 +40,10 @@ export default function App({ Component, pageProps }: AppProps) {
                         </VehiculosProvider>
                       </AdjuntosProvider>
                     </PedidosProvider>
-                  </ClientesProvider>
                 </UIProvider>
-              </SnackbarProvider>
             </SocketProvider>
+                  </ClientesProvider>
+              </SnackbarProvider>
           </AuthProvider>
         </ChatProvider>
       </SWRConfig>

@@ -3,16 +3,13 @@ import { IUsuario } from '../../interfaces';
 import { IMensaje } from '../../interfaces/mensaje';
 
 interface ContextProps {
-    uid: string;
     chatActivo: string | null;
     mensajes: IMensaje[];
     usuarios: IUsuario[];
     // Methods
-    cargarMensajes: (uid: string) => void;
+    cargarMensajes: (chatActivo: string) => void;
     cargarUsuarios: (usuarios: IUsuario[]) => void;
-    activarChat: (uid: string) => void;
-    // cargarMensajes2: () => void;
-    // updateCliente: (cliente: Cliente, showSnackbar?: boolean ) => void;
+    activarChat: (idCliente: string) => void;
 }
 
 

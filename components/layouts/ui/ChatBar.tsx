@@ -33,7 +33,7 @@ export const ChatBar = () => {
             <List sx={{ width: '100%', padding: 1 }}>
               {
                   clientesConMensajes
-                      // .filter( cliente => cliente.id !== user?.uid )
+                      .filter( cliente => cliente.mensajes.length > 0 )
                       .map( ( cliente ) => (
                         <SidebarChatItem
                             key={ cliente.id }

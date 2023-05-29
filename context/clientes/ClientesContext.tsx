@@ -9,6 +9,7 @@ interface ContextProps {
     addNewCliente: (description: string) => void;
     updateCliente: (cliente: Cliente, showSnackbar?: boolean ) => void;
     refreshClientes: () => Promise<void>;
+    refreshClientesConMensajes: () => Promise<void>;
     // addNewMensajeNoLeido: () => void;
 }
 

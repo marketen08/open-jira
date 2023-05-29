@@ -3,8 +3,13 @@ import { Box } from '@mui/system'
 import { FC } from 'react'
 import { horaMes } from '../../utils/horaMes'
 import CloudDownloadOutlinedIcon from '@mui/icons-material/CloudDownloadOutlined';
+import { IMensaje } from '../../interfaces';
 
-export const OutgoingMessage:FC<any> = ({ msg }) => {
+interface Props {
+    msg: IMensaje
+}
+
+export const OutgoingMessage:FC<Props> = ({ msg }) => {
 
     return (
         <Box display="flex" justifyContent="flex-end">
@@ -20,7 +25,7 @@ export const OutgoingMessage:FC<any> = ({ msg }) => {
                         <Box>
                             <Typography sx={{ textAlign: 'right', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
                                 <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }}>
-                                    { msg.mensaje }
+                                    { msg.body }
                                 </Link>
                                 <Link href={ msg.link } underline="none">
                                     <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
@@ -30,12 +35,12 @@ export const OutgoingMessage:FC<any> = ({ msg }) => {
                         </Box>
                     :
                         <Typography sx={{ textAlign: 'right', paddingBottom: 1}}>
-                            { msg.mensaje }
+                            { msg.body }
                         </Typography>
                 }
                 
                 <Typography sx={{ textAlign: 'right'}}>
-                    { horaMes( msg.createdAt ) }
+                    { horaMes( msg.createdAt! ) }
                 </Typography>
             </Card> 
         </Box>

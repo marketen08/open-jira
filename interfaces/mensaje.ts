@@ -1,14 +1,17 @@
 export interface IMensaje {
-    _id: string;
-    de: string;
-    para: string;
-    mensaje: string;
-    tipo: string;
-    idWa: string;
+    _id?: string;
+    cliente: string;
+    clase: string;
+    body?: string;
+    link?: string;
+    tipo?: string;
+    tipoDetalle?: string;
+    idWa?: string;
     estado: MensajeEstado;
-    
-    createdAt: string;
-    updatedAt?: string;
+    usuario?: string;
+
+    createdAt?: Date;
+    updatedAt?: Date;
   }
   
   export type MensajeEstado = 'leido' | 'no leido'

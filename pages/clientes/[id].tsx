@@ -1,19 +1,18 @@
-import { ChangeEvent, FC, useMemo, useState, useContext } from 'react';
+import { FC } from 'react';
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router';
 
-import { ErrorMessage, Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, FormikProps, FormikErrors } from 'formik';
 import { number, object, string } from 'yup';
-
-import { Autocomplete, Button, Grid, IconButton, TextField, Typography, MenuItem, FormGroup, CardContent, Card, CardHeader } from '@mui/material';
-import { Layout } from "../../components/layouts";
+import Swal from 'sweetalert2';
+import { Button, Grid, IconButton, TextField, Typography, MenuItem, CardContent, Card, CardHeader } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+
 import { Cliente, ClienteCondicionIva, ClienteNuevo, ClienteTipoDeDocumento } from "../../interfaces";
-import { ClientesContext } from '../../context/clientes';
-import { dateFunctions } from '../../utils';
 import { externalApiConToken } from '../../apiAxios';
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/router';
+import { Layout } from "../../components/layouts";
+
 
 const validTipoDocumento: ClienteTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
 const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
@@ -22,6 +21,86 @@ const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
                                                     'Cliente del Exterior',
                                                     'Consumidor Final',
                                                     'IVA No Alcanzado' ];
+
+
+
+const handleServerError = (error: any) => {
+    if (error.response) {
+      // El servidor ha respondido con un código de estado HTTP diferente de 2xx
+      const array = [];
+      for (let key in error.response.data.errors) {
+        if (error.response.data.errors.hasOwnProperty(key)) {
+          const value = error.response.data.errors[key];
+          if (value.hasOwnProperty('msg')) {
+            array.push(value.msg);
+          }
+        }
+      }
+      const errorMessage = `Por favor revisar los siguientes errores:<br>${array.join('<br>')}`;
+  
+      Swal.fire({
+        title: 'Error en la solicitud',
+        html: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+  
+    } else {
+      // Ocurrió un error durante la configuración de la solicitud
+      Swal.fire({
+        title: 'Error',
+        text: 'Ocurrió un error durante la solicitud',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+};
+
+const validateExiste = async (buscar: string, etiqueta: string): Promise<string | undefined> => {
+    try {
+        const response = await externalApiConToken.get(`/clientes/existe/${buscar}`);
+        // Si el email existe en la base de datos, el servidor podría responder con un código de estado específico (por ejemplo, 200) o algún otro indicador.
+        // Puedes adaptar el código a tu servidor y verificar la respuesta de acuerdo a tus necesidades.
+        if (response.data) {
+            console.log('existe data');
+            return `El ${ etiqueta } ya está registrado`;
+        }
+        return undefined; // El email no existe en la base de datos
+    } catch (error) {
+        console.error('Error al validar el email:', error);
+        return `Ocurrió un error al validar el ${ etiqueta }`;
+    }
+};
+
+  
+const validateForm = async (values: Cliente): Promise<FormikErrors<Cliente>> => {
+    
+    const errors: FormikErrors<Cliente> = {};
+  
+    // Validar los campos y asignar mensajes de error según sea necesario
+    if (values.numero) {
+        const numeroExistsError = await validateExiste(values.numero, 'número');
+        if (numeroExistsError) {
+            errors.numero = numeroExistsError;
+        }
+    }
+
+    if (values.email) {
+        const emailExistsError = await validateExiste(values.email, 'email');
+        if (emailExistsError) {
+            errors.email = emailExistsError;
+        }
+    }
+
+    if (values.celular) {
+        const celularExistsError = await validateExiste(values.celular, 'celular');
+        if (celularExistsError) {
+            errors.celular = celularExistsError;
+        }
+    }
+
+    return errors;
+};
 
 interface Props {
     cliente: Cliente
@@ -35,15 +114,26 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
 
         if ( !values.codigo ){
             // NUEVO CLIENTE
-            await externalApiConToken.post(`/clientes`, { ...values });
-            router.push('/clientes')
+            try {
+                await externalApiConToken.post(`/clientes`, { ...values });
+                router.push('/clientes')
+            } catch (error: any) {
+                handleServerError(error);
+            }
         } else {
             // ACTUALIZAR CLIENTE
-            await externalApiConToken.put(`/clientes/${ values.id }`, { ...values });
-            router.push('/clientes')
+            try {
+                await externalApiConToken.put(`/clientes/${values.id}`, { ...values });
+                router.push('/clientes');
+            } catch (error: any) {
+                handleServerError(error);
+            }
         }
 
     }
+
+    
+      
 
   return (
     
@@ -63,6 +153,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                         onSubmit={ ( values ) => {
                             onSave( values );
                         }}
+                        validate={validateForm}
                         validationSchema={ object({
                             tipoDeDocumento: string().required('El tipo de documento es obligatorio'),
                             numero: string().required('El número de documento es obligatorio'), 
@@ -76,11 +167,14 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                     .required('El celular es obligatorio'),
                             email: string().email('El mail no es valido').required('El email es obligatorio'),
                         })
-                    }>
-                    {( { values, errors, touched, isSubmitting, isValidating }:any ) => (
+                    }
+                    >
+                    {( { values, errors, touched, isSubmitting, isValidating, setErrors }:FormikProps<Cliente> ) => {
+                        
+                        return (
                         <Form autoComplete="off">
                             {
-                                values.codigo !== 0 &&
+                                values.codigo &&
                                 <Field
                                     as={ TextField }
                                     name='codigo'
@@ -125,10 +219,9 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Número'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                error={ touched.numero && errors.numero }
+                                error={ Boolean(touched.numero && errors.numero) }
                                 helperText={ touched.numero && errors.numero && errors.numero }
                             />
-                            
                             <Field
                                 as={ TextField }
                                 name='nombre'
@@ -136,7 +229,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Nombre'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                error={ touched.nombre && errors.nombre }
+                                error={ Boolean(touched.nombre && errors.nombre) }
                                 helperText={ touched.nombre && errors.nombre && errors.nombre  }
                             />
                             <Field
@@ -146,7 +239,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Email'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                error={ touched.email && errors.email }
+                                error={ Boolean(touched.email && errors.email) }
                                 helperText={ touched.email && errors.email && errors.email }
                             />
                             <Field
@@ -156,7 +249,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 fullWidth
                                 label='Celular'
                                 sx={{ mt: 1.5, mb: 1 }}
-                                error={ touched.celular && errors.celular }
+                                error={ Boolean(touched.celular && errors.celular) }
                                 helperText={ touched.celular && errors.celular && errors.celular  }
                             />
                             <Field
@@ -205,14 +298,14 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 type='submit'
                                 variant='outlined'
                                 color='success'
-                                // disabled={ isSubmitting || isValidating }
+                                disabled={ isSubmitting }
                             >
                                 <SaveOutlinedIcon />
                                 <Typography>Guardar</Typography>
                                 
                             </Button>
                         </Form>
-                    )}
+                    )}}
                     </Formik>
                 </CardContent>
             </Card>

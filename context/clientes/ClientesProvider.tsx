@@ -110,6 +110,7 @@ export const ClientesProvider:FC<Props> = ({ children }) => {
             addNewCliente,
             updateCliente,
             refreshClientes,
+            refreshClientesConMensajes
             // addNewMensajeNoLeido
         }} >
             { children }
