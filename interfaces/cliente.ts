@@ -25,6 +25,7 @@ export interface ClienteConMensajes {
   domicilio: string;
   localidad: string;
   mensajes: IMensaje[]
+  updatedAt: Date;
 }
 
 export interface Cliente extends ClienteNuevo {

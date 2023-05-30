@@ -15,7 +15,7 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
   const router = useRouter();
 
 
-  const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
+  const { activarChat, cargarMensajes } = useContext(ChatContext);
 
   const { closeChatMenu } = useContext( UIContext );
 
@@ -24,10 +24,9 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
     const idCliente = pedido.vehiculo.cliente.id;
 
     router.push(`/chat/${ idCliente }`);
-    // console.log('idCliente', idCliente)
-    activarChat( idCliente )
-    cargarMensajes( idCliente )
-    scrollToBottomAnimated('mensajes');
+    // activarChat( idCliente )
+    // cargarMensajes( idCliente )
+    // scrollToBottomAnimated('mensajes');
   }
 
   

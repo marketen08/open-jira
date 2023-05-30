@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useEffect } from 'react'
 import { ChatContext, UIContext } from '../../context';
 import { scrollToBottom, scrollToBottomAnimated } from '../../utils/scrollToBottom';
 import { Avatar, Badge, Divider, IconButton, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
@@ -15,20 +15,15 @@ export const SidebarChatItem:FC<Props> = ({ cliente }) => {
     // console.log(cliente.mensajes.length)
     const router = useRouter();
 
-    const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
+    const { activarChat, cargarMensajes, chatActivo } = useContext(ChatContext);
 
     const { closeChatMenu } = useContext( UIContext );
 
     const handleActivarChat = async() => {
-        
         closeChatMenu()
-        
-        activarChat( cliente.id )
 
+        activarChat( cliente.id )
         router.push(`/chat/${ cliente.id }`);
-        console.log(cliente.id)
-        // cargarMensajes( cliente.usuarioCliente )
-        // scrollToBottomAnimated('mensajes');
     }
 
     return (
@@ -50,9 +45,8 @@ export const SidebarChatItem:FC<Props> = ({ cliente }) => {
                                     { cliente.celular }
                                 </Typography>
                                 {
-                                    ( cliente.email )
-                                    ? <span className="text-success">Online</span>
-                                    : <span className="text-danger">
+                                    ( cliente.id )
+                                    && <span className="text-danger">
                                             <Badge badgeContent={ cliente.mensajes.length } color="primary">
                                                 <EmailOutlined />
                                             </Badge>

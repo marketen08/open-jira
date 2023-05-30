@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material"
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
@@ -14,9 +14,24 @@ import { SidebarChatItem } from "../../chats";
 export const ChatBar = () => {
 
   const { chatmenuOpen, closeChatMenu } = useContext( UIContext)
-  const { user, isLoggedIn, logout } = useContext(  AuthContext );
 
   const { clientesConMensajes } = useContext( ClientesContext );
+
+  // const [items, setItems] = useState(clientesConMensajes);
+
+  // useEffect(() => {
+  //   // Ordenar el array por fechas
+  //   const itemsOrdenados = [...items].sort((a, b) => {
+  //     const dateA = new Date(a.updatedAt);
+  //     const dateB = new Date(b.updatedAt);
+  //     return dateA.getTime() - dateB.getTime();
+  //   });
+
+  //   // Actualizar el estado con el array ordenado
+  //   console.log(itemsOrdenados);
+  //   setItems(itemsOrdenados);
+  // }, []);
+
 
   return (
           <Drawer
@@ -34,6 +49,11 @@ export const ChatBar = () => {
               {
                   clientesConMensajes
                       .filter( cliente => cliente.mensajes.length > 0 )
+                      .sort((a, b) => {
+                            const dateA = new Date(a.updatedAt);
+                            const dateB = new Date(b.updatedAt);
+                            return dateB.getTime() - dateA.getTime();
+                          })
                       .map( ( cliente ) => (
                         <SidebarChatItem
                             key={ cliente.id }

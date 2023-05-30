@@ -54,6 +54,7 @@ export const SideBar = () => {
             anchor='left'
             open={ sidemenuOpen }
             onClose={ () => closeSideMenu() }
+          
             
           >
             <Box sx={{ width: 250 }}></Box>

@@ -25,14 +25,13 @@ interface Props {
 
 export const ChatPage:FC<Props> = ({ cliente }) => {
     
-    const { activarChat, cargarMensajes, chatActivo, mensajes } = useContext(ChatContext);
+    const { activarChat, chatActivo } = useContext(ChatContext);
 
     useEffect(() => {
-        activarChat( cliente.id )
-        cargarMensajes( cliente.id )
-        scrollToBottomAnimated('mensajes');
-        // console.log('chatActivo IdChat', cliente.id)
-    }, [chatActivo, cliente.id])
+        if ( !chatActivo ){
+            activarChat( cliente.id )
+        }
+    }, [chatActivo])
     
     return (
         <Layout>
@@ -47,7 +46,7 @@ export const ChatPage:FC<Props> = ({ cliente }) => {
                     <Item sx={{ height: 'calc(100vh - 100px)'}}>
                         <CardHeader title="Mensajes" sx={{ backgroundColor: 'gray', color: 'white'}} />
                         {
-                            ( chatActivo )
+                            ( cliente.id )
                             ? <Messages />
                             : <ChatSelect />
                         }

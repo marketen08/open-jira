@@ -76,6 +76,7 @@ export const SendMessage = () => {
 
     const onTerminar = async() => {
 
+      console.log(chatActivo, 'chatActivo');
         Swal.fire({
             title: 'Desea marcar todos los mensajes como leidos?',
             text: "No podras revertir este cambio!",
