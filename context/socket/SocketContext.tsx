@@ -51,7 +51,6 @@ export const SocketProvider:FC<Props> = ({ children }) => {
     
     useEffect(() => {
         socket?.on('backend:mensaje-personal', ( mensaje ) => {
-            // console.log('backend:mensaje-personal', mensaje)
             refreshClientesConMensajes();
             cargarMensajes( mensaje.cliente );
         })
