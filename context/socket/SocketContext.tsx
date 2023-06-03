@@ -20,11 +20,12 @@ interface Props {
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
-    const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-ve-production.up.railway.app');
-    
-    const { cargarMensajes } = useContext( ChatContext );
+    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-vercel.vercel.app');
+
+    const { ingresoMensaje } = useContext( ChatContext );
     const { refreshClientesConMensajes } = useContext( ClientesContext );   
 
     const { isLoggedIn } = useContext( AuthContext )    
@@ -40,19 +41,11 @@ export const SocketProvider:FC<Props> = ({ children }) => {
             desconectarSocket();
         }
     }, [ isLoggedIn, desconectarSocket ]);
-
-    // Escuchar los cambios en los usuarios conectados
-    // useEffect(() => {
-    //     socket?.on( 'lista-usuarios', ( usuarios ) => {
-    //         console.log('cargarUsuarios')
-    //         cargarUsuarios( usuarios );
-    //     })
-    // }, [ socket ]);
     
     useEffect(() => {
         socket?.on('backend:mensaje-personal', ( mensaje ) => {
             refreshClientesConMensajes();
-            cargarMensajes( mensaje.cliente );
+            ingresoMensaje();
         })
     }, [socket])
     

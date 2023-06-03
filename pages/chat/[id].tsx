@@ -28,20 +28,13 @@ export const ChatPage:FC<Props> = ({ cliente }) => {
     const { activarChat, chatActivo } = useContext(ChatContext);
 
     useEffect(() => {
-        if ( !chatActivo ){
-            activarChat( cliente.id )
-        }
-    }, [chatActivo])
+        console.log(cliente.id);
+        activarChat( cliente.id )
+    }, [cliente.id, chatActivo])
     
     return (
         <Layout>
             <Grid container spacing={ 2 }>
-                {/* <Grid item xs>
-                    <Item sx={{ height: 'calc(100vh - 100px)'}}>
-                        <CardHeader title="Contactos" sx={{ backgroundColor: 'gray', color: 'white'}} />
-                        <InboxPeople />
-                    </Item>
-                </Grid> */}
                 <Grid item xs={12} md={8}>
                     <Item sx={{ height: 'calc(100vh - 100px)'}}>
                         <CardHeader title="Mensajes" sx={{ backgroundColor: 'gray', color: 'white'}} />

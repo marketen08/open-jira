@@ -56,7 +56,7 @@ export const AuthProvider:FC<Props> = ({ children }) => {
             dispatch({ type: '[Auth] - Login', payload: usuario as IUsuario });
         } catch (error) {
             Cookies.remove('token');
-            console.log('eror en renew')
+            console.log('error en renew')
         }
     }
     

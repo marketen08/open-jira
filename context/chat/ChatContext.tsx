@@ -5,10 +5,11 @@ import { IMensaje } from '../../interfaces/mensaje';
 interface ContextProps {
     chatActivo: string | null;
     mensajes: IMensaje[];
+    mensajesNuevos: number;
     // usuarios: IUsuario[];
     // Methods
     cargarMensajes: (chatActivo: string) => void;
-    // cargarUsuarios: (usuarios: IUsuario[]) => void;
+    ingresoMensaje: () => void;
     activarChat: (chatActivo: string) => void;
 }
 

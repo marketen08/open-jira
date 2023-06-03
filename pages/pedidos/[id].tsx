@@ -18,6 +18,7 @@ import { AdjuntoLista } from '../../components/adjuntos/AdjuntoLista';
 import { EmailOutlined } from '@mui/icons-material';
 import { AdjuntosContext } from '../../context/adjuntos/AdjuntosContext';
 import { SocketContext } from '../../context/socket';
+import { ChatContext } from '../../context';
 
 interface Props {
     pedido: Pedido,
@@ -28,11 +29,14 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
     const router = useRouter();
 
+    const { activarChat } = useContext(ChatContext);
     const { refreshAdjuntos } = useContext(AdjuntosContext)
     const { socket } = useContext( SocketContext );
 
     const handleActivarChat = async() => {
-        router.push(`/chat/${ pedido.vehiculo.cliente._id }`);
+        const idCliente = pedido.vehiculo.cliente._id;
+        activarChat( idCliente )
+        router.push(`/chat/${ idCliente }`);
     }
   
     const formularioInicial = { servicio: '', importe: 0 };
@@ -84,11 +88,12 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
         await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { listaItems })
         
         const payload: IMensaje = {
-            cliente: values.vehiculo.cliente.id,
+            cliente: values.vehiculo.cliente._id,
             clase: 'enviado',
             estado: 'leido'
         }
 
+        console.log(payload);
         socket?.emit('frontend:enviar-cotizado', payload );
 
         setModificar(false);

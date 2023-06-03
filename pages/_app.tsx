@@ -23,27 +23,26 @@ export default function App({ Component, pageProps }: AppProps) {
         >
         <ChatProvider>
           <AuthProvider>
-              <SnackbarProvider maxSnack={ 3 }>
-                  <ClientesProvider>
-            <SocketProvider>
-                <UIProvider>
+            <SnackbarProvider maxSnack={ 3 }>
+              <ClientesProvider>
+                <SocketProvider>
+                  <UIProvider>
                     <PedidosProvider>
                       <AdjuntosProvider>
                         <VehiculosProvider>
                           <EntriesProvider>
-                            
-                              <ThemeProvider theme={ lightTheme }>
-                                <CssBaseline />
-                                <Component {...pageProps} />
-                              </ThemeProvider>
+                            <ThemeProvider theme={ lightTheme }>
+                              <CssBaseline />
+                              <Component {...pageProps} />
+                            </ThemeProvider>
                           </EntriesProvider>
                         </VehiculosProvider>
                       </AdjuntosProvider>
                     </PedidosProvider>
-                </UIProvider>
-            </SocketProvider>
-                  </ClientesProvider>
-              </SnackbarProvider>
+                  </UIProvider>
+                </SocketProvider>
+              </ClientesProvider>
+            </SnackbarProvider>
           </AuthProvider>
         </ChatProvider>
       </SWRConfig>

@@ -14,23 +14,14 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
 
   const router = useRouter();
 
-
-  const { activarChat, cargarMensajes } = useContext(ChatContext);
-
-  const { closeChatMenu } = useContext( UIContext );
-
+  const { activarChat } = useContext(ChatContext);
+  
   const handleActivarChat = async() => {
-    closeChatMenu()
-    const idCliente = pedido.vehiculo.cliente.id;
-
+    const idCliente = pedido.vehiculo.cliente._id;
+    activarChat( idCliente )
     router.push(`/chat/${ idCliente }`);
-    // activarChat( idCliente )
-    // cargarMensajes( idCliente )
-    // scrollToBottomAnimated('mensajes');
   }
 
-  
-  const [openMenu, setOpenMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -47,7 +38,6 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
   }
 
   const onCrearNuevoPedido = () => {
-    // console.log(pedido)
     router.push(`/pedidos/nuevo/${ pedido.vehiculo._id }`);
   }
 
@@ -55,7 +45,6 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
     <TableRow
             key={ pedido.id }
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            // onClick={ onClick }
             hover
     >
       <TableCell component="th" scope="row">

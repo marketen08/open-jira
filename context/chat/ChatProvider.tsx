@@ -1,7 +1,6 @@
 import { FC, ReactNode, useReducer } from 'react';
 
 import { externalApiConToken } from '../../apiAxios';
-import { IUsuario } from '../../interfaces';
 import { IMensaje } from '../../interfaces/mensaje';
 import { ChatContext, chatReducer } from './';
 
@@ -12,12 +11,14 @@ interface Props {
 export interface ChatState {
     chatActivo: string | null;
     mensajes: IMensaje[];
+    mensajesNuevos: number;
     // usuarios: IUsuario[];
 }
 
 const CHAT_INITIAL_STATE: ChatState = {
     chatActivo: null,
     mensajes: [],
+    mensajesNuevos: 0
     // usuarios: []
 }
 
@@ -26,16 +27,15 @@ export const ChatProvider:FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer( chatReducer, CHAT_INITIAL_STATE )
 
     const cargarMensajes = async( idCliente: string ) => {
-        console.log('cargarMensajes',  state.chatActivo);
         if ( state.chatActivo ){
-            const { data } = await externalApiConToken.get(`mensajes/${ state.chatActivo }`);
+            const { data } = await externalApiConToken.get(`mensajes/${ idCliente }`);
             dispatch({ type: 'Chat - Mensajes cargados', payload: data.mensajes });
         }
     }
 
-    // const cargarUsuarios = async( usuarios: IUsuario[] ) => {
-    //     dispatch({ type: 'Chat - Cargar usuarios', payload: usuarios });
-    // }
+    const ingresoMensaje = async( ) => {
+        dispatch({ type: 'Chat - Ingreso mensaje nuevo', payload: 1 });
+    }
 
     const activarChat = async( idCliente: string ) => {
         // const { data } = await externalApiConToken.get(`mensajes/${ uid }`);
@@ -49,7 +49,7 @@ export const ChatProvider:FC<Props> = ({ children }) => {
 
             // Methods
             cargarMensajes,
-            // cargarUsuarios,
+            ingresoMensaje,
             activarChat,
         }} >
             { children }

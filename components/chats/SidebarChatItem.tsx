@@ -15,7 +15,7 @@ export const SidebarChatItem:FC<Props> = ({ cliente }) => {
     // console.log(cliente.mensajes.length)
     const router = useRouter();
 
-    const { activarChat, cargarMensajes, chatActivo } = useContext(ChatContext);
+    const { activarChat } = useContext(ChatContext);
 
     const { closeChatMenu } = useContext( UIContext );
 

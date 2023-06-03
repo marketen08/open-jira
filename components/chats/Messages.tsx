@@ -9,13 +9,13 @@ import { scrollToBottom, scrollToBottomAnimated } from '../../utils/scrollToBott
 
 export const Messages = () => {
 
-    const { mensajes, chatActivo, cargarMensajes } = useContext( ChatContext );
+    const { mensajes, chatActivo, cargarMensajes, mensajesNuevos } = useContext( ChatContext );
 
     useEffect(() => {
         if ( chatActivo ) {
             cargarMensajes( chatActivo )
         }
-    }, [chatActivo])
+    }, [mensajesNuevos, chatActivo])
 
     useEffect(() => {
         scrollToBottomAnimated('mensajes');

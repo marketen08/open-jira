@@ -4,7 +4,7 @@ import { ChatState } from './';
 
 type ChatActionType = 
 | { type: 'Chat - Mensajes cargados', payload: IMensaje[] }
-// | { type: 'Chat - Cargar usuarios', payload: IUsuario[] }
+| { type: 'Chat - Ingreso mensaje nuevo', payload: number }
 | { type: 'Chat - Activar', payload: string }
 
 export const chatReducer = ( state: ChatState, action: ChatActionType ):ChatState => {
@@ -16,11 +16,11 @@ export const chatReducer = ( state: ChatState, action: ChatActionType ):ChatStat
                 mensajes: [ ...action.payload ]
             }
 
-        // case 'Chat - Cargar usuarios':
-        //     return {
-        //         ...state,
-        //         usuarios: [ ...action.payload ]
-        //     }
+        case 'Chat - Ingreso mensaje nuevo':
+            return {
+                ...state,
+                mensajesNuevos: state.mensajesNuevos +  action.payload
+            }
 
         case 'Chat - Activar':
             if ( state.chatActivo === action.payload ) return state;
