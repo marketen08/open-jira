@@ -22,7 +22,7 @@ export const SocketProvider:FC<Props> = ({ children }) => {
 
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com');
-    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-ve-production.up.railway.app');
+    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-vercel-production.up.railway.app/');
     // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-vercel.vercel.app:8080');
 
     const { ingresoMensaje } = useContext( ChatContext );
