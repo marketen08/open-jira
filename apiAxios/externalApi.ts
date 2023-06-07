@@ -3,8 +3,8 @@ import Cookies from 'js-cookie';
 
 // export const baseURL: string = 'http://localhost:8080/api';
 // export const baseURL: string = 'https://sonia-backend.herokuapp.com/api';
-export const baseURL: string = 'https://sonia-backend-vercel-production.up.railway.app/api';
-// export const baseURL: string = 'https://sonia-backend-vercel.vercel.app:8080/api';
+// export const baseURL: string = 'https://sonia-backend-vercel-production.up.railway.app/api';
+export const baseURL: string = 'http://piruco-backend-w.geaonline.com.ar:8080/api';
 
 const token = Cookies.get('token');
 

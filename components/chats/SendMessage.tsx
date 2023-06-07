@@ -72,6 +72,7 @@ export const SendMessage = () => {
         
         socket?.emit('frontend:mensaje-personal', payload );
 
+        console.log('frontend:mensaje-personal')
     }
 
     const onTerminar = async() => {
