@@ -1,10 +1,13 @@
 import { FC, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-import { IconButton, Menu, TableCell, TableRow, Typography, MenuItem } from '@mui/material';
+import moment from 'moment';
+import Swal from 'sweetalert2';
+
+import { IconButton, Menu, TableCell, TableRow, MenuItem } from '@mui/material';
 import { Pedido } from '../../interfaces';
 import { MoreVertOutlined } from '@mui/icons-material';
-import { ChatContext, UIContext } from '../../context';
-import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
+import { ChatContext } from '../../context';
+import { externalApiConToken } from '../../apiAxios';
 
 interface Props {
     pedido: Pedido;
@@ -41,6 +44,79 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
     router.push(`/pedidos/nuevo/${ pedido.vehiculo._id }`);
   }
 
+  const onDescartarPedido = () => {
+
+    handleClose();
+
+    Swal.fire({
+      title: 'Desea rechazar el pedido?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, rechazar!'
+    }).then(async(result) => {
+        // RECHAZAR PEDIDO
+        if (result.isConfirmed) {
+          try {
+            await externalApiConToken.put(`/pedidos/${ pedido.id }`, { estado: 'Rechazado' });
+            if (result.isConfirmed) {
+              Swal.fire(
+                'Pedido Rechazado!',
+                'El pedido ha sido rechazado.',
+                'success'
+              )
+            }
+          } catch (error: any) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'No se pudo rechazar el pedido!'
+            })
+          }
+        }
+      
+    })
+
+  }
+
+  const onRetomarPedido = () => {
+
+    handleClose();
+
+    Swal.fire({
+      title: 'Desea retomar el pedido?',
+      // text: "No podra revertir este cambio!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, retomar!'
+    }).then(async(result) => {
+        // RECHAZAR PEDIDO
+        if (result.isConfirmed) {
+          try {
+            await externalApiConToken.put(`/pedidos/${ pedido.id }`, { estado: 'Nuevo' });
+            if (result.isConfirmed) {
+              Swal.fire(
+                'Pedido restablecido!',
+                'Se ha cambido el estado del pedido a Nuevo.',
+                'success'
+              )
+            }
+          } catch (error: any) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'No se pudo cambiar el estado!'
+            })
+          }
+        }
+      
+    })
+
+  }
+
   return (
     <TableRow
             key={ pedido.id }
@@ -55,6 +131,9 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
       <TableCell>{ pedido.vehiculo.cliente.nombre }</TableCell>
       <TableCell  sx={{ maxWidth: '250px' }}>{ pedido.descripcion.length >= 50 ? pedido.descripcion.substring(0, 50) + '...'  : pedido.descripcion }</TableCell>
       <TableCell>{ pedido.estado }</TableCell>
+      <TableCell>
+        { moment( pedido.updatedAt ).format( 'DD/MM/yyyy' ) }
+      </TableCell>
       <TableCell>
         <div>
           <IconButton
@@ -82,9 +161,15 @@ export const PedidoItem:FC<Props> = ({ pedido }) => {
             open={Boolean(anchorEl)}
             onClose={ handleClose }
           >
-            <MenuItem onClick={onCrearNuevoPedido}>Crear nuevo pedido</MenuItem>
             <MenuItem onClick={onClick}>Editar</MenuItem>
             <MenuItem onClick={handleActivarChat}>Chat</MenuItem>
+            {
+              pedido.estado === 'Rechazado' ? 
+              <MenuItem onClick={onRetomarPedido}>Volver a cotizar</MenuItem>
+              :
+              <MenuItem onClick={onDescartarPedido}>Rechazar</MenuItem>
+            }
+            <MenuItem onClick={onCrearNuevoPedido}>Crear nuevo pedido</MenuItem>
           </Menu>
         </div>
       </TableCell>

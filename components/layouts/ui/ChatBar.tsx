@@ -38,7 +38,6 @@ export const ChatBar = () => {
             anchor='right'
             open={ chatmenuOpen }
             onClose={ () => closeChatMenu() }
-            
           >
             <Box sx={{ width: 350 }}></Box>
             <Box sx={{ padding: '5px 5px' }} >
@@ -62,7 +61,6 @@ export const ChatBar = () => {
                   ))
               }
           </List>
-
             <Divider />
           </Drawer>
     )

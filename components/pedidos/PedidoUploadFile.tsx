@@ -61,6 +61,7 @@ export const PedidoUploadFile:FC<Props> = ({ id }) => {
                     <input 
                         accept="image/*" 
                         type="file"
+                        capture
                         onChange={handleFileChange} 
                         multiple 
                         hidden 

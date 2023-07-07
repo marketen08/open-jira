@@ -1,13 +1,16 @@
+import { ClienteCondicionIva } from './cliente';
 import { Vehiculo } from './vehiculo';
 export interface Pedido {
   id: string;
   numero: string;
   vehiculo: Vehiculo;
   descripcion: string;
+  condicionIva: ClienteCondicionIva;
   listaItems: [
     {
       servicio: string;
-      importe: string;
+      cantidad: number;
+      importe: number;
     }
   ];
   estado: PedidoEstados;

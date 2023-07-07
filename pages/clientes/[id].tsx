@@ -78,21 +78,21 @@ const validateForm = async (values: Cliente): Promise<FormikErrors<Cliente>> => 
     const errors: FormikErrors<Cliente> = {};
   
     // Validar los campos y asignar mensajes de error según sea necesario
-    if (values.numero) {
+    if (values.numero && !values.codigo) {
         const numeroExistsError = await validateExiste(values.numero, 'número');
         if (numeroExistsError) {
             errors.numero = numeroExistsError;
         }
     }
 
-    if (values.email) {
-        const emailExistsError = await validateExiste(values.email, 'email');
-        if (emailExistsError) {
-            errors.email = emailExistsError;
-        }
-    }
+    // if (values.email && !values.codigo) {
+    //     const emailExistsError = await validateExiste(values.email, 'email');
+    //     if (emailExistsError) {
+    //         errors.email = emailExistsError;
+    //     }
+    // }
 
-    if (values.celular) {
+    if (values.celular && !values.codigo) {
         const celularExistsError = await validateExiste(values.celular, 'celular');
         if (celularExistsError) {
             errors.celular = celularExistsError;
@@ -143,8 +143,12 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
             justifyContent='center'
             sx={{ marginTop: 2, padding: 2 }}
         >
-            <Card>
-                <CardHeader title="Detalle del Cliente" sx={{ backgroundColor: 'gray', color: 'white'}} />
+            <Card sx={{ border: 1, borderColor: 'dimgray' }} >
+                <CardHeader 
+                    title="DETALLE DEL CLIENTE" 
+                    sx={{ padding: 3, borderBottom: 1, backgroundColor: '#c5c5c5' }} 
+                    titleTypographyProps={{ variant:'h5', fontWeight: 'bold' }}
+                />
                 <CardContent>
                     <Formik
                         initialValues={{ 
@@ -165,7 +169,7 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                     .min(1000000000, 'El celular debe tener 10 caracteres')
                                     .max(9999999999, 'El celular debe tener 10 caracteres')
                                     .required('El celular es obligatorio'),
-                            email: string().email('El mail no es valido').required('El email es obligatorio'),
+                            email: string().email('El mail no es valido'),
                         })
                     }
                     >

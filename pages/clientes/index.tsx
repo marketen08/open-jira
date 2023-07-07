@@ -41,10 +41,6 @@ const Clientes:NextPage = () => {
     setPage(0);
   };
 
-  // const emptyRows =
-  //   rowsPerPage - Math.min(rowsPerPage, clientes ? clientes.length : 0 - page * rowsPerPage);
-
-
   const handleNuevo = () => {
     router.push('/clientes/nuevo')
   }
@@ -89,18 +85,19 @@ const Clientes:NextPage = () => {
           isLoading ? <FullScreenLoading /> :      
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }} component={Paper}>
-              <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Código</TableCell>
-                      <TableCell>Nombre del cliente</TableCell>
-                      <TableCell>Documento</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Celular</TableCell>
-                      <TableCell>Estado</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <ClienteLista clientes={ clientes } page={ page } rowsPerPage={ rowsPerPage } />
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    {/* <TableCell>Código</TableCell> */}
+                    <TableCell>Nombre del cliente</TableCell>
+                    <TableCell>Documento</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Celular</TableCell>
+                    <TableCell>Estado</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <ClienteLista clientes={ clientes } page={ page } rowsPerPage={ rowsPerPage } />
               </Table>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 100]}

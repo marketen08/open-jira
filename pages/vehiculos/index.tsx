@@ -87,19 +87,19 @@ const Vehiculos:NextPage = () => {
           isLoading ? <FullScreenLoading /> :      
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }} component={Paper}>
-              <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Patente</TableCell>
-                      <TableCell>Marca</TableCell>
-                      <TableCell>Modelo</TableCell>
-                      <TableCell>Cliente</TableCell>
-                      <TableCell>Celular</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <VehiculoLista vehiculos={ vehiculos } page={ page } rowsPerPage={ rowsPerPage } />
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Patente</TableCell>
+                    <TableCell>Marca</TableCell>
+                    <TableCell>Modelo</TableCell>
+                    <TableCell>Cliente</TableCell>
+                    <TableCell>Celular</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <VehiculoLista vehiculos={ vehiculos } page={ page } rowsPerPage={ rowsPerPage } />
               </Table>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 100]}

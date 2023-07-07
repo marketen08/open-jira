@@ -1,9 +1,7 @@
-import { FC, useContext, useState } from 'react';
-import { Paper, TableBody, TableCell, TableContainer, TableRow, Table, TableHead } from '@mui/material';
-import { Adjunto } from '../../interfaces';
+import { FC } from 'react';
+import { Paper } from '@mui/material';
 import { AdjuntoItem } from './AdjuntoItem';
 import { useAdjuntos } from '../../hooks';
-import { AdjuntosContext } from '../../context/adjuntos';
 
 interface Props {
     id: string
@@ -11,15 +9,12 @@ interface Props {
 
 export const AdjuntoLista:FC<Props> = ({ id }) => {
 
-    const { addNewAdjunto, adjuntos } = useContext(AdjuntosContext);
     const { adjuntosResumen, isLoading } = useAdjuntos(`/adjuntos/pedido/${ id }`);
 
-    // const adjuntos = adjuntosResumen?.adjuntos;
-
-
+    const adjuntos = adjuntosResumen?.adjuntos;
 
     return (
-        <Paper sx={{ overflow: 'hidden' }}>
+        <Paper sx={ adjuntos?.length ? { overflow: 'hidden' } : { display: 'none' }}>
             <ul>
                 {
                     adjuntos?.map( adjunto => (

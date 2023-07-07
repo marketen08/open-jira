@@ -1,29 +1,40 @@
 import { FC, useState, useContext, useEffect } from 'react';
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router';
+import * as Yup from 'yup';
 
 import { Formik, Form, Field, FieldArray } from 'formik';
-import * as Yup from 'yup';
 
 import { Button, Grid, IconButton,
         TextField, Typography,  
         Card, CardContent, CardActions, 
-        Box } from "@mui/material";
+        Box, 
+        MenuItem} from "@mui/material";
+
 import { Layout } from "../../components/layouts";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { IMensaje, Pedido } from "../../interfaces";
+import { ClienteCondicionIva, IMensaje, Pedido } from "../../interfaces";
 import { externalApiConToken } from '../../apiAxios';
-import { useRouter } from 'next/router';
 import { PedidoUploadFile } from '../../components/pedidos/PedidoUploadFile';
 import { AdjuntoLista } from '../../components/adjuntos/AdjuntoLista';
-import { EmailOutlined } from '@mui/icons-material';
+import { EmailOutlined, Phone } from '@mui/icons-material';
 import { AdjuntosContext } from '../../context/adjuntos/AdjuntosContext';
 import { SocketContext } from '../../context/socket';
 import { ChatContext } from '../../context';
+import { FormControl, InputLabel, Select } from '@mui/material';
+import { PedidoEstados } from '../../interfaces/pedido';
 
 interface Props {
     pedido: Pedido,
     id: string
 }
+
+const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
+                                                    'Responsable Monotributo',
+                                                    'IVA Sujeto Exento',
+                                                    'Cliente del Exterior',
+                                                    'Consumidor Final',
+                                                    'IVA No Alcanzado' ];
 
 export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
@@ -39,37 +50,52 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
         router.push(`/chat/${ idCliente }`);
     }
   
-    const formularioInicial = { servicio: '', importe: 0 };
+    const handleLlamarTelefono = async() => {
+        const celular = pedido.vehiculo.cliente.celular;
+        console.log(celular)
+        router.push(`tel:${ celular }`);
+    }
+
+    const formularioInicial = { servicio: '', importe: 0, cantidad: 0 };
     
     const [modificar, setModificar] = useState(false);
-    const [cotizar, setCotizar] = useState(false);
+
+    const estados = [ 'Nuevo', 'Cotizando', 'Cotizado', 'Aprobado', 'Rechazado', 'Finalizado' ];
+
 
     const onSave = async( values: Pedido ) => {
 
-        const { id, descripcion, listaItems } = values;
-        
-        if ( modificar ) {
-            const modificar = await externalApiConToken.put(`/pedidos/${ id }`, { descripcion })
-        }
-
-        if ( cotizar ) {
-            values.estado = 'Cotizando'
-            const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { listaItems })
-        }
-
-        setModificar(false);
-        setCotizar(false);
-    }
-
-    const onVolverCotizar = async( values: Pedido ) => {
-        
-        const { id, listaItems } = values;
+        const { id } = values;
         
         values.estado = 'Cotizando'
-        const cotizando = await externalApiConToken.put(`/pedidos/cotizando/${ id }`, { listaItems })
+
+        try {
+            const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values })
+            
+        } catch (error) {
+            console.log(error);
+        }
 
         setModificar(false);
-        setCotizar(false);
+    }
+
+    const onVolverCotizar = async( values: Pedido, setFieldValue: any, estado: PedidoEstados ) => {
+        
+        const { id } = values;
+
+        setFieldValue('estado', estado);
+        values.estado = estado;
+
+        try {
+            const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values });
+
+            setModificar(true);
+
+        } catch (error) {
+            console.log(error);
+        }
+
+        
     }
 
     const onVerCotizacion = async( values: Pedido ) => {
@@ -81,23 +107,32 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
     const onCotizarEnviar = async( values: Pedido ) => {
 
-        const { id, listaItems } = values;
+        const { id } = values;
 
         values.estado = 'Cotizado'
 
-        await externalApiConToken.put(`/pedidos/cotizarenviar/${ id }`, { listaItems })
-        
-        const payload: IMensaje = {
-            cliente: values.vehiculo.cliente._id,
-            clase: 'enviado',
-            estado: 'leido'
+        try {
+            const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values });
+            
+            const payload: IMensaje = {
+                cliente: values.vehiculo.cliente._id,
+                clase: 'enviado',
+                estado: 'leido',
+                tipo: 'documento',
+                link: resultado.data.urlPropuesta,
+                pedido: id,
+                urlPropuesta: resultado.data.urlPropuesta
+            }
+    
+            socket?.emit('frontend:enviar-cotizado', payload );
+    
+            setModificar(false);
+
+        } catch (error) {
+            console.log(error);
         }
-
-        console.log(payload);
-        socket?.emit('frontend:enviar-cotizado', payload );
-
-        setModificar(false);
-        setCotizar(false);
+        
+        
     }
 
     useEffect(() => {
@@ -121,7 +156,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                 })
             }>
 
-                {( { values, errors, touched, isSubmitting, isValidating, setSubmitting } ) => (
+                {( { values, errors, touched, isSubmitting, isValidating, setSubmitting, setFieldValue } ) => (
                     <Layout title={ `Pedido #${ values.numero }` }>
                         <Grid
                             justifyContent='center'
@@ -157,29 +192,53 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                 }
                                             </Grid>
                                             
-                                            <Grid item xs={ 12 } sm={ 6 } md={ 6 } sx={ values.estado === 'Cotizado' ? { display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' } : { display: 'none' } }>
-                                                <Button
-                                                    type='button'
-                                                    variant='outlined'
-                                                    color='success'
-                                                    disabled={ isSubmitting || isValidating }
-                                                    onClick={ () => onVerCotizacion( values ) }
-                                                    sx={ values.urlPropuesta ? { marginRight: 1, height: 40 } : { display: 'none' }}
+                                            <Grid item xs={ 12 } sm={ 6 } md={ 6 } >
+                                                <Field 
+                                                    as={ TextField }
+                                                    name='condicionIva'
+                                                    fullWidth
+                                                    disabled={ !modificar }
+                                                    size='small'
+                                                    label='Condición Iva'
+                                                    sx={{ mt: 1.5, mb: 1 }}
+                                                    select
                                                 >
-                                                    <SaveOutlinedIcon />
-                                                    <Typography>Ver cotización</Typography>
-                                                </Button>
-                                                <Button
-                                                    type='button'
-                                                    variant='outlined'
-                                                    color='error'
-                                                    disabled={ isSubmitting || isValidating }
-                                                    onClick={ () => onVolverCotizar( values ) }
-                                                    sx={{ height: 40 }}
+                                                    {
+                                                        validCondicionIva.map( cond => <MenuItem value={ cond } key={ cond }>{ cond }</MenuItem> )
+                                                    }
+                                                </Field>
+                                                <Field 
+                                                    as={ TextField }
+                                                    name='estado'
+                                                    fullWidth
+                                                    // disabled={ values.estado === 'Cotizado' ? false : true }
+                                                    size='small'
+                                                    label='Estado'
+                                                    sx={{ mt: 1.5, mb: 1 }}
+                                                    select
+                                                    onChange={ (e:any) => {
+                                                        onVolverCotizar( values, setFieldValue, e.target.value );
+                                                    } }
                                                 >
-                                                    <SaveOutlinedIcon />
-                                                    <Typography>Volver a cotizar</Typography>
-                                                </Button>
+                                                    {
+                                                        estados.map( item => 
+                                                        <MenuItem value={ item } key={ item }>{ item }</MenuItem>
+                                                        )
+                                                    }
+                                                </Field>
+                                                <Box sx={ values.urlPropuesta ? { display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' } : { display: 'none' } }>
+                                                    <Button
+                                                        type='button'
+                                                        variant='outlined'
+                                                        color='success'
+                                                        disabled={ isSubmitting || isValidating }
+                                                        onClick={ () => onVerCotizacion( values ) }
+                                                        sx={ { marginRight: 1 } }
+                                                    >
+                                                        <Typography>Ver cotización</Typography>
+                                                    </Button>
+                                                </Box>
+                                                
                                             </Grid>
                                         </Grid>
                                         <PedidoUploadFile id={ id } />
@@ -202,7 +261,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                             error={ touched.descripcion && errors.descripcion }
                                             helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
                                         />
-                                        <Box sx={ !cotizar && values.estado === 'Nuevo' ? { display: 'none' } : { display: 'block'}}>
+                                        <Box sx={ !modificar && values.estado === 'Nuevo' ? { display: 'none' } : { display: 'block'}}>
                                             <FieldArray name="listaItems">
                                                 {({ push, remove }) => (
                                                 <>
@@ -216,24 +275,37 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                                     type='text'
                                                                     fullWidth
                                                                     multiline
-                                                                    disabled={ !cotizar }
+                                                                    disabled={ !modificar }
                                                                     rows={ 1 }
                                                                     label='Detalle de la cotización'
                                                                     sx={{ mt: 1, mb: 1 }}
-
-                                                                    error={ touched.descripcion && errors.descripcion }
-                                                                    helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
                                                                 />
                                                                 <Field
                                                                     as={ TextField }
                                                                     name={`listaItems.${indiceFormulario}.importe`}
                                                                     type='number'
                                                                     fullWidth
-                                                                    disabled={ !cotizar }
+                                                                    disabled={ !modificar }
                                                                     label='Importe'
                                                                     sx={{ m: 1, width: 150  }}
-                                                                    error={ touched.descripcion && errors.descripcion }
-                                                                    helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                                                />
+                                                                <Field
+                                                                    as={ TextField }
+                                                                    name={`listaItems.${indiceFormulario}.cantidad`}
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    disabled={ !modificar }
+                                                                    label='Cantidad'
+                                                                    sx={{ m: 1, width: 150  }}
+                                                                />
+                                                                <Field
+                                                                    as={ TextField }
+                                                                    value={ opcion.importe * opcion.cantidad }
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    disabled={ !false }
+                                                                    label='Importe'
+                                                                    sx={{ m: 1, width: 150  }}
                                                                 />
                                                                 <Button
                                                                     disabled={isSubmitting}
@@ -241,7 +313,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                                     type='button'
                                                                     variant='outlined'
                                                                     color='error'
-                                                                    sx={ !cotizar ? { display: 'none' } : { mt: 1, mb: 1 }}
+                                                                    sx={ !modificar ? { display: 'none' } : { mt: 1, mb: 1 }}
                                                                 >
                                                                     Delete
                                                                 </Button>
@@ -256,7 +328,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                             </>
                                                         ) : null }
                                                     </div>
-                                                    <Box sx={ !cotizar ? { display: 'none' } : { display: 'block' } } >
+                                                    <Box sx={ !modificar ? { display: 'none' } : { display: 'block' } } >
                                                         <Button
                                                             type='button'
                                                             variant='outlined'
@@ -271,9 +343,66 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                 )}
                                             </FieldArray>
                                         </Box>
+                                        <Grid container>
+                                            <Grid item md={6}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                                    <Typography variant='h6' padding={ 2 }>Neto</Typography>
+                                                    <Typography variant='h6' padding={ 2 }>
+                                                        { values.listaItems.reduce((inicial, valor) => 
+                                                            inicial + (valor.importe * valor.cantidad), 0)
+                                                            .toLocaleString('es-AR', {  
+                                                                style: 'currency',
+                                                                currency: 'ARS'
+                                                            }) 
+                                                        }
+                                                    </Typography>
+                                                </Box>
+                                            </Grid>
+                                            <Grid item md={3}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                                    <Typography variant='h6' padding={ 2 }>IVA</Typography>
+                                                    <Typography variant='h6' padding={ 2 }>
+                                                        { values.condicionIva !== 'IVA Sujeto Exento' ?  
+                                                            values.listaItems.reduce((inicial, valor) => 
+                                                            inicial + valor.importe * valor.cantidad * 0.21, 0)
+                                                            .toLocaleString('es-AR', {  
+                                                                style: 'currency',
+                                                                currency: 'ARS'
+                                                            }) 
+                                                            : parseFloat('0').toLocaleString('es-AR', {  
+                                                                style: 'currency',
+                                                                currency: 'ARS'
+                                                            }) 
+                                                        }
+                                                    </Typography>
+                                                </Box>
+                                            </Grid>
+                                            <Grid item md={3}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                                    <Typography variant='h6' padding={ 2 }>Total</Typography>
+                                                    <Typography variant='h6' padding={ 2 }>
+                                                        { values.condicionIva !== 'IVA Sujeto Exento' ? 
+                                                            values.listaItems.reduce((inicial, valor) => 
+                                                            inicial + valor.importe * valor.cantidad * 1.21, 0)
+                                                            .toLocaleString('es-AR', {  
+                                                                style: 'currency',
+                                                                currency: 'ARS'
+                                                            }) 
+                                                            :
+                                                            values.listaItems.reduce((inicial, valor) => 
+                                                            inicial + valor.importe * valor.cantidad, 0)
+                                                            .toLocaleString('es-AR', {  
+                                                                style: 'currency',
+                                                                currency: 'ARS'
+                                                            }) 
+                                                        }
+                                                    </Typography>
+                                                </Box>
+                                            </Grid>
+                                        </Grid>
                                     </CardContent>
                                     <CardActions>
-                                        <Box sx={ modificar || cotizar || values.estado === 'Cotizado' ? { display: 'none' } : { display: 'block' } }>
+                                        <Box sx={ modificar ? { display: 'none' } : { display: 'block' } }>
                                             <Button
                                                 type='button'
                                                 variant='outlined'
@@ -285,19 +414,8 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                 <SaveOutlinedIcon />
                                                 <Typography>Modificar</Typography>
                                             </Button>
-                                            <Button
-                                                type='button'
-                                                variant='outlined'
-                                                color='warning'
-                                                disabled={ isSubmitting || isValidating }
-                                                onClick={ () => setCotizar(true) }
-                                                sx={{ margin: 1 }}
-                                                >
-                                                <SaveOutlinedIcon />
-                                                <Typography>Cotizar</Typography>
-                                            </Button>
                                         </Box>
-                                        <Box sx={ !modificar && !cotizar ? { display: 'none' } : { display: 'block' } } >
+                                        <Box sx={ !modificar ? { display: 'none' } : { display: 'block' } } >
                                             <Button
                                                 type='submit'
                                                 variant='outlined'
@@ -315,7 +433,6 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                 disabled={ isSubmitting || isValidating }
                                                 onClick={ () => {
                                                     setModificar(false);
-                                                    setCotizar(false);
                                                 } }
                                                 sx={{ margin: 1 }}
                                                 >
@@ -323,25 +440,22 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                 <Typography>Cancelar</Typography>
                                             </Button>
                                         </Box>
-                                        <Box sx={ !cotizar ? { display: 'none' } : { display: 'block' } } >
+                                        <Box sx={ !modificar ? { display: 'none' } : { display: 'block' } } >
                                             <Button
                                                 type='button'
                                                 variant='outlined'
                                                 color='primary'
                                                 disabled={ isSubmitting || isValidating }
                                                 onClick={ () => onCotizarEnviar( values ) }
-                                                
-
                                             >
                                                 <SaveOutlinedIcon />
-                                                <Typography>Enviar</Typography>
+                                                <Typography>Guardar y Enviar</Typography>
                                             </Button>
                                         </Box>
                                     </CardActions>
                                 </Card>
                             </Form>
                         </Grid>
-
                             <IconButton 
                                 sx={{
                                     position:'fixed',
@@ -353,6 +467,18 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                 onClick={ () => handleActivarChat() }
                             >
                                 <EmailOutlined />
+                            </IconButton>
+                            <IconButton 
+                                sx={{
+                                    position:'fixed',
+                                    bottom: 30,
+                                    right: 80,
+                                    border: 1,
+                                    color: 'blue'
+                                }}
+                                onClick={ () => handleLlamarTelefono() }
+                            >
+                                <Phone />
                             </IconButton>
                     </Layout>
                     )

@@ -4,6 +4,8 @@ import { TableCell, TableRow, Typography, IconButton, Menu, MenuItem } from '@mu
 import { Cliente } from '../../interfaces';
 import { MoreVertOutlined } from '@mui/icons-material';
 import { ChatContext } from '../../context';
+import { externalApiConToken } from '../../apiAxios';
+import Swal from 'sweetalert2';
 
 interface Props {
     cliente: Cliente;
@@ -34,6 +36,45 @@ export const ClienteItem:FC<Props> = ({ cliente }) => {
     router.push(`/chat/${ cliente.id }`);
   }
 
+  const handleEliminarCliente = async ( ) => {
+
+    Swal.fire({
+      title: 'Desea eliminar el cliente?',
+      text: "No podra revertir este cambio!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar!'
+    }).then(async(result) => {
+        // ELIMINAR CLIENTE
+        if (result.isConfirmed) {
+          try {
+            console.log(cliente.id);
+            await externalApiConToken.delete(`/clientes/${ cliente.id }`);
+            if (result.isConfirmed) {
+              Swal.fire(
+                'Cliente eliminado!',
+                'El cliente ha sido eliminado.',
+                'success'
+              )
+            }
+          } catch (error: any) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'No se pudo eliminar el cliente!'
+            })
+          }
+        }
+      
+    })
+
+    
+   
+        
+
+}
 
   return (
     <TableRow
@@ -42,7 +83,7 @@ export const ClienteItem:FC<Props> = ({ cliente }) => {
             // onClick={ onClick }
             hover
     >
-      <TableCell>{ cliente.codigo }</TableCell>
+      {/* <TableCell>{ cliente.codigo }</TableCell> */}
       <TableCell component="th" scope="row">
           { cliente.nombre }
       </TableCell>
@@ -77,8 +118,9 @@ export const ClienteItem:FC<Props> = ({ cliente }) => {
             open={Boolean(anchorEl)}
             onClose={ handleClose }
           >
-            <MenuItem onClick={onClick}>Editar</MenuItem>
             <MenuItem onClick={handleActivarChat}>Chat</MenuItem>
+            <MenuItem onClick={onClick}>Editar</MenuItem>
+            <MenuItem onClick={handleEliminarCliente}>Eliminar</MenuItem>
           </Menu>
         </div>
       </TableCell>

@@ -21,6 +21,17 @@ export const IncomingMessage:FC<Props> = ({ msg }) => {
                     </Typography>
                 }
                 {
+                    msg.tipo === 'boton' &&
+                    <Box>
+                        <Typography sx={ msg.body === 'Acepta el presupuesto' 
+                                        ? { textAlign: 'left', fontWeight: 'bold', border: 1, padding: 2, marginBottom: 2, fontSize: 25, color: 'green' }
+                                        : { textAlign: 'left', fontWeight: 'bold', border: 1, padding: 2, marginBottom: 2, fontSize: 25, color: 'red' }
+                        }>
+                            { msg.body }
+                        </Typography>
+                    </Box>
+                }
+                {
                     msg.tipo === 'documento' &&
                         <Box>
                             <Typography sx={{ textAlign: 'left', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
