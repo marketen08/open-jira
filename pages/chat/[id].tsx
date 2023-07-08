@@ -35,9 +35,9 @@ export const ChatPage:FC<Props> = ({ cliente }) => {
     return (
         <Layout>
             <Grid container spacing={ 2 }>
-                <Grid item xs={12} md={8}>
+                <Grid item xs={12} md={12}>
                     <Item sx={{ height: 'calc(100vh - 100px)'}}>
-                        <CardHeader title="Mensajes" sx={{ backgroundColor: 'gray', color: 'white'}} />
+                        <CardHeader title={ cliente.nombre + ' ' + cliente.celular } sx={{ backgroundColor: 'gray', color: 'white'}} />
                         {
                             ( cliente.id )
                             ? <Messages />
@@ -45,7 +45,7 @@ export const ChatPage:FC<Props> = ({ cliente }) => {
                         }
                     </Item>
                 </Grid>
-                <Grid item xs>
+                {/* <Grid item xs>
                     <Item sx={{ height: 'calc(100vh - 100px)'}}>
                         <CardHeader title="Detalle" sx={{ backgroundColor: 'gray', color: 'white'}} />
                         { cliente &&
@@ -71,7 +71,7 @@ export const ChatPage:FC<Props> = ({ cliente }) => {
                             </Box>
                         }
                     </Item>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Layout>
     )
