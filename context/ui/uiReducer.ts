@@ -27,7 +27,7 @@ export const uiReducer = ( state: UIState, action: UIActionType ):UIState => {
         case 'UI - Open ChatBar':
             return {
                 ...state,
-                chatmenuOpen: true,
+                chatmenuOpen: state.chatmenuOpen ? false : true,
             }
 
         case 'UI - Close ChatBar':
