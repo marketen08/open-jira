@@ -67,7 +67,9 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
         const { id } = values;
         
-        values.estado = 'Cotizando'
+        if ( values.estado === 'Nuevo' ) {
+            values.estado = 'Cotizando'
+        }
 
         try {
             const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values })
@@ -79,7 +81,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
         setModificar(false);
     }
 
-    const onVolverCotizar = async( values: Pedido, setFieldValue: any, estado: PedidoEstados ) => {
+    const onEstadoChange = async( values: Pedido, setFieldValue: any, estado: PedidoEstados ) => {
         
         const { id } = values;
 
@@ -88,8 +90,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
         try {
             const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values });
-
-            setModificar(true);
+            setModificar(false);
 
         } catch (error) {
             console.log(error);
@@ -217,7 +218,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                     sx={{ mt: 1.5, mb: 1 }}
                                                     select
                                                     onChange={ (e:any) => {
-                                                        onVolverCotizar( values, setFieldValue, e.target.value );
+                                                        onEstadoChange( values, setFieldValue, e.target.value );
                                                     } }
                                                 >
                                                     {
