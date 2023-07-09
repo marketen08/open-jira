@@ -90,6 +90,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
 
         try {
             const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values });
+
             setModificar(false);
 
         } catch (error) {

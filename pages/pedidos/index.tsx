@@ -46,10 +46,10 @@ const Pedidos:NextPage = () => {
       
       <Grid container padding={ 2 }>
         <Grid container spacing={2}>
-          <Grid item md={6}>
+          <Grid item md={6} xs={12}>
               <Typography variant='h4' paddingBottom={ 2 }>LISTA DE PEDIDOS</Typography>
           </Grid>
-          <Grid item md={3}>
+          <Grid item md={3} xs={12}>
             <Box sx={{ pb: 3, display: 'flex', justifyContent: 'flex-end' }}>
               <FormControl>
                 <InputLabel id="lblCliente">Cliente</InputLabel>

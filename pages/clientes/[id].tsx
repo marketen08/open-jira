@@ -238,16 +238,6 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                             />
                             <Field
                                 as={ TextField }
-                                name='email'
-                                type='text'
-                                fullWidth
-                                label='Email'
-                                sx={{ mt: 1.5, mb: 1 }}
-                                error={ Boolean(touched.email && errors.email) }
-                                helperText={ touched.email && errors.email && errors.email }
-                            />
-                            <Field
-                                as={ TextField }
                                 name='celular'
                                 type='text'
                                 fullWidth
@@ -255,6 +245,16 @@ export const ClientePage:FC<Props> = ({ cliente }) => {
                                 sx={{ mt: 1.5, mb: 1 }}
                                 error={ Boolean(touched.celular && errors.celular) }
                                 helperText={ touched.celular && errors.celular && errors.celular  }
+                            />
+                            <Field
+                                as={ TextField }
+                                name='email'
+                                type='text'
+                                fullWidth
+                                label='Email'
+                                sx={{ mt: 1.5, mb: 1 }}
+                                error={ Boolean(touched.email && errors.email) }
+                                helperText={ touched.email && errors.email && errors.email }
                             />
                             <Field
                                 as={ TextField }
