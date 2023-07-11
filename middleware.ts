@@ -8,18 +8,14 @@ export async function middleware(req: NextRequest) {
 
     const session:any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    const token = req.cookies.get('token')?.value
-
-    if (!req.nextUrl.pathname.startsWith( '/auth/login' )) {
-        // Unicamente chequeo si existe la session, el token lo chequea en AuthProvider, y si no existe token hace un logout
-        if ( !session ) {
-            const requestedPage = req.nextUrl.pathname;
-            const url = req.nextUrl.clone();
-            url.pathname = `/auth/login`;
-            url.search = `callbackUrl=${requestedPage}`;
-            console.log(url)
-            return NextResponse.redirect(url);
-        }
+    // Unicamente chequeo si existe la session, 
+    // No se chequeaa el token ya que lo esta haciendo el AuthProvider, y si no existe token hace un logout
+    if ( !session ) {
+        const requestedPage = req.nextUrl.pathname;
+        const url = req.nextUrl.clone();
+        url.pathname = `/auth/login`;
+        url.search = `callbackUrl=${requestedPage}`;
+        return NextResponse.redirect(url);
     }
 
     if ( req.nextUrl.pathname.startsWith( '/api/entries/' )) {
@@ -58,6 +54,7 @@ export const config = {
         '/api/entries',
         '/api/entries/:path*',
         '/chat',
+        '/chat/:path*',
         '/clientes',
         '/clientes/:path*',
         '/ingreso',
