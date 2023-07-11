@@ -10,6 +10,8 @@ export async function middleware(req: NextRequest) {
 
     // Unicamente chequeo si existe la session, 
     // No se chequeaa el token ya que lo esta haciendo el AuthProvider, y si no existe token hace un logout
+    // Tampoco es necesario usar el !startsWith('/login') porque la pagina de login no esta dentro del las que evalua el middleware
+    
     if ( !session ) {
         const requestedPage = req.nextUrl.pathname;
         const url = req.nextUrl.clone();
