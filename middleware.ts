@@ -11,11 +11,13 @@ export async function middleware(req: NextRequest) {
     const token = req.cookies.get('token')?.value
 
     if (!req.nextUrl.pathname.startsWith( '/auth/login' )) {
-        if ( !session || !token ) {
+        // Unicamente chequeo si existe la session, el token lo chequea en AuthProvider, y si no existe token hace un logout
+        if ( !session ) {
             const requestedPage = req.nextUrl.pathname;
             const url = req.nextUrl.clone();
             url.pathname = `/auth/login`;
             url.search = `callbackUrl=${requestedPage}`;
+            console.log(url)
             return NextResponse.redirect(url);
         }
     }
