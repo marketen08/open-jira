@@ -1,14 +1,16 @@
 import { Box, Button, Card, CardContent, CircularProgress, Grid, MenuItem, Step, StepLabel, Stepper } from '@mui/material';
-import { Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
+import { Field, Form, Formik, FormikConfig, FormikErrors, FormikValues } from 'formik';
 import { TextField } from 'formik-mui';
 import React, { FocusEvent, ReactNode, useState } from 'react';
 import { number, object, string } from 'yup';
 import { NextPage } from 'next';
 import { Layout } from '../../components/layouts';
 import { externalApiConToken } from '../../apiAxios/externalApi';
-import { ClienteCondicionIva, ClienteTipoDeDocumento, Vehiculo } from '../../interfaces';
+import { Cliente, ClienteCondicionIva, ClienteTipoDeDocumento, Ingreso, Vehiculo } from '../../interfaces';
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router';
+import { ClientesResumen, ClienteNuevo } from '../../interfaces/cliente';
+import Swal from 'sweetalert2';
 
 const validTipoDocumento: ClienteTipoDeDocumento[] = [ 'CUIT', 'CUIL', 'DNI', 'Otros' ]
 const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
@@ -18,7 +20,56 @@ const validCondicionIva: ClienteCondicionIva[] = [  'IVA Responsable Inscripto',
                                                     'Consumidor Final',
                                                     'IVA No Alcanzado' ];
 
-const sleep = (time:any) => new Promise((acc) => setTimeout(acc, time));
+
+
+const validateExiste = async (buscar: string, etiqueta: string): Promise<string | undefined> => {
+  try {
+      const response = await externalApiConToken.get(`/clientes/existe/${buscar}`);
+      // Si el email existe en la base de datos, el servidor podría responder con un código de estado específico (por ejemplo, 200) o algún otro indicador.
+      // Puedes adaptar el código a tu servidor y verificar la respuesta de acuerdo a tus necesidades.
+      if (response.data) {
+          console.log('existe data');
+          return `El ${ etiqueta } ya está registrado`;
+      }
+      return undefined; // El email no existe en la base de datos
+  } catch (error) {
+      console.error('Error al validar el email:', error);
+      return `Ocurrió un error al validar el ${ etiqueta }`;
+  }
+};
+
+
+const validateForm = async (values: any ): Promise<FormikErrors<Ingreso>> => {
+  
+  console.log(values);
+  const errors: FormikErrors<Ingreso> = {};
+
+  if (values.celular && !('id' in values)) {
+      const celularExistsError = await validateExiste(values.celular, 'celular');
+      if (celularExistsError) {
+          errors.celular = celularExistsError;
+      }
+  }
+
+  return errors;
+};
+
+const valoresIniciales: Ingreso = {
+  numero: '',
+  tipoDeDocumento: 'DNI',
+  nombre: '',
+  email: '',
+  celular: '',
+  telefono: '',
+  domicilio: '',
+  provincia: '',
+  localidad: '',
+  condicionIva: 'Consumidor Final',
+  patente: '',
+  marca: '',
+  modelo: '',
+  descripcion: '',
+}
 
 const Ingreso:NextPage = () => {
 
@@ -26,9 +77,8 @@ const Ingreso:NextPage = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const handleSubmit = async( values: any ) => {
-        // console.log('values', values);
         try {
-            await externalApiConToken.post<Vehiculo>('/pedidos/ingreso', values );    
+            await externalApiConToken.post<Ingreso>('/pedidos/ingreso', values );    
             enqueueSnackbar('Ingreso de servicio actualizado', {
                 variant: 'success',
                 autoHideDuration: 3000,
@@ -47,15 +97,69 @@ const Ingreso:NextPage = () => {
         }
     }
 
-    const existeDocumento = async(e: FocusEvent<HTMLInputElement>) => {
+    const existeNumero = async(e: FocusEvent<HTMLInputElement>) => {
       
-      const documento = e.target.value;
+      const numero = e.target.value;
 
       try {
-        const existeDocumento = await externalApiConToken.get<Vehiculo>(`/clientes?documento=${ documento }` ); 
-      
-        if ( existeDocumento ) {
+        const { data } = await externalApiConToken.get<ClientesResumen>(`/clientes?numero=${ numero }` ); 
+        const { clientes } = data;
         
+        if ( clientes.length > 0 && numero.length > 0 ) {
+          Swal.fire({
+            title: 'Existe un cliente registrado con ese número.',
+            text: "¿Desea continuar?",
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            denyButtonText: 'Ver clientes relacionados',
+            denyButtonColor: '#3085d0',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Continuar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            console.log(result);
+            if ( result.isDenied ) {
+              router.push(`/clientes?numero=${ numero }`);
+            }
+          })
+        }
+
+      } catch (error) {
+        
+      }
+
+    }
+
+    const existeCelular = async(e: FocusEvent<HTMLInputElement>) => {
+      
+      const celular = e.target.value;
+
+      try {
+        const { data } = await externalApiConToken.get<ClientesResumen>(`/clientes?celular=${ celular }` ); 
+        const { clientes } = data;
+        
+        console.log(data)
+        if ( clientes.length > 0 && celular.length > 0 ) {
+          Swal.fire({
+            title: 'Existe un cliente registrado con ese celular.',
+            text: "¿Desea ir a la pantalla del cliente?",
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            denyButtonText: 'Ver cliente relacionado',
+            denyButtonColor: '#3085d0',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Continuar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            console.log(result);
+            if ( result.isDenied ) {
+              router.push(`/clientes?celular=${ celular }`);
+            }
+          })
         }
 
       } catch (error) {
@@ -71,26 +175,9 @@ const Ingreso:NextPage = () => {
             <Card>
                 <CardContent>
                     <FormikStepper
-                      
-                        initialValues={{
-                            numero: '',
-                            tipoDeDocumento: 'DNI',
-                            nombre: '',
-                            email: '',
-                            celular: '',
-                            telefono: '',
-                            domicilio: '',
-                            provincia: '',
-                            localidad: '',
-                            condicionIva: 'Consumidor Final',
-                            patente: '',
-                            marca: '',
-                            modelo: '',
-                            description: '',
-                        }}
+                        validate={ validateForm }
+                        initialValues={ valoresIniciales }
                         onSubmit={async (values) => {
-                            // await sleep(3000);
-                            
                             handleSubmit( values );
                         }}
                     >
@@ -106,15 +193,12 @@ const Ingreso:NextPage = () => {
                                   .min(1000000000, 'El celular debe tener 10 caracteres')
                                   .max(9999999999, 'El celular debe tener 10 caracteres')
                                   .required('El celular es obligatorio'),
-                          email: string().email('El mail no es valido').required('El email es obligatorio'),
+                          email: string().email('El mail no es valido'),
                         })}
                       >
                         <Box paddingBottom={2}>
                             <Field fullWidth name="numero" component={TextField} label="Número de documento" 
-                              onBlur={ (e:FocusEvent<HTMLInputElement>) => {
-                                const documento = e.target.value;
-                                // console.log(documento);
-                            } } />
+                              onBlur={ existeNumero } />
                         </Box>
                         <Box paddingBottom={2}>
                           <Field fullWidth name="tipoDeDocumento" component={TextField} label="Tipo de Documento" select>
@@ -127,10 +211,10 @@ const Ingreso:NextPage = () => {
                             <Field fullWidth name="nombre" component={TextField} label="Nombre y Apellido / Razon Social" inputProps={{ style: { textTransform: "uppercase" } }} />
                         </Box>
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="email" component={TextField} label="Email" />
+                            <Field fullWidth name="celular" component={TextField} label="Celular" onBlur={ existeCelular } />
                         </Box>
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="celular" component={TextField} label="Celular" />
+                            <Field fullWidth name="email" component={TextField} label="Email" />
                         </Box>
                         <Box paddingBottom={2}>
                             <Field fullWidth name="telefono" component={TextField} label="Teléfono" />
@@ -166,7 +250,7 @@ const Ingreso:NextPage = () => {
                                 .min(1000000000, 'El celular debe tener 10 caracteres')
                                 .max(9999999999, 'El celular debe tener 10 caracteres')
                                 .required('El celular es obligatorio'),
-                        email: string().email('El mail no es valido').required('El email es obligatorio'),
+                        email: string().email('El mail no es valido'),
                         })}
                       >
                         <Box paddingBottom={2}>

@@ -8,23 +8,20 @@ import { FullScreenLoading } from "../../components/ui";
 import { useClientes } from "../../hooks";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useRouter } from 'next/router';
-import { SocketContext } from "../../context/socket";
 
 const Clientes:NextPage = () => {
 
   const router = useRouter();
 
-  const { socket } = useContext( SocketContext );
+  const { numero = '', celular = '' } = router.query;
 
   const [buscar, setBuscar] = useState('');
 
   const handleInputChangeBuscar = ({ target }: any) => {
     setBuscar(target.value);
-
-    // socket?.emit('hola', 'pepapepa');
   }
 
-  const { clientesResumen, isLoading } = useClientes(`/clientes?buscar=${ buscar }`);
+  const { clientesResumen, isLoading } = useClientes(`/clientes?buscar=${ buscar }&numero=${ numero }&celular=${ celular }`);
 
   const clientes = clientesResumen?.clientes;
   const total = clientesResumen?.total ? clientesResumen.total : -1;
@@ -42,7 +39,7 @@ const Clientes:NextPage = () => {
   };
 
   const handleNuevo = () => {
-    router.push('/clientes/nuevo')
+    router.push('/clientes/nuevo');
   }
 
   return (
@@ -88,7 +85,6 @@ const Clientes:NextPage = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    {/* <TableCell>Código</TableCell> */}
                     <TableCell>Nombre del cliente</TableCell>
                     <TableCell>Documento</TableCell>
                     <TableCell>Email</TableCell>

@@ -1,5 +1,10 @@
 import { IMensaje } from './';
 
+export interface ClientesResumen {
+    total: number;
+    clientes: Cliente[]
+}
+
 export interface ClienteNuevo {
   numero: string;
   tipoDeDocumento: ClienteTipoDeDocumento;
@@ -16,7 +21,6 @@ export interface ClienteNuevo {
 
 export interface ClienteConMensajes {
   id: string;
-  codigo: string;
   tipoDeDocumento: ClienteTipoDeDocumento;
   numero: string;
   nombre: string;
@@ -30,7 +34,6 @@ export interface ClienteConMensajes {
 
 export interface Cliente extends ClienteNuevo {
   id: string;
-  codigo: number;
   activo: boolean;
   estado: string;
   usuario: string;

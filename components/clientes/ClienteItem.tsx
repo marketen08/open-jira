@@ -78,12 +78,9 @@ export const ClienteItem:FC<Props> = ({ cliente }) => {
 
   return (
     <TableRow
-            key={ cliente.id }
-            // sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor:'pointer' }}
-            // onClick={ onClick }
-            hover
+      key={ cliente.id }
+      hover
     >
-      {/* <TableCell>{ cliente.codigo }</TableCell> */}
       <TableCell component="th" scope="row">
           { cliente.nombre }
       </TableCell>

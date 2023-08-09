@@ -26,14 +26,16 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
 
     const onSave = async ( values: Vehiculo ) => {
 
+        console.log(values.cliente);
+
         if ( values.id === '' ){
             // NUEVO VEHICULO
             await externalApiConToken.post(`/vehiculos`, { ...values });
-            router.push('/vehiculos')
+            router.push(`/clientes/${ values.cliente._id }`)
         } else {
             // ACTUALIZAR VEHICULO
             await externalApiConToken.put(`/vehiculos/${ values.id }`, { ...values });
-            router.push('/vehiculos')
+            router.push(`/clientes/${ values.cliente._id }`)
         }
 
     }
@@ -66,6 +68,11 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                             modelo: string()
                                         .max(100, 'Debe de tener 100 caracteres o menos')
                                         .required('El modelo es requerido'),
+                            cliente: object()
+                                    .shape({
+                                        _id: string()
+                                            .required('Debe seleccionar el cliente')
+                                    })
                             
                         })
                     }>
@@ -112,6 +119,8 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                                 label='Cliente'
                                 sx={{ mt: 1.5, mb: 1 }}
                                 select
+                                error={ touched.cliente?._id && errors.cliente?._id ? true : false }
+                                helperText={ touched.cliente?._id && errors.cliente?._id && errors.cliente._id }
                             >
                                 {
                                     clientes.clientes.map( cli => 
@@ -149,9 +158,11 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req, query }) => {
 
     const { id } = params as { id: string };
+
+    let { cliente = '' } = query;
 
     try {
         const { data:clientes } = await externalApiConToken.get(`/clientes/`, {
@@ -166,7 +177,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
                 patente: '',
                 marca: '',
                 modelo: '',
-                cliente: '',
+                cliente: {
+                    _id: cliente
+                },
                 activo: false,
                 createdAt: 0
             }

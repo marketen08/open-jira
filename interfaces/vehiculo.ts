@@ -12,3 +12,8 @@ export interface Vehiculo {
   createdAt: number;
   updatedAt?: number;
 }
+
+export interface VehiculosResumen {
+  total: number;
+  vehiculos: Vehiculo[]
+}
