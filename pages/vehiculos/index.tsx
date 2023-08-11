@@ -16,13 +16,15 @@ const Vehiculos:NextPage = () => {
 
   const router = useRouter();
 
+  const { patente = '' } = router.query;
+
   const [buscar, setBuscar] = useState('');
 
   const handleInputChangeBuscar = ({ target }: any) => {
     setBuscar(target.value);
   }
 
-  const { vehiculosResumen, isLoading } = useVehiculos(`/vehiculos?buscar=${ buscar }`);
+  const { vehiculosResumen, isLoading } = useVehiculos(`/vehiculos?buscar=${ buscar }&patente=${ patente }`);
 
   const vehiculos = vehiculosResumen?.vehiculos;
   const total = vehiculosResumen?.total ? vehiculosResumen.total : -1;

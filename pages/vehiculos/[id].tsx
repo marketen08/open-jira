@@ -124,7 +124,7 @@ export const VehiculoPage:FC<Props> = ({ vehiculo, clientes }) => {
                             >
                                 {
                                     clientes.clientes.map( cli => 
-                                           <MenuItem value={ cli.id } key={ cli.id }>{ cli.nombre }</MenuItem> 
+                                           <MenuItem value={ cli.id } key={ cli.id }>{ cli.nombre } (CUIT: { cli.numero } CEL: { cli.celular })</MenuItem> 
                                     )
                                 }
                             </Field>

@@ -6,7 +6,7 @@ import { number, object, string } from 'yup';
 import { NextPage } from 'next';
 import { Layout } from '../../components/layouts';
 import { externalApiConToken } from '../../apiAxios/externalApi';
-import { Cliente, ClienteCondicionIva, ClienteTipoDeDocumento, Ingreso, Vehiculo } from '../../interfaces';
+import { Cliente, ClienteCondicionIva, ClienteTipoDeDocumento, Ingreso, Vehiculo, VehiculosResumen } from '../../interfaces';
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router';
 import { ClientesResumen, ClienteNuevo } from '../../interfaces/cliente';
@@ -38,10 +38,27 @@ const validateExiste = async (buscar: string, etiqueta: string): Promise<string 
   }
 };
 
+const validateExistePatente = async ( patente: string ): Promise<string | undefined> => {
+  try {
+      const response = await externalApiConToken.get(`/vehiculos?patente=${ patente }`);
+      
+      const { total } = response.data;
+
+      // Si el email existe en la base de datos, el servidor podría responder con un código de estado específico (por ejemplo, 200) o algún otro indicador.
+      // Puedes adaptar el código a tu servidor y verificar la respuesta de acuerdo a tus necesidades.
+      if ( total > 0 ) {
+          console.log('existe data');
+          return `La patente ya está registrada`;
+      }
+      return undefined; // La patente no existe en la base de datos
+  } catch (error) {
+      console.error('Error al validar el email:', error);
+      return `Ocurrió un error al validar la patente`;
+  }
+};
 
 const validateForm = async (values: any ): Promise<FormikErrors<Ingreso>> => {
   
-  console.log(values);
   const errors: FormikErrors<Ingreso> = {};
 
   if (values.celular && !('id' in values)) {
@@ -50,6 +67,13 @@ const validateForm = async (values: any ): Promise<FormikErrors<Ingreso>> => {
           errors.celular = celularExistsError;
       }
   }
+
+  if (values.patente && !('id' in values)) {
+    const patenteExistsError = await validateExistePatente( values.patente );
+    if ( patenteExistsError ) {
+        errors.patente = patenteExistsError;
+    }
+}
 
   return errors;
 };
@@ -88,48 +112,11 @@ const Ingreso:NextPage = () => {
                 }
 
             })
-            
-            // console.log(vehiculo);
             router.push('/pedidos');
 
         } catch (error) {
             
         }
-    }
-
-    const existeNumero = async(e: FocusEvent<HTMLInputElement>) => {
-      
-      const numero = e.target.value;
-
-      try {
-        const { data } = await externalApiConToken.get<ClientesResumen>(`/clientes?numero=${ numero }` ); 
-        const { clientes } = data;
-        
-        if ( clientes.length > 0 && numero.length > 0 ) {
-          Swal.fire({
-            title: 'Existe un cliente registrado con ese número.',
-            text: "¿Desea continuar?",
-            icon: 'warning',
-            showCancelButton: true,
-            showDenyButton: true,
-            denyButtonText: 'Ver clientes relacionados',
-            denyButtonColor: '#3085d0',
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Continuar',
-            cancelButtonText: 'Cancelar'
-          }).then((result) => {
-            console.log(result);
-            if ( result.isDenied ) {
-              router.push(`/clientes?numero=${ numero }`);
-            }
-          })
-        }
-
-      } catch (error) {
-        
-      }
-
     }
 
     const existeCelular = async(e: FocusEvent<HTMLInputElement>) => {
@@ -168,6 +155,77 @@ const Ingreso:NextPage = () => {
 
     }
 
+    const existeNumero = async(e: FocusEvent<HTMLInputElement>) => {
+      
+      const numero = e.target.value;
+
+      try {
+        const { data } = await externalApiConToken.get<ClientesResumen>(`/clientes?numero=${ numero }` ); 
+        const { clientes } = data;
+        
+        console.log(data)
+        if ( clientes.length > 0 && numero.length > 0 ) {
+          Swal.fire({
+            title: 'Existe un cliente registrado con ese número.',
+            text: "¿Desea ir a la pantalla del cliente?",
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            denyButtonText: 'Ver cliente relacionado',
+            denyButtonColor: '#3085d0',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Continuar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            console.log(result);
+            if ( result.isDenied ) {
+              router.push(`/clientes?numero=${ numero }`);
+            }
+          })
+        }
+
+      } catch (error) {
+        
+      }
+
+    }
+
+    const existePatente = async(e: FocusEvent<HTMLInputElement>) => {
+      
+      const patente = e.target.value.toUpperCase();
+
+      try {
+        const { data } = await externalApiConToken.get<VehiculosResumen>(`/vehiculos?patente=${ patente }` ); 
+        const { vehiculos } = data;
+        
+        if ( vehiculos.length > 0 && patente.length > 0 ) {
+          Swal.fire({
+            title: 'Existe un vehiculo registrado con esa patente.',
+            text: "¿Desea ir a la pantalla del vehiculo?",
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            denyButtonText: 'Ver vehiculo relacionado',
+            denyButtonColor: '#3085d0',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Continuar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            console.log(result);
+            if ( result.isDenied ) {
+              router.push(`/vehiculos?patente=${ patente }`);
+            }
+          })
+        }
+
+      } catch (error) {
+        
+      }
+
+    }
+
     return (
         <Layout title='Pedidos'>
       
@@ -178,11 +236,12 @@ const Ingreso:NextPage = () => {
                         validate={ validateForm }
                         initialValues={ valoresIniciales }
                         onSubmit={async (values) => {
+                          console.log(values);
                             handleSubmit( values );
                         }}
                     >
                       <FormikStep label="Datos del cliente"
-                        validationSchema={object({
+                        validationSchema={ object({
                           numero: string().required('El número de documento es obligatorio'), 
                           tipoDeDocumento: string().required('El número de documento es obligatorio'),
                           nombre: string().required('El nombre y apellido es obligatorio'),
@@ -197,8 +256,7 @@ const Ingreso:NextPage = () => {
                         })}
                       >
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="numero" component={TextField} label="Número de documento" 
-                              onBlur={ existeNumero } />
+                            <Field fullWidth name="numero" component={TextField} label="Número de documento" onBlur={ existeNumero } />
                         </Box>
                         <Box paddingBottom={2}>
                           <Field fullWidth name="tipoDeDocumento" component={TextField} label="Tipo de Documento" select>
@@ -237,7 +295,7 @@ const Ingreso:NextPage = () => {
                         </Box>
                       </FormikStep>
                       <FormikStep label="Datos del vehículo"
-                        validationSchema={object({
+                        validationSchema={ object({
                         patente: string().min(6, 'La patente debe tener como mínimo 6 caracteres')
                                         .required('La patente es obligatoria'),
                         marca: string().required('La marca es obligatoria'),
@@ -254,7 +312,7 @@ const Ingreso:NextPage = () => {
                         })}
                       >
                         <Box paddingBottom={2}>
-                            <Field fullWidth name="patente" component={TextField} label="Patente" inputProps={{ style: { textTransform: "uppercase" } }} />
+                            <Field fullWidth name="patente" component={TextField} label="Patente" inputProps={{ style: { textTransform: "uppercase" } }} onBlur={ existePatente } />
                         </Box>
                         <Box paddingBottom={2}>
                             <Field fullWidth name="marca" component={TextField} label="Marca" inputProps={{ style: { textTransform: "uppercase" } }}/>
