@@ -20,12 +20,8 @@ interface Props {
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
-    const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://piruco.geaonline.com.ar');
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend.herokuapp.com');
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://sonia-backend-vercel-production.up.railway.app');
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://piruco-backend-w.geaonline.com.ar');
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://https://sonia-backend-vercel.vercel.app');
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
+    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://piruco.geaonline.com.ar');
 
     const { ingresoMensaje } = useContext( ChatContext );
     const { refreshClientesConMensajes } = useContext( ClientesContext );   
