@@ -66,10 +66,14 @@ export const SendMessage = () => {
             cliente: chatActivo!,
             clase: 'enviado',
             body: mensaje,
+            link: '',
+            tipo: 'texto',
+            tipoDetalle: 'sin-especificar',
             estado: 'leido',
             usuario: user?.uid
         }
         
+        console.log(payload)
         socket?.emit('frontend:mensaje-personal', payload );
 
         console.log('frontend:mensaje-personal')

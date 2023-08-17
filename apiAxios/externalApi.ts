@@ -1,8 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-// export const baseURL: string = 'http://localhost:8080/api';
-export const baseURL: string = 'https://piruco.geaonline.com.ar/api';
+export const baseURL: string = process.env.NEXT_PUBLIC_AXIOS_BASEURL!;
 
 const token = Cookies.get('token');
 

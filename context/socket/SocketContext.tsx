@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, createContext, useEffect, useContext } from 'react';
 import { useSocket } from '../../hooks'
-import { scrollToBottomAnimated } from '../../utils/scrollToBottom';
 import { Socket } from 'socket.io-client';
 import { AuthContext } from '../auth';
 import { ChatContext } from '../chat';
@@ -20,13 +19,12 @@ interface Props {
 
 export const SocketProvider:FC<Props> = ({ children }) => {
 
-    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
-    const { socket, online, conectarSocket, desconectarSocket } = useSocket('https://piruco.geaonline.com.ar');
+    const { socket, online, conectarSocket, desconectarSocket } = useSocket(process.env.NEXT_PUBLIC_SOCKET_BASEURL!);
 
     const { ingresoMensaje } = useContext( ChatContext );
     const { refreshClientesConMensajes } = useContext( ClientesContext );   
 
-    const { isLoggedIn } = useContext( AuthContext )    
+    const { isLoggedIn } = useContext( AuthContext );
 
     useEffect(() => {
         if ( isLoggedIn ) {
