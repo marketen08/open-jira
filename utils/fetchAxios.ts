@@ -1,6 +1,6 @@
 // import { useSession } from 'next-auth/react';
 import axios from 'axios';
-const baseUrl = process.env.AXIOS_BASEURL;
+const baseUrl = process.env.NEXT_PUBLIC_AXIOS_BASEURL;
 
 interface IFetch {
     endpoint: string;

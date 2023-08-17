@@ -73,9 +73,7 @@ export const SendMessage = () => {
             usuario: user?.uid
         }
         
-        console.log(payload)
         socket?.emit('frontend:mensaje-personal', payload );
-
         console.log('frontend:mensaje-personal')
     }
 

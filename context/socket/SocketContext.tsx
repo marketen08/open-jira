@@ -20,6 +20,7 @@ interface Props {
 export const SocketProvider:FC<Props> = ({ children }) => {
 
     const { socket, online, conectarSocket, desconectarSocket } = useSocket(process.env.NEXT_PUBLIC_SOCKET_BASEURL!);
+    // const { socket, online, conectarSocket, desconectarSocket } = useSocket('http://localhost:8080');
 
     const { ingresoMensaje } = useContext( ChatContext );
     const { refreshClientesConMensajes } = useContext( ClientesContext );   
