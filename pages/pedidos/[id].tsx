@@ -74,6 +74,7 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
         try {
             const resultado = await externalApiConToken.put(`/pedidos/${ id }`, { ...values })
             
+            console.log(resultado);
         } catch (error) {
             console.log(error);
         }
@@ -256,12 +257,11 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                             fullWidth
                                             multiline
                                             disabled={ !modificar }
-                                            rows={ 6 }
+                                            rows={ 4 }
                                             label='Descripción del servicio'
                                             sx={{ mt: 3, mb: 1 }}
-                                            
                                             error={ touched.descripcion && errors.descripcion }
-                                            helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del vehículo' }
+                                            helperText={ touched.descripcion && errors.descripcion && 'Ingrese la descripción del servicio' }
                                         />
                                         <Box sx={ !modificar && values.estado === 'Nuevo' ? { display: 'none' } : { display: 'block'}}>
                                             <FieldArray name="listaItems">
@@ -345,6 +345,17 @@ export const PedidoPage:FC<Props> = ({ pedido, id }) => {
                                                 )}
                                             </FieldArray>
                                         </Box>
+                                        <Field
+                                            as={ TextField }
+                                            name='observaciones'
+                                            type='text'
+                                            fullWidth
+                                            multiline
+                                            disabled={ !modificar }
+                                            rows={ 3 }
+                                            label='Observaciones'
+                                            sx={{ mt: 3, mb: 1 }}
+                                        />
                                         <Grid container>
                                             <Grid item md={6}>
                                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

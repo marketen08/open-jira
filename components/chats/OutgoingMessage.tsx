@@ -21,7 +21,7 @@ export const OutgoingMessage:FC<Props> = ({ msg }) => {
                         paddingBottom: 1, justifyItems: 'flex-end' }}
                         >
                 {
-                    msg.tipo === 'documento' ?
+                    msg.tipo === 'documento' && msg.body !== 'Bienvenido a Casa Piruco!' ?
                         <Box>
                             <Typography sx={{ textAlign: 'right', paddingBottom: 1, display: 'flex', alignItems: 'center'}}>
                                 <Link href={ msg.link } underline="none" sx={{ paddingRight: 1 }}>
@@ -29,7 +29,6 @@ export const OutgoingMessage:FC<Props> = ({ msg }) => {
                                 </Link>
                                 <Link href={ msg.link } underline="none">
                                     <CloudDownloadOutlinedIcon sx={{ fontSize: 30 }} />
-                                    
                                 </Link>
                             </Typography>
                         </Box>
