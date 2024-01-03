@@ -98,7 +98,7 @@ export const ClientePage:FC<Props> = ({ cliente, vehiculos }) => {
 
     const onSave = async ( values: Cliente | ClienteNuevo) => {
 
-        if ( !values.razonSocial ){
+        if ( values.razonSocial.length < 1 ){
             values.razonSocial = values.nombre.toLocaleUpperCase();
         }
 
