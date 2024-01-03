@@ -26,13 +26,18 @@ const Pedidos:NextPage = () => {
     setEstado(value.target.value);
   }
 
+
+  const clientesConVehiculo = pedidosResumen?.pedidos
+
   // Obtener el id y el nombre del cliente de cada objeto
-  const clientesEnPedidos = pedidosResumen?.pedidos.map(objeto => ({
+  const clientesEnPedidos = pedidosResumen?.pedidos.map(objeto => {
+
+    return ({
     id: objeto.vehiculo.cliente._id,
     nombre: objeto.vehiculo.cliente.nombre
-  }));
+  })});
 
-  
+
   // Eliminar objetos duplicados basados en el id del cliente
   const clientesUnicos = clientesEnPedidos?.filter((cliente, index, self) => {
     return index === self.findIndex(obj => obj.id === cliente.id);

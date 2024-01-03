@@ -98,6 +98,10 @@ export const ClientePage:FC<Props> = ({ cliente, vehiculos }) => {
 
     const onSave = async ( values: Cliente | ClienteNuevo) => {
 
+        if ( !values.razonSocial ){
+            values.razonSocial = values.nombre.toLocaleUpperCase();
+        }
+
         if (  !('id' in values) ){
             // NUEVO CLIENTE
             try {
