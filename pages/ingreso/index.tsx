@@ -61,19 +61,33 @@ const validateForm = async (values: any ): Promise<FormikErrors<Ingreso>> => {
   
   const errors: FormikErrors<Ingreso> = {};
 
-  if (values.celular && !('id' in values)) {
-      const celularExistsError = await validateExiste(values.celular, 'celular');
-      if (celularExistsError) {
-          errors.celular = celularExistsError;
-      }
-  }
+  // if (values.celular && !('id' in values)) {
+  //     const celularExistsError = await validateExiste(values.celular, 'celular');
+  //     if (celularExistsError) {
+  //         errors.celular = celularExistsError;
+  //     }
+  // }
+
+  // if (values.numero && !('id' in values)) {
+  //   const numeroExistsError = await validateExiste(values.numero, 'numero');
+  //   if (numeroExistsError) {
+  //     if (values.nombre && !('id' in values)) {
+  //       const nombreExistsError = await validateExiste(values.nombre, 'nombre');
+  //       if (nombreExistsError) {
+  //         errors.numero = numeroExistsError;
+  //         errors.nombre = nombreExistsError;
+  //       }
+  //     }
+  //   }
+  // }
 
   if (values.patente && !('id' in values)) {
     const patenteExistsError = await validateExistePatente( values.patente );
     if ( patenteExistsError ) {
         errors.patente = patenteExistsError;
     }
-}
+  }
+
 
   return errors;
 };
